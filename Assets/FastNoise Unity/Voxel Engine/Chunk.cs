@@ -292,7 +292,24 @@ namespace VoxelEngine
 			{
 				chunkGameObject = chunkGameObjectPool.Get();
 				chunkGameObject.Setup(chunkPos, realPos, voxelEngineManager.gameObject.transform);
-				chunkGameObject.meshRenderer.material = voxelEngineManager.meshMaterial;
+				Material matToUse = voxelEngineManager.meshMaterial;
+				if (matToUse == null || matToUse.shader == null || !matToUse.shader.isSupported)
+				{
+					Shader custom = Shader.Find("Custom/VertexColorURP");
+					if (custom != null)
+					{
+						matToUse = new Material(custom);
+					}
+					else
+					{
+						Shader fallback = Shader.Find("Standard") ?? Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("HDRP/Lit");
+						if (fallback != null)
+							matToUse = new Material(fallback);
+						else
+							matToUse = new Material(Shader.Find("Diffuse"));
+					}
+				}
+				chunkGameObject.meshRenderer.material = matToUse;
 			}
 
 			chunkGameObject.meshFilter.sharedMesh = mesh;

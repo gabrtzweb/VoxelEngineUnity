@@ -1,5 +1,8 @@
 ﻿using System;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -84,42 +87,42 @@ namespace VoxelEngine
 
 			if (GUI.Button(rect, "Grass Hills"))
 			{
-				terrainGenerator = FindObjectOfType<TerrainGenerator_GrassLand>();
+				terrainGenerator = UnityEngine.Object.FindAnyObjectByType<TerrainGenerator_GrassLand>();
 				ResetAll();
 			}
 			rect.y += labelSpacing;
 
 			if (GUI.Button(rect, "Alien Planet"))
 			{
-				terrainGenerator = FindObjectOfType<TerrainGenerator_AlienPlanet>();
+				terrainGenerator = UnityEngine.Object.FindAnyObjectByType<TerrainGenerator_AlienPlanet>();
 				ResetAll();
 			}
 			rect.y += labelSpacing;
 
 			if (GUI.Button(rect, "Cracked Surface"))
 			{
-				terrainGenerator = FindObjectOfType<TerrainGenerator_CrackedSurface>();
+				terrainGenerator = UnityEngine.Object.FindAnyObjectByType<TerrainGenerator_CrackedSurface>();
 				ResetAll();
 			}
 			rect.y += labelSpacing;
 
 			if (GUI.Button(rect, "Desert (SIMD)"))
 			{
-				terrainGenerator = FindObjectOfType<TerrainGeneratorSIMD_Desert>();
+				terrainGenerator = UnityEngine.Object.FindAnyObjectByType<TerrainGeneratorSIMD_Desert>();
 				ResetAll();
 			}
 			rect.y += labelSpacing;
 
 			if (GUI.Button(rect, "Floating Islands (SIMD)"))
 			{
-				terrainGenerator = FindObjectOfType<TerrainGeneratorSIMD_FloatingIslands>();
+				terrainGenerator = UnityEngine.Object.FindAnyObjectByType<TerrainGeneratorSIMD_FloatingIslands>();
 				ResetAll();
 			}
 			rect.y += labelSpacing;
 
 			if (GUI.Button(rect, "Caves (SIMD)"))
 			{
-				terrainGenerator = FindObjectOfType<TerrainGeneratorSIMD_Caves>();
+				terrainGenerator = UnityEngine.Object.FindAnyObjectByType<TerrainGeneratorSIMD_Caves>();
 				ResetAll(true);
 			}
 		}
@@ -142,8 +145,13 @@ namespace VoxelEngine
 
 			averageFPS = Mathf.Lerp(averageFPS, 1f/deltaTimeFPS, 0.05f);
 			
+			#if ENABLE_LEGACY_INPUT_MANAGER
 			if (Input.GetKeyDown(KeyCode.Escape))
 				Application.Quit();
+			#elif ENABLE_INPUT_SYSTEM
+			if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+				Application.Quit();
+			#endif
 		}
 
 		// Uses called in late update since it is called after corountine updates allowing it to start new threads if they have just finished
