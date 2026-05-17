@@ -84,41 +84,6 @@ namespace VoxelEngine
 
 			rect = new Rect(Screen.width - 172, 2, 170, 20);
 			labelSpacing = 22;
-
-			if (GUI.Button(rect, "Grass Hills"))
-			{
-				SelectTerrainGenerator(UnityEngine.Object.FindAnyObjectByType<TerrainGenerator>(), TerrainGenerator.TerrainProfile.GrassLand);
-			}
-			rect.y += labelSpacing;
-
-			if (GUI.Button(rect, "Alien Planet"))
-			{
-				SelectTerrainGenerator(UnityEngine.Object.FindAnyObjectByType<TerrainGenerator>(), TerrainGenerator.TerrainProfile.AlienPlanet);
-			}
-			rect.y += labelSpacing;
-
-			if (GUI.Button(rect, "Cracked Surface"))
-			{
-				SelectTerrainGenerator(UnityEngine.Object.FindAnyObjectByType<TerrainGenerator>(), TerrainGenerator.TerrainProfile.CrackedSurface);
-			}
-			rect.y += labelSpacing;
-
-			if (GUI.Button(rect, "Desert (SIMD)"))
-			{
-				SelectTerrainGenerator(UnityEngine.Object.FindAnyObjectByType<TerrainGeneratorSIMD>(), TerrainGeneratorSIMD.TerrainProfile.Desert);
-			}
-			rect.y += labelSpacing;
-
-			if (GUI.Button(rect, "Floating Islands (SIMD)"))
-			{
-				SelectTerrainGenerator(UnityEngine.Object.FindAnyObjectByType<TerrainGeneratorSIMD>(), TerrainGeneratorSIMD.TerrainProfile.FloatingIslands);
-			}
-			rect.y += labelSpacing;
-
-			if (GUI.Button(rect, "Caves (SIMD)"))
-			{
-				SelectTerrainGenerator(UnityEngine.Object.FindAnyObjectByType<TerrainGeneratorSIMD>(), TerrainGeneratorSIMD.TerrainProfile.Caves, true);
-			}
 		}
 
 		private void SelectTerrainGenerator(TerrainGenerator generator, TerrainGenerator.TerrainProfile profile, bool useCameraLight = false)

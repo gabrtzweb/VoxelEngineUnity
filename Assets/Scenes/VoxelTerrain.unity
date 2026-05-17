@@ -313,7 +313,7 @@ MonoBehaviour:
   seed: 1337
   frequency: 0.007
   interp: 2
-  noiseType: 5
+  noiseType: 4
   octaves: 3
   lacunarity: 2
   gain: 0.5
@@ -327,8 +327,8 @@ MonoBehaviour:
   gradientPerturbAmp: 1
   generalSettingsFold: 1
   fractalSettingsFold: 1
-  cellularSettingsFold: 0
-  positionWarpSettingsFold: 0
+  cellularSettingsFold: 1
+  positionWarpSettingsFold: 1
 --- !u!114 &93157386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -420,8 +420,8 @@ MonoBehaviour:
   cellularJitter: 0.45
   gradientPerturbAmp: 30
   generalSettingsFold: 1
-  fractalSettingsFold: 0
-  cellularSettingsFold: 0
+  fractalSettingsFold: 1
+  cellularSettingsFold: 1
   positionWarpSettingsFold: 1
 --- !u!1 &195017561
 GameObject:
