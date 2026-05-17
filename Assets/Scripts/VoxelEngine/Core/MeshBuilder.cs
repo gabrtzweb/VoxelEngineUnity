@@ -892,7 +892,7 @@ namespace VoxelEngine
 				verts[vertIndex++] = gradientVerts[quad.i3];
 
 				if ((verts[vertIndex - 4] - verts[vertIndex - 2]).sqrMagnitude <
-				    (verts[vertIndex - 3] - verts[vertIndex - 1]).sqrMagnitude)
+				(verts[vertIndex - 3] - verts[vertIndex - 1]).sqrMagnitude)
 				{
 					tris[triIndex++] = vertIndex - 4;
 					tris[triIndex++] = vertIndex - 3;

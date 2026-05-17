@@ -77,8 +77,8 @@ namespace VoxelEngine
 				return false;
 			Vector3i vector = (Vector3i) other;
 			return x == vector.x &&
-			       y == vector.y &&
-			       z == vector.z;
+			y == vector.y &&
+			z == vector.z;
 		}
 
 		public override string ToString()
@@ -89,29 +89,29 @@ namespace VoxelEngine
 		public static bool operator ==(Vector3i a, Vector3i b)
 		{
 			return a.x == b.x &&
-			       a.y == b.y &&
-			       a.z == b.z;
+			a.y == b.y &&
+			a.z == b.z;
 		}
 
 		public static bool operator !=(Vector3i a, Vector3i b)
 		{
 			return a.x != b.x ||
-			       a.y != b.y ||
-			       a.z != b.z;
+			a.y != b.y ||
+			a.z != b.z;
 		}
 
 		public static bool operator >=(Vector3i a, int b)
 		{
 			return a.x >= b &&
-			       a.y >= b &&
-			       a.z >= b;
+			a.y >= b &&
+			a.z >= b;
 		}
 
 		public static bool operator <=(Vector3i a, int b)
 		{
 			return a.x <= b &&
-			       a.y <= b &&
-			       a.z <= b;
+			a.y <= b &&
+			a.z <= b;
 		}
 
 		public static Vector3i operator -(Vector3i a, Vector3i b)
