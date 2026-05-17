@@ -44,5 +44,4 @@ public class PlayerConfig : ScriptableObject
     public float interactionCooldown = 0.16f;
     public float boundsExpansion = -0.05f;
     public float raycastStepSize = 0.05f;
-
 }
