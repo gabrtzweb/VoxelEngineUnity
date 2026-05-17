@@ -7,7 +7,6 @@ public class PlayerMovement : MonoBehaviour {
     
     CharacterController charController;
     InputHandler inputHandler;
-    WorldManager worldManager;
     Vector3 velocity;
 
     bool isFlying = false;
@@ -20,9 +19,6 @@ public class PlayerMovement : MonoBehaviour {
         inputHandler = GetComponent<InputHandler>();
     }
 
-    void Start() {
-        worldManager = Object.FindAnyObjectByType<WorldManager>();
-    }
     void Update() {
         if (!charController.enabled) return;
         ApplyStance();

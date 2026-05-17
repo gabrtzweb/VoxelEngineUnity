@@ -111,27 +111,18 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""UsePrimary"",
-                    ""type"": ""Button"",
-                    ""id"": ""6c2ab1b8-8984-453a-af3d-a3c78ae1679a"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""UseSecondary"",
-                    ""type"": ""Button"",
-                    ""id"": ""852140f2-7766-474d-8707-702459ba45f3"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Crouch"",
                     ""type"": ""Button"",
                     ""id"": ""27c5f898-bc57-4ee1-8800-db469aca5fe3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Crawl"",
+                    ""type"": ""Button"",
+                    ""id"": ""37395692-d0cd-44cd-8662-76d44b8a1331"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -150,6 +141,60 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""name"": ""Sprint"",
                     ""type"": ""Button"",
                     ""id"": ""641cd816-40e6-41b4-8c3d-04687c349290"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UsePrimary"",
+                    ""type"": ""Button"",
+                    ""id"": ""6c2ab1b8-8984-453a-af3d-a3c78ae1679a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UseSecondary"",
+                    ""type"": ""Button"",
+                    ""id"": ""852140f2-7766-474d-8707-702459ba45f3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PickAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""4b7269dd-ff1e-4520-a1fc-6e1e3b6ffb21"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DropAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""ddde043b-16e3-41f5-8e85-7aac4454b1ea"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HotbarScroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""68adf9f3-afaa-4834-af71-f0de1eca7f62"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""HotbarSelect"",
+                    ""type"": ""Button"",
+                    ""id"": ""52630007-7fa7-4c7f-8568-5eba19bc8f70"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -291,6 +336,39 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""ad6b7277-6645-4f2e-97f2-c4e08e78dd61"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=-1)"",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""HotbarScroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f9a06e4f-4c7a-4052-8ad1-66cd1f25d965"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale"",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""HotbarScroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6615046d-3c6d-48ce-bd19-c78a090b3d99"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarScroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""daba33a1-ad0c-4742-a909-43ad1cdfbeb6"",
                     ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
@@ -352,6 +430,171 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a01ac788-e2f6-4d5b-bbee-3ff2e460d57b"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""PickAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7c96cbc3-3a9e-476a-9549-687957c3ef57"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""PickAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c87970c8-fc26-4f7b-9050-772d65aa058f"",
+                    ""path"": ""<Gamepad>/rightStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Crawl"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""73b4d404-8d35-4951-a640-82e4f14b4665"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Crawl"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""62371376-d749-4768-b1bb-03a13932aefc"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""DropAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fb4249c8-76f6-4d44-9076-de7f0f659461"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""DropAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb76c00e-3b36-425e-a5dc-3ecc0504efef"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e93a28a1-bc69-475a-876f-37ba39689805"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9180e4ff-0bb0-4339-9f15-632b171f95ec"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7c159868-94d3-4bf8-af2e-890ad16cd317"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eda90202-11a3-4f66-a6aa-9ddd3e1cd364"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""74d96a30-acff-42a3-a170-839338b41bfd"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0bab447f-a3d0-4456-a67a-7f91fbf4068c"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f7759dc9-22ae-415c-9a68-7801984b4396"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""674a6a15-27c2-460c-a825-c887fb2eb499"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HotbarSelect"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -625,11 +868,16 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
-        m_Player_UsePrimary = m_Player.FindAction("UsePrimary", throwIfNotFound: true);
-        m_Player_UseSecondary = m_Player.FindAction("UseSecondary", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
+        m_Player_Crawl = m_Player.FindAction("Crawl", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
+        m_Player_UsePrimary = m_Player.FindAction("UsePrimary", throwIfNotFound: true);
+        m_Player_UseSecondary = m_Player.FindAction("UseSecondary", throwIfNotFound: true);
+        m_Player_PickAction = m_Player.FindAction("PickAction", throwIfNotFound: true);
+        m_Player_DropAction = m_Player.FindAction("DropAction", throwIfNotFound: true);
+        m_Player_HotbarScroll = m_Player.FindAction("HotbarScroll", throwIfNotFound: true);
+        m_Player_HotbarSelect = m_Player.FindAction("HotbarSelect", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -718,11 +966,16 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
-    private readonly InputAction m_Player_UsePrimary;
-    private readonly InputAction m_Player_UseSecondary;
     private readonly InputAction m_Player_Crouch;
+    private readonly InputAction m_Player_Crawl;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Sprint;
+    private readonly InputAction m_Player_UsePrimary;
+    private readonly InputAction m_Player_UseSecondary;
+    private readonly InputAction m_Player_PickAction;
+    private readonly InputAction m_Player_DropAction;
+    private readonly InputAction m_Player_HotbarScroll;
+    private readonly InputAction m_Player_HotbarSelect;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -743,17 +996,13 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Look => m_Wrapper.m_Player_Look;
         /// <summary>
-        /// Provides access to the underlying input action "Player/UsePrimary".
-        /// </summary>
-        public InputAction @UsePrimary => m_Wrapper.m_Player_UsePrimary;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/UseSecondary".
-        /// </summary>
-        public InputAction @UseSecondary => m_Wrapper.m_Player_UseSecondary;
-        /// <summary>
         /// Provides access to the underlying input action "Player/Crouch".
         /// </summary>
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Crawl".
+        /// </summary>
+        public InputAction @Crawl => m_Wrapper.m_Player_Crawl;
         /// <summary>
         /// Provides access to the underlying input action "Player/Jump".
         /// </summary>
@@ -762,6 +1011,30 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Sprint".
         /// </summary>
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/UsePrimary".
+        /// </summary>
+        public InputAction @UsePrimary => m_Wrapper.m_Player_UsePrimary;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/UseSecondary".
+        /// </summary>
+        public InputAction @UseSecondary => m_Wrapper.m_Player_UseSecondary;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/PickAction".
+        /// </summary>
+        public InputAction @PickAction => m_Wrapper.m_Player_PickAction;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/DropAction".
+        /// </summary>
+        public InputAction @DropAction => m_Wrapper.m_Player_DropAction;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/HotbarScroll".
+        /// </summary>
+        public InputAction @HotbarScroll => m_Wrapper.m_Player_HotbarScroll;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/HotbarSelect".
+        /// </summary>
+        public InputAction @HotbarSelect => m_Wrapper.m_Player_HotbarSelect;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -794,21 +1067,36 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Look.started += instance.OnLook;
             @Look.performed += instance.OnLook;
             @Look.canceled += instance.OnLook;
-            @UsePrimary.started += instance.OnUsePrimary;
-            @UsePrimary.performed += instance.OnUsePrimary;
-            @UsePrimary.canceled += instance.OnUsePrimary;
-            @UseSecondary.started += instance.OnUseSecondary;
-            @UseSecondary.performed += instance.OnUseSecondary;
-            @UseSecondary.canceled += instance.OnUseSecondary;
             @Crouch.started += instance.OnCrouch;
             @Crouch.performed += instance.OnCrouch;
             @Crouch.canceled += instance.OnCrouch;
+            @Crawl.started += instance.OnCrawl;
+            @Crawl.performed += instance.OnCrawl;
+            @Crawl.canceled += instance.OnCrawl;
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
+            @UsePrimary.started += instance.OnUsePrimary;
+            @UsePrimary.performed += instance.OnUsePrimary;
+            @UsePrimary.canceled += instance.OnUsePrimary;
+            @UseSecondary.started += instance.OnUseSecondary;
+            @UseSecondary.performed += instance.OnUseSecondary;
+            @UseSecondary.canceled += instance.OnUseSecondary;
+            @PickAction.started += instance.OnPickAction;
+            @PickAction.performed += instance.OnPickAction;
+            @PickAction.canceled += instance.OnPickAction;
+            @DropAction.started += instance.OnDropAction;
+            @DropAction.performed += instance.OnDropAction;
+            @DropAction.canceled += instance.OnDropAction;
+            @HotbarScroll.started += instance.OnHotbarScroll;
+            @HotbarScroll.performed += instance.OnHotbarScroll;
+            @HotbarScroll.canceled += instance.OnHotbarScroll;
+            @HotbarSelect.started += instance.OnHotbarSelect;
+            @HotbarSelect.performed += instance.OnHotbarSelect;
+            @HotbarSelect.canceled += instance.OnHotbarSelect;
         }
 
         /// <summary>
@@ -826,21 +1114,36 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Look.started -= instance.OnLook;
             @Look.performed -= instance.OnLook;
             @Look.canceled -= instance.OnLook;
-            @UsePrimary.started -= instance.OnUsePrimary;
-            @UsePrimary.performed -= instance.OnUsePrimary;
-            @UsePrimary.canceled -= instance.OnUsePrimary;
-            @UseSecondary.started -= instance.OnUseSecondary;
-            @UseSecondary.performed -= instance.OnUseSecondary;
-            @UseSecondary.canceled -= instance.OnUseSecondary;
             @Crouch.started -= instance.OnCrouch;
             @Crouch.performed -= instance.OnCrouch;
             @Crouch.canceled -= instance.OnCrouch;
+            @Crawl.started -= instance.OnCrawl;
+            @Crawl.performed -= instance.OnCrawl;
+            @Crawl.canceled -= instance.OnCrawl;
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
+            @UsePrimary.started -= instance.OnUsePrimary;
+            @UsePrimary.performed -= instance.OnUsePrimary;
+            @UsePrimary.canceled -= instance.OnUsePrimary;
+            @UseSecondary.started -= instance.OnUseSecondary;
+            @UseSecondary.performed -= instance.OnUseSecondary;
+            @UseSecondary.canceled -= instance.OnUseSecondary;
+            @PickAction.started -= instance.OnPickAction;
+            @PickAction.performed -= instance.OnPickAction;
+            @PickAction.canceled -= instance.OnPickAction;
+            @DropAction.started -= instance.OnDropAction;
+            @DropAction.performed -= instance.OnDropAction;
+            @DropAction.canceled -= instance.OnDropAction;
+            @HotbarScroll.started -= instance.OnHotbarScroll;
+            @HotbarScroll.performed -= instance.OnHotbarScroll;
+            @HotbarScroll.canceled -= instance.OnHotbarScroll;
+            @HotbarSelect.started -= instance.OnHotbarSelect;
+            @HotbarSelect.performed -= instance.OnHotbarSelect;
+            @HotbarSelect.canceled -= instance.OnHotbarSelect;
         }
 
         /// <summary>
@@ -1079,26 +1382,19 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLook(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "UsePrimary" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnUsePrimary(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "UseSecondary" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnUseSecondary(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "Crouch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCrouch(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Crawl" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCrawl(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Jump" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1113,6 +1409,48 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSprint(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "UsePrimary" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUsePrimary(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "UseSecondary" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUseSecondary(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PickAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPickAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DropAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDropAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "HotbarScroll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbarScroll(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "HotbarSelect" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbarSelect(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

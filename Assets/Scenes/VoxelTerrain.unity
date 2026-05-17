@@ -147,21 +147,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 69701487}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a17a260709ce0454fa6016f940408e4f, type: 3}
+  m_Script: {fileID: 11500000, guid: 9405c77d4da84d445ac0880d8529a766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fastNoiseSIMDUnity:
   - {fileID: 69701490}
   - {fileID: 69701491}
-  terrainScale: 20
-  canyonMaxHeight: 2
-  canyonGradient: 3
-  sandColor:
+  terrainProfile: 0
+  desertInterpNoise: {fileID: 69701490}
+  desertCanyonNoise: {fileID: 69701491}
+  desertTerrainScale: 20
+  desertCanyonMaxHeight: 2
+  desertCanyonGradient: 3
+  desertSandColor:
     serializedVersion: 2
     rgba: 4278370032
-  stoneColor:
+  desertStoneColor:
     serializedVersion: 2
     rgba: 4283463800
+  floatingIslandNoise: {fileID: 1550379466}
+  floatingTerrainNoise: {fileID: 1550379466}
+  floatingTerrainScale: 3
+  floatingGrassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  floatingDirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  floatingStoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveNoise: {fileID: 783630701}
+  caveRatio: 0.88
+  caveStoneMinColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveStoneMaxColor:
+    serializedVersion: 2
+    rgba: 4284769380
 --- !u!4 &69701489
 Transform:
   m_ObjectHideFlags: 0
@@ -315,22 +338,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 93157384}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18257190b46054b4685ea153b1661585, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ab2d075b9954ec4eb0a925bac5a5b6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fastNoiseUnity:
   - {fileID: 93157385}
   - {fileID: 93157388}
-  terrainScale: 20
+  terrainProfile: 0
+  grassMainNoise: {fileID: 93157385}
+  grassWarpNoise: {fileID: 93157388}
+  grassTerrainScale: 20
   grassColor:
     serializedVersion: 2
     rgba: 4281374320
-  dirtColor:
+  grassDirtColor:
     serializedVersion: 2
     rgba: 4282534753
-  stoneColor:
+  grassStoneColor:
     serializedVersion: 2
     rgba: 4288059030
+  alienMainNoise: {fileID: 1972986277}
+  alienTerrainScale: 40
+  alienSurfaceColor:
+    serializedVersion: 2
+    rgba: 4286743170
+  alienCoreColor:
+    serializedVersion: 2
+    rgba: 4279703319
+  crackedMainNoise: {fileID: 1683311064}
+  crackedTerrainScale: 30
+  crackedSurfaceColor:
+    serializedVersion: 2
+    rgba: 4284835173
+  crackedCoreColor:
+    serializedVersion: 2
+    rgba: 4279703319
+  crackedLavaColor:
+    serializedVersion: 2
+    rgba: 4278227955
 --- !u!4 &93157387
 Transform:
   m_ObjectHideFlags: 0
@@ -767,37 +812,11 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1 &684836409
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 684836410}
-  m_Layer: 0
-  m_Name: CameraTarget
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &684836410
+--- !u!4 &684836410 stripped
 Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 5335629501855457694, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+  m_PrefabInstance: {fileID: 4573694839037452912}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 684836409}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1457011483}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &783630700
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,16 +883,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 783630700}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d544a8f97afb74fa7511402afc2703, type: 3}
+  m_Script: {fileID: 11500000, guid: 9405c77d4da84d445ac0880d8529a766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fastNoiseSIMDUnity:
   - {fileID: 783630701}
-  caveRatio: 0.88
-  stoneMinColor:
+  terrainProfile: 2
+  desertInterpNoise: {fileID: 69701490}
+  desertCanyonNoise: {fileID: 69701490}
+  desertTerrainScale: 20
+  desertCanyonMaxHeight: 2
+  desertCanyonGradient: 3
+  desertSandColor:
+    serializedVersion: 2
+    rgba: 4278370032
+  desertStoneColor:
+    serializedVersion: 2
+    rgba: 4283463800
+  floatingIslandNoise: {fileID: 1550379466}
+  floatingTerrainNoise: {fileID: 1550379466}
+  floatingTerrainScale: 3
+  floatingGrassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  floatingDirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  floatingStoneColor:
     serializedVersion: 2
     rgba: 4288059030
-  stoneMaxColor:
+  caveNoise: {fileID: 783630701}
+  caveRatio: 0.88
+  caveStoneMinColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveStoneMaxColor:
     serializedVersion: 2
     rgba: 4284769380
 --- !u!4 &783630703
@@ -891,123 +935,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 195017562}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1457011477
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1457011483}
-  - component: {fileID: 1457011482}
-  - component: {fileID: 1457011481}
-  - component: {fileID: 1457011480}
-  - component: {fileID: 1457011479}
-  - component: {fileID: 1457011478}
-  m_Layer: 0
-  m_Name: MainPlayer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1457011478
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1457011477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48c85c3846a767545afed8872f0448ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputHandler
---- !u!114 &1457011479
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1457011477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e07d0e521b272947a51f57427db59ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraController
-  cameraTarget: {fileID: 684836410}
-  mouseSensitivity: 0.4
-  topClamp: -80
-  bottomClamp: 80
---- !u!114 &1457011480
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1457011477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4806c09ccd917d14588ccca4909ae002, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractions
-  playerConfig: {fileID: 11400000, guid: f7e575cc0c3c66c4e86c2c23493a36d9, type: 2}
---- !u!114 &1457011481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1457011477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 979813f578559d84cb25fceb418c54b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  playerConfig: {fileID: 11400000, guid: f7e575cc0c3c66c4e86c2c23493a36d9, type: 2}
-  cameraTarget: {fileID: 684836410}
---- !u!143 &1457011482
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1457011477}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!4 &1457011483
+--- !u!4 &1457011483 stripped
 Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+  m_PrefabInstance: {fileID: 4573694839037452912}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1457011477}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 2, z: -0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 684836410}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1466604058
 GameObject:
   m_ObjectHideFlags: 0
@@ -1380,22 +1312,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 1550379464}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fc9bd4799f0dc546923ead4e0fec52e, type: 3}
+  m_Script: {fileID: 11500000, guid: 9405c77d4da84d445ac0880d8529a766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fastNoiseSIMDUnity:
   - {fileID: 1550379466}
-  - {fileID: 1550379465}
-  terrainScale: 3
-  grassColor:
+  - {fileID: 1550379466}
+  terrainProfile: 1
+  desertInterpNoise: {fileID: 69701490}
+  desertCanyonNoise: {fileID: 69701490}
+  desertTerrainScale: 20
+  desertCanyonMaxHeight: 2
+  desertCanyonGradient: 3
+  desertSandColor:
+    serializedVersion: 2
+    rgba: 4278370032
+  desertStoneColor:
+    serializedVersion: 2
+    rgba: 4283463800
+  floatingIslandNoise: {fileID: 1550379466}
+  floatingTerrainNoise: {fileID: 1550379466}
+  floatingTerrainScale: 3
+  floatingGrassColor:
     serializedVersion: 2
     rgba: 4281374320
-  dirtColor:
+  floatingDirtColor:
     serializedVersion: 2
     rgba: 4282534753
-  stoneColor:
+  floatingStoneColor:
     serializedVersion: 2
     rgba: 4288059030
+  caveNoise: {fileID: 783630701}
+  caveRatio: 0.88
+  caveStoneMinColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveStoneMaxColor:
+    serializedVersion: 2
+    rgba: 4284769380
 --- !u!4 &1550379468
 Transform:
   m_ObjectHideFlags: 0
@@ -1470,19 +1424,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 1683311063}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51dd6a9ba54ced74ea9d0f72f25c3b80, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ab2d075b9954ec4eb0a925bac5a5b6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fastNoiseUnity:
   - {fileID: 1683311064}
-  terrainScale: 30
-  surfaceColor:
+  terrainProfile: 2
+  grassMainNoise: {fileID: 93157385}
+  grassWarpNoise: {fileID: 93157385}
+  grassTerrainScale: 20
+  grassColor:
     serializedVersion: 2
-    rgba: 4284835173
-  coreColor:
+    rgba: 4281374320
+  grassDirtColor:
     serializedVersion: 2
-    rgba: 4279703319
-  lavaColor:
+    rgba: 4282534753
+  grassStoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  alienMainNoise: {fileID: 1972986277}
+  alienTerrainScale: 40
+  alienSurfaceColor:
+    serializedVersion: 2
+    rgba: 4286743170
+  alienCoreColor:
+    serializedVersion: 2
+    rgba: 4283433040
+  crackedMainNoise: {fileID: 1683311064}
+  crackedTerrainScale: 30
+  crackedSurfaceColor:
+    serializedVersion: 2
+    rgba: 4286743170
+  crackedCoreColor:
+    serializedVersion: 2
+    rgba: 4283433040
+  crackedLavaColor:
     serializedVersion: 2
     rgba: 4278227955
 --- !u!4 &1683311066
@@ -1560,18 +1536,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 1972986276}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c70d4d8ce57d29644980099587d33d1b, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ab2d075b9954ec4eb0a925bac5a5b6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fastNoiseUnity:
   - {fileID: 1972986277}
-  terrainScale: 40
-  surfaceColor:
+  terrainProfile: 1
+  grassMainNoise: {fileID: 93157385}
+  grassWarpNoise: {fileID: 93157385}
+  grassTerrainScale: 20
+  grassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  grassDirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  grassStoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  alienMainNoise: {fileID: 1972986277}
+  alienTerrainScale: 40
+  alienSurfaceColor:
     serializedVersion: 2
     rgba: 4286743170
-  coreColor:
+  alienCoreColor:
     serializedVersion: 2
     rgba: 4283433040
+  crackedMainNoise: {fileID: 1683311064}
+  crackedTerrainScale: 30
+  crackedSurfaceColor:
+    serializedVersion: 2
+    rgba: 4286743170
+  crackedCoreColor:
+    serializedVersion: 2
+    rgba: 4283433040
+  crackedLavaColor:
+    serializedVersion: 2
+    rgba: 4278227955
 --- !u!4 &1972986279
 Transform:
   m_ObjectHideFlags: 0
@@ -1619,6 +1620,63 @@ MonoBehaviour:
   fractalSettingsFold: 0
   cellularSettingsFold: 0
   positionWarpSettingsFold: 0
+--- !u!1001 &4573694839037452912
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2363790081647193435, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_Name
+      value: MainPlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565024674462400729, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1629,4 +1687,4 @@ SceneRoots:
   - {fileID: 347679308}
   - {fileID: 363349584}
   - {fileID: 195017562}
-  - {fileID: 1457011483}
+  - {fileID: 4573694839037452912}
