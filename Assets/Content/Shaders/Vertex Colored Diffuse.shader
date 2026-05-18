@@ -1,69 +1,63 @@
-Shader "Custom/Vertex Colored Diffuse" {
+Shader "Custom/Vertex Colored Diffuse URP"
+{
+    Properties
+    {
+        _Color ("Main Color", Color) = (1,1,1,1)
+        _MainTex ("Base (RGB)", 2D) = "white" {}
+    }
 
-	Properties {
-	
-	    _Color ("Main Color", Color) = (1,1,1,1)
-	
-	    _MainTex ("Base (RGB)", 2D) = "white" {}	
-	}
-	
-	 
-	
-	SubShader {
-	
-	    Tags { "RenderType"="Opaque" }
-	
-	    LOD 150
-	
-	 
-	
-	CGPROGRAM
-	
-	#pragma surface surf Lambert vertex:vert
-	
-	 
-	
-	sampler2D _MainTex;
-	
-	fixed4 _Color;
-	
-	 
-	
-	struct Input {
-	
-	    float2 uv_MainTex;
-	
-	    float3 vertColor;
-	
-	};
-	
-	 
-	
-	void vert (inout appdata_full v, out Input o) {
-	
-	    UNITY_INITIALIZE_OUTPUT(Input, o);
-	
-	    o.vertColor = v.color;
-	
-	}
-	
-	 
-	
-	void surf (Input IN, inout SurfaceOutput o) {
-	
-	    fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-	
-	    o.Albedo = c.rgb * IN.vertColor;
-	
-	    o.Alpha = c.a;	
-	}
-	
-	ENDCG
-	
-	}
-	
-	 
-	
-	Fallback "Diffuse"
+    SubShader
+    {
+        Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Opaque" }
+        LOD 100
 
+        Pass
+        {
+            Tags { "LightMode" = "UniversalForward" }
+
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float4 color : COLOR;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float4 color : COLOR;
+                float2 uv : TEXCOORD0;
+            };
+
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+
+            CBUFFER_START(UnityPerMaterial)
+            float4 _MainTex_ST;
+            float4 _Color;
+            CBUFFER_END
+
+            Varyings vert(Attributes IN)
+            {
+                Varyings OUT;
+                OUT.positionCS = TransformObjectToHClip(IN.positionOS.xyz);
+                OUT.color = IN.color;
+                OUT.uv = TRANSFORM_TEX(IN.uv, _MainTex);
+                return OUT;
+            }
+
+            half4 frag(Varyings IN) : SV_Target
+            {
+                half4 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
+                return texColor * _Color * IN.color;
+            }
+            ENDHLSL
+        }
+    }
+    Fallback "Universal Render Pipeline/Unlit"
 }
