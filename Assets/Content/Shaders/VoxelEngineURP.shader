@@ -92,7 +92,6 @@ Shader "Custom/VoxelEngineURP"
 
                 half3 normalWS = normalize(IN.normalWS);
                 Light mainLight = GetMainLight(IN.shadowCoord);
-                mainLight.shadowAttenuation = 1.0h;
                 half mainNdotL = saturate(dot(normalWS, mainLight.direction));
 
                 half3 lighting = 0;
@@ -105,7 +104,6 @@ Shader "Custom/VoxelEngineURP"
                 for (uint lightIndex = 0u; lightIndex < additionalLightsCount; ++lightIndex)
                 {
                     Light light = GetAdditionalLight(lightIndex, IN.positionWS);
-                    light.shadowAttenuation = 1.0h;
                     half NdotL = saturate(dot(normalWS, light.direction));
                     lighting += light.color * (NdotL * light.distanceAttenuation * light.shadowAttenuation);
                 }

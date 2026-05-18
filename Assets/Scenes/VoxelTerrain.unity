@@ -655,7 +655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84bc4116c6e867f49b870936045044d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainGenerator: {fileID: 93157386}
+  terrainGenerator: {fileID: 69701488}
   targetTransform: {fileID: 1457011483}
   loadDistance: 256
   unloadDistanceModifier: 1.2
@@ -663,7 +663,7 @@ MonoBehaviour:
   maxThreads: 8
   targetFPS: 90
   meshMaterial: {fileID: 2100000, guid: 883dd109ee28f294db0e283ce275e585, type: 2}
-  showDebugInfo: 1
+  showDebugInfo: 0
   directionalLight: {fileID: 550396898}
   cameraLight: {fileID: 1466604069}
 --- !u!1 &396826348
