@@ -90,8 +90,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractions
   playerConfig: {fileID: 11400000, guid: f7e575cc0c3c66c4e86c2c23493a36d9, type: 2}
-  raycastDistance: 6
-  interactCooldown: 0.1
 --- !u!114 &6398612681905484272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,7 +143,7 @@ Transform:
   m_GameObject: {fileID: 7057533732571713270}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -181,7 +179,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38b7e90ef92fb7e40b204e9d142bc52a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38b7e90ef92fb7e40b204e9d142bc52a, type: 3}
       propertyPath: m_LocalRotation.w

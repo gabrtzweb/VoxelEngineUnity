@@ -18,11 +18,11 @@ namespace VoxelEngine
 	{
 		public TerrainGeneratorBase terrainGenerator;
 		public Transform targetTransform;
-		public float loadDistance = 400f;
+		public float loadDistance = 256f;
 		public float unloadDistanceModifier = 1.2f;
-		public float yDistanceModifier = 1.5f;
+		public float yDistanceModifier = 1f;
 		public int maxThreads = 8;
-		public float targetFPS = 100f;
+		public float targetFPS = 90f;
 		public Material meshMaterial;
 		public bool showDebugInfo = true;
 
