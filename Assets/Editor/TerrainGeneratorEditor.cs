@@ -11,7 +11,7 @@ namespace VoxelEngine
 		public override void OnInspectorGUI()
 		{
 			serializedObject.Update();
-			DrawPropertiesExcluding(serializedObject, new[] {"m_Script", "fastNoiseUnity"});
+			DrawPropertiesExcluding(serializedObject, new[] {"m_Script", "fastNoiseUnity", "grassColor", "grassDirtColor", "grassStoneColor", "alienSurfaceColor", "alienCoreColor", "crackedSurfaceColor", "crackedCoreColor", "crackedLavaColor"});
 
 			TerrainGenerator terrainGenerator = ((TerrainGenerator) target);
 

@@ -111,6 +111,36 @@ namespace VoxelEngine
 			}
 		}
 
+		public override BlockData.BlockType DensityBlock(Voxel voxel)
+		{
+			switch (terrainProfile)
+			{
+				case TerrainProfile.GrassLand:
+					if (voxel.density < 5f)
+						return BlockData.BlockType.TerrGrass;
+
+					if (voxel.density < 15f)
+						return BlockData.BlockType.TerrDirt;
+
+					return BlockData.BlockType.RockStone;
+				case TerrainProfile.AlienPlanet:
+					if (voxel.density < 5f)
+						return BlockData.BlockType.TerrMoss;
+
+					return BlockData.BlockType.RockCore;
+				case TerrainProfile.CrackedSurface:
+					if (voxel.density < 5f)
+						return BlockData.BlockType.RockSlate;
+
+					if (voxel.density >= 8f)
+						return BlockData.BlockType.Lava;
+
+					return BlockData.BlockType.RockCore;
+				default:
+					return BlockData.BlockType.RockStone;
+			}
+		}
+
 		private void RefreshProfileSettings()
 		{
 			switch (terrainProfile)

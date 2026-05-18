@@ -113,8 +113,8 @@ namespace VoxelEngine
 
 			if (cameraLight && directionalLight)
 			{
-				cameraLight.enabled = useCameraLight;
-				directionalLight.enabled = !useCameraLight;
+				cameraLight.enabled = false;
+				directionalLight.enabled = true;
 			}
 		}
 

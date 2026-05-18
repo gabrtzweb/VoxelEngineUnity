@@ -5,6 +5,9 @@ namespace VoxelEngine
 	[ExecuteInEditMode]
 	public abstract class TerrainGeneratorBase : MonoBehaviour
 	{
+		[Header("Block Data")]
+		public BlockData blockData;
+
 		protected float minHeight = float.MinValue;
 		protected float maxHeight = float.MaxValue;
 
@@ -18,6 +21,7 @@ namespace VoxelEngine
 
 		public abstract void GenerateChunk(Chunk chunk);
 		public abstract Color32 DensityColor(Voxel voxel);
+		public abstract BlockData.BlockType DensityBlock(Voxel voxel);
 
 		public float MinHeight()
 		{
@@ -37,6 +41,19 @@ namespace VoxelEngine
 		public Voxel MaxVoxel()
 		{
 			return maxVoxel;
+		}
+
+		public Texture2DArray BlockTextureArray()
+		{
+			return blockData ? blockData.textureArray : null;
+		}
+
+		public int ResolveBlockIndex(BlockData.BlockType blockType)
+		{
+			if (blockData != null)
+				return blockData.GetBlockIndex(blockType);
+
+			return 0;
 		}
 
 		public static void ChunkFillUpdate(Chunk chunk, Voxel voxel)

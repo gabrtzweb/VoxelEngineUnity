@@ -11,7 +11,7 @@ namespace VoxelEngine
 		public override void OnInspectorGUI()
 		{
 			serializedObject.Update();
-			DrawPropertiesExcluding(serializedObject, new[] { "m_Script", "fastNoiseSIMDUnity" });
+			DrawPropertiesExcluding(serializedObject, new[] { "m_Script", "fastNoiseSIMDUnity", "desertSandColor", "desertStoneColor", "floatingGrassColor", "floatingDirtColor", "floatingStoneColor", "caveStoneMinColor", "caveStoneMaxColor" });
 
 			TerrainGeneratorSIMD terrainGenerator = ((TerrainGeneratorSIMD)target);
 

@@ -92,55 +92,44 @@ namespace VoxelEngine
 						Voxel left = GetAdjVoxelLeft(index, x);
 						Voxel down = GetAdjVoxelDown(index, y);
 						Voxel back = GetAdjVoxelBack(index, z);
+						BlockData.BlockType blockType = terrainGenerator.DensityBlock(voxel);
+						int blockIndex = terrainGenerator.ResolveBlockIndex(blockType);
 
 						if (voxel.IsSolid())
 						{
-							Color32 color = new Color32();
-							bool colorInit = false;
+							Color32 color = new Color32(255, 255, 255, 255);
 
 							// Left
 							if (!left.IsSolid())
 							{
-								colorInit = true;
-								color = terrainGenerator.DensityColor(voxel);
-
 								quads.Add(new Quad(
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
-									color, Direction.Left));
+									color, Direction.Left, blockIndex));
 							}
 
 							// Down
 							if (!down.IsSolid())
 							{
-								if (!colorInit)
-								{
-									colorInit = true;
-									color = terrainGenerator.DensityColor(voxel);
-								}
-
 								quads.Add(new Quad(
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
-									color, Direction.Down));
+									color, Direction.Down, blockIndex));
 							}
 
 							// Back
 							if (!back.IsSolid())
 							{
-								if (!colorInit)
-									color = terrainGenerator.DensityColor(voxel);
-
 								quads.Add(new Quad(
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
-									color, Direction.Back));
+									color, Direction.Back, blockIndex));
 							}
 						}
 						else // Voxel not solid
@@ -153,7 +142,7 @@ namespace VoxelEngine
 									new Vector3(x - 0.5f, y + 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									terrainGenerator.DensityColor(left), Direction.Right));
+									new Color32(255, 255, 255, 255), Direction.Right, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(left))));
 							}
 
 							// Down
@@ -164,7 +153,7 @@ namespace VoxelEngine
 									new Vector3(x + 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									terrainGenerator.DensityColor(down), Direction.Up));
+									new Color32(255, 255, 255, 255), Direction.Up, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(down))));
 							}
 
 							// Back
@@ -175,7 +164,7 @@ namespace VoxelEngine
 									new Vector3(x + 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									terrainGenerator.DensityColor(back), Direction.Forward));
+									new Color32(255, 255, 255, 255), Direction.Forward, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(back))));
 							}
 						}
 					}
@@ -187,7 +176,8 @@ namespace VoxelEngine
 
 			Vector3[] verts = new Vector3[quads.Count * 4];
 			Vector3[] normals = new Vector3[quads.Count * 4];
-			//Vector2[] uvs = new Vector2[quads.Count * 4];
+			Vector2[] uvs = new Vector2[quads.Count * 4];
+			Vector2[] uv2 = new Vector2[quads.Count * 4];
 			Color32[] colors = new Color32[quads.Count * 4];
 			int[] tris = new int[quads.Count * 6];
 
@@ -205,15 +195,23 @@ namespace VoxelEngine
 
 				colors[vertIndex] = quad.color;
 				normals[vertIndex] = directionNormals[(int)quad.direction];
+				uvs[vertIndex] = new Vector2(0f, 0f);
+				uv2[vertIndex] = new Vector2(quad.blockIndex, 0f);
 				verts[vertIndex++] = quad.v0;
 				colors[vertIndex] = quad.color;
 				normals[vertIndex] = directionNormals[(int)quad.direction];
+				uvs[vertIndex] = new Vector2(1f, 0f);
+				uv2[vertIndex] = new Vector2(quad.blockIndex, 0f);
 				verts[vertIndex++] = quad.v1;
 				colors[vertIndex] = quad.color;
 				normals[vertIndex] = directionNormals[(int)quad.direction];
+				uvs[vertIndex] = new Vector2(1f, 1f);
+				uv2[vertIndex] = new Vector2(quad.blockIndex, 0f);
 				verts[vertIndex++] = quad.v2;
 				colors[vertIndex] = quad.color;
 				normals[vertIndex] = directionNormals[(int)quad.direction];
+				uvs[vertIndex] = new Vector2(0f, 1f);
+				uv2[vertIndex] = new Vector2(quad.blockIndex, 0f);
 				verts[vertIndex++] = quad.v3;
 			}
 
@@ -222,6 +220,8 @@ namespace VoxelEngine
 				vertices = verts,
 				normals = normals,
 				triangles = tris,
+				uv = uvs,
+				uv2 = uv2,
 				colors32 = colors
 			};
 
@@ -261,21 +261,18 @@ namespace VoxelEngine
 
 						if (voxel.IsSolid())
 						{
-							Color32 color = new Color32();
-							bool colorInit = false;
+							Color32 color = new Color32(255, 255, 255, 255);
+							int blockIndex = terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(voxel));
 
 							// Left
 							if (!left.IsSolid())
 							{
-								colorInit = true;
-								color = terrainGenerator.DensityColor(voxel);
-
 								Quad q = new Quad(
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
-									color, Direction.Left);
+									color, Direction.Left, blockIndex);
 
 								q.i0 = LightLevelX(q.v0, color, y, z, -0.25f);
 								q.i1 = LightLevelX(q.v1, color, y, z, -0.25f);
@@ -288,18 +285,12 @@ namespace VoxelEngine
 							// Down
 							if (!down.IsSolid())
 							{
-								if (!colorInit)
-								{
-									colorInit = true;
-									color = terrainGenerator.DensityColor(voxel);
-								}
-
 								Quad q = new Quad(
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
-									color, Direction.Down);
+									color, Direction.Down, blockIndex);
 
 								q.i0 = LightLevelY(q.v0, color, x, z, -0.25f);
 								q.i1 = LightLevelY(q.v1, color, x, z, -0.25f);
@@ -312,15 +303,12 @@ namespace VoxelEngine
 							// Back
 							if (!back.IsSolid())
 							{
-								if (!colorInit)
-									color = terrainGenerator.DensityColor(voxel);
-
 								Quad q = new Quad(
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
-									color, Direction.Back);
+									color, Direction.Back, blockIndex);
 
 								q.i0 = LightLevelZ(q.v0, color, x, y, -0.25f);
 								q.i1 = LightLevelZ(q.v1, color, x, y, -0.25f);
@@ -340,7 +328,7 @@ namespace VoxelEngine
 									new Vector3(x - 0.5f, y + 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									terrainGenerator.DensityColor(left), Direction.Right);
+									new Color32(255, 255, 255, 255), Direction.Right, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(left)));
 
 								q.i0 = LightLevelX(q.v0, q.color, y, z, 0.25f);
 								q.i1 = LightLevelX(q.v1, q.color, y, z, 0.25f);
@@ -358,7 +346,7 @@ namespace VoxelEngine
 									new Vector3(x + 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									terrainGenerator.DensityColor(down), Direction.Up);
+									new Color32(255, 255, 255, 255), Direction.Up, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(down)));
 
 								q.i0 = LightLevelY(q.v0, q.color, x, z, 0.25f);
 								q.i1 = LightLevelY(q.v1, q.color, x, z, 0.25f);
@@ -376,7 +364,7 @@ namespace VoxelEngine
 									new Vector3(x + 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									terrainGenerator.DensityColor(back), Direction.Forward);
+									new Color32(255, 255, 255, 255), Direction.Forward, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(back)));
 
 								q.i0 = LightLevelZ(q.v0, q.color, x, y, 0.25f);
 								q.i1 = LightLevelZ(q.v1, q.color, x, y, 0.25f);
@@ -395,7 +383,8 @@ namespace VoxelEngine
 
 			Vector3[] verts = new Vector3[quads.Count * 4];
 			Vector3[] normals = new Vector3[quads.Count * 4];
-			//Vector2[] uvs = new Vector2[quads.Count * 4];
+			Vector2[] uvs = new Vector2[quads.Count * 4];
+			Vector2[] uv2 = new Vector2[quads.Count * 4];
 			Color32[] colors = new Color32[quads.Count * 4];
 			int[] tris = new int[quads.Count * 6];
 
@@ -425,15 +414,23 @@ namespace VoxelEngine
 
 				normals[vertIndex] = directionNormals[(int)quad.direction];
 				colors[vertIndex] = LightColorAdjust(quad.color, quad.i0);
+				uvs[vertIndex] = new Vector2(0f, 0f);
+				uv2[vertIndex] = new Vector2(quad.blockIndex, 0f);
 				verts[vertIndex++] = quad.v0;
 				normals[vertIndex] = directionNormals[(int)quad.direction];
 				colors[vertIndex] = LightColorAdjust(quad.color, quad.i1);
+				uvs[vertIndex] = new Vector2(1f, 0f);
+				uv2[vertIndex] = new Vector2(quad.blockIndex, 0f);
 				verts[vertIndex++] = quad.v1;
 				normals[vertIndex] = directionNormals[(int)quad.direction];
 				colors[vertIndex] = LightColorAdjust(quad.color, quad.i2);
+				uvs[vertIndex] = new Vector2(1f, 1f);
+				uv2[vertIndex] = new Vector2(quad.blockIndex, 0f);
 				verts[vertIndex++] = quad.v2;
 				normals[vertIndex] = directionNormals[(int)quad.direction];
 				colors[vertIndex] = LightColorAdjust(quad.color, quad.i3);
+				uvs[vertIndex] = new Vector2(0f, 1f);
+				uv2[vertIndex] = new Vector2(quad.blockIndex, 0f);
 				verts[vertIndex++] = quad.v3;
 			}
 
@@ -442,6 +439,8 @@ namespace VoxelEngine
 				vertices = verts,
 				normals = normals,
 				triangles = tris,
+				uv = uvs,
+				uv2 = uv2,
 				colors32 = colors
 			};
 
@@ -1052,9 +1051,10 @@ namespace VoxelEngine
 			public Vector3 v0, v1, v2, v3;
 			public Color32 color;
 			public Direction direction;
+			public int blockIndex;
 			public int i0, i1, i2, i3;
 
-			public Quad(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, Color32 color, Direction direction)
+			public Quad(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, Color32 color, Direction direction, int blockIndex)
 			{
 				this.v0 = v0;
 				this.v1 = v1;
@@ -1062,18 +1062,30 @@ namespace VoxelEngine
 				this.v3 = v3;
 				this.color = color;
 				this.direction = direction;
+				this.blockIndex = blockIndex;
 				i0 = i1 = i2 = i3 = 0;
 			}
 
-			public Quad(int i0, int i1, int i2, int i3, Color32 color)
+			public Quad(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, Color32 color, Direction direction)
+				: this(v0, v1, v2, v3, color, direction, 0)
+			{
+			}
+
+			public Quad(int i0, int i1, int i2, int i3, Color32 color, int blockIndex)
 			{
 				this.i0 = i0;
 				this.i1 = i1;
 				this.i2 = i2;
 				this.i3 = i3;
 				this.color = color;
+				this.blockIndex = blockIndex;
 				direction = Direction.Left;
 				v0 = v1 = v2 = v3 = Vector3.zero;
+			}
+
+			public Quad(int i0, int i1, int i2, int i3, Color32 color)
+				: this(i0, i1, i2, i3, color, 0)
+			{
 			}
 		}
 	}

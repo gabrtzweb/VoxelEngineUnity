@@ -292,25 +292,36 @@ namespace VoxelEngine
 			{
 				chunkGameObject = chunkGameObjectPool.Get();
 				chunkGameObject.Setup(chunkPos, realPos, voxelEngineManager.gameObject.transform);
-				Material matToUse = voxelEngineManager.meshMaterial;
-				if (matToUse == null || matToUse.shader == null || !matToUse.shader.isSupported)
-				{
-					Shader custom = Shader.Find("Custom/VertexColorURP");
-					if (custom != null)
-					{
-						matToUse = new Material(custom);
-					}
-					else
-					{
-						Shader fallback = Shader.Find("Standard") ?? Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("HDRP/Lit");
-						if (fallback != null)
-							matToUse = new Material(fallback);
-						else
-							matToUse = new Material(Shader.Find("Diffuse"));
-					}
-				}
-				chunkGameObject.meshRenderer.material = matToUse;
 			}
+
+			Material matToUse = voxelEngineManager.meshMaterial;
+			if (matToUse == null || matToUse.shader == null || matToUse.shader.name != "Custom/Voxel Texture Array URP" || !matToUse.shader.isSupported)
+			{
+				Shader custom = Shader.Find("Custom/Voxel Texture Array URP");
+				if (custom != null)
+				{
+					matToUse = new Material(custom);
+					voxelEngineManager.meshMaterial = matToUse;
+				}
+				else
+				{
+					Shader fallback = Shader.Find("Standard") ?? Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("HDRP/Lit");
+					if (fallback != null)
+						matToUse = new Material(fallback);
+					else
+						matToUse = new Material(Shader.Find("Diffuse"));
+				}
+			}
+
+			Texture2DArray textureArray = voxelEngineManager.terrainGenerator.BlockTextureArray();
+			if (textureArray != null && matToUse != null)
+			{
+				matToUse.SetTexture("_BlockTexArray", textureArray);
+				matToUse.SetColor("_GrassTint", new Color(0.75f, 1f, 0.75f, 1f));
+				matToUse.SetFloat("_GrassLayerIndex", voxelEngineManager.terrainGenerator.ResolveBlockIndex(BlockData.BlockType.TerrGrass));
+			}
+
+			chunkGameObject.meshRenderer.sharedMaterial = matToUse;
 
 			chunkGameObject.meshFilter.sharedMesh = mesh;
 
