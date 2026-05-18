@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,10 +10,10 @@ namespace VoxelEngine
 	public class TexturePackerEditor : EditorWindow
 	{
 		private string sourceFolder = "Assets/Content/Textures/Blocks";
-		private string textureArrayAssetPath = "Assets/Content/Textures/Blocks/BlockTextureArray.asset";
-		private string blockDataAssetPath = "Assets/Content/Textures/Blocks/BlockData.asset";
+		private string textureArrayAssetPath = "Assets/Resources/Voxel/TextureArray.asset";
+		private string textureMapScriptPath = "Assets/Scripts/VoxelEngine/Core/TextureMap.cs";
 
-		[MenuItem("Tools/Voxel Engine/Texture Packer")]
+		[MenuItem("VoxelEngine/Texture Packer")]
 		public static void Open()
 		{
 			GetWindow<TexturePackerEditor>("Texture Packer");
@@ -23,7 +24,7 @@ namespace VoxelEngine
 			EditorGUILayout.LabelField("Block Texture Baker", EditorStyles.boldLabel);
 			sourceFolder = EditorGUILayout.TextField("Source Folder", sourceFolder);
 			textureArrayAssetPath = EditorGUILayout.TextField("Texture Array Asset", textureArrayAssetPath);
-			blockDataAssetPath = EditorGUILayout.TextField("Block Data Asset", blockDataAssetPath);
+			textureMapScriptPath = EditorGUILayout.TextField("Texture Map Script", textureMapScriptPath);
 
 			EditorGUILayout.Space();
 
@@ -40,101 +41,254 @@ namespace VoxelEngine
 			}
 
 			string[] guids = AssetDatabase.FindAssets("t:Texture2D", new[] { sourceFolder });
-			List<Texture2D> textures = new List<Texture2D>();
+			List<string> texturePaths = new List<string>();
 
 			foreach (string guid in guids)
 			{
 				string path = AssetDatabase.GUIDToAssetPath(guid);
-				Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+				if (!string.IsNullOrEmpty(path))
+					texturePaths.Add(path);
+			}
 
+			if (texturePaths.Count == 0)
+			{
+				EditorUtility.DisplayDialog("Texture Packer", "No textures were found in the selected folder.", "OK");
+				return;
+			}
+
+			texturePaths = texturePaths.OrderBy(path => path).ToList();
+
+			for (int i = 0; i < texturePaths.Count; i++)
+				EnsureStandardTextureImporter(texturePaths[i]);
+
+			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+			List<Texture2D> textures = new List<Texture2D>();
+			for (int i = 0; i < texturePaths.Count; i++)
+			{
+				Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePaths[i]);
 				if (texture != null)
 					textures.Add(texture);
 			}
 
 			if (textures.Count == 0)
 			{
-				EditorUtility.DisplayDialog("Texture Packer", "No textures were found in the selected folder.", "OK");
+				EditorUtility.DisplayDialog("Texture Packer", "No readable textures were found after import refresh.", "OK");
 				return;
 			}
 
 			textures = textures.OrderBy(texture => texture.name).ToList();
 
-			Texture2D firstTexture = textures[0];
-			int width = firstTexture.width;
-			int height = firstTexture.height;
-			bool mipChain = false;
-			List<BlockData.BlockTextureEntry> blockEntries = new List<BlockData.BlockTextureEntry>();
+			int resolution = textures[0].width;
+			Dictionary<string, List<TextureInput>> groups = new Dictionary<string, List<TextureInput>>();
+			int totalSlices = 0;
 
 			for (int i = 0; i < textures.Count; i++)
 			{
 				Texture2D texture = textures[i];
-				if (texture.width != width || texture.height != height)
+				if (texture.width != resolution || texture.height % resolution != 0)
 				{
 					EditorUtility.DisplayDialog("Texture Packer",
-						"All block textures must share the same dimensions. The texture '" + texture.name + "' does not match the first texture.", "OK");
-					return;
-				}
-			}
-
-			foreach (Texture2D texture in textures)
-			{
-				BlockData.BlockType blockType = BlockData.GuessBlockType(texture.name);
-				if (blockType == BlockData.BlockType.Unknown)
-				{
-					EditorUtility.DisplayDialog("Texture Packer",
-						"Could not infer a block type from texture name '" + texture.name + "'. Use one of: terr_grass, terr_dirt, terr_moss, rock_stone, rock_slate, rock_core, liqd_lava, terr_sand.", "OK");
+						"Texture '" + texture.name + "' must have width=" + resolution + " and height as multiple of width.", "OK");
 					return;
 				}
 
-				blockEntries.Add(new BlockData.BlockTextureEntry
+				TextureNameInfo info = ExtractTextureInfo(texture.name);
+				int frames = texture.height / resolution;
+
+				List<TextureInput> list;
+				if (!groups.TryGetValue(info.baseName, out list))
 				{
-					blockType = blockType,
+					list = new List<TextureInput>();
+					groups[info.baseName] = list;
+				}
+
+				list.Add(new TextureInput
+				{
 					name = texture.name,
-					sourceTexture = texture,
-					layerIndex = 0
+					texture = texture,
+					frames = frames,
+					variantIndex = info.variantIndex
 				});
-			}
 
-			blockEntries = blockEntries
-				.OrderBy(entry => entry.blockType)
-				.ThenBy(entry => entry.name)
-				.ToList();
+				totalSlices += frames;
+			}
 
 			EnsureParentFolderExists(textureArrayAssetPath);
-			EnsureParentFolderExists(blockDataAssetPath);
+			EnsureParentFolderExists(textureMapScriptPath);
 
 			if (File.Exists(textureArrayAssetPath))
 				AssetDatabase.DeleteAsset(textureArrayAssetPath);
 
-			Texture2DArray textureArray = new Texture2DArray(width, height, textures.Count, firstTexture.format, mipChain);
+			Texture2DArray textureArray = new Texture2DArray(resolution, resolution, totalSlices, TextureFormat.RGBA32, false);
 			textureArray.filterMode = FilterMode.Point;
-			textureArray.wrapMode = TextureWrapMode.Clamp;
+			textureArray.wrapMode = TextureWrapMode.Repeat;
 
-			for (int i = 0; i < blockEntries.Count; i++)
+			List<MapData> mapData = new List<MapData>();
+			int currentSlice = 0;
+
+			foreach (KeyValuePair<string, List<TextureInput>> kv in groups.OrderBy(g => g.Key))
 			{
-				Graphics.CopyTexture(blockEntries[i].sourceTexture, 0, 0, textureArray, i, 0);
-				var entry = blockEntries[i];
-				entry.layerIndex = i;
-				blockEntries[i] = entry;
+				List<TextureInput> ordered = kv.Value
+					.OrderBy(item => item.variantIndex)
+					.ThenBy(item => item.name)
+					.ToList();
+
+				int[] variations = new int[ordered.Count];
+				int frameCount = 1;
+
+				for (int v = 0; v < ordered.Count; v++)
+				{
+					TextureInput input = ordered[v];
+					variations[v] = currentSlice;
+					frameCount = Mathf.Max(frameCount, input.frames);
+
+					for (int f = 0; f < input.frames; f++)
+					{
+						int startY = input.texture.height - ((f + 1) * resolution);
+						Color[] pixels = input.texture.GetPixels(0, startY, resolution, resolution);
+						textureArray.SetPixels(pixels, currentSlice, 0);
+						currentSlice++;
+					}
+				}
+
+				mapData.Add(new MapData
+				{
+					name = kv.Key,
+					variationIndices = variations,
+					frames = frameCount
+				});
 			}
 
+			textureArray.Apply(false, false);
 			AssetDatabase.CreateAsset(textureArray, textureArrayAssetPath);
+			GenerateTextureMapScript(textureMapScriptPath, mapData);
 
-			BlockData blockData = AssetDatabase.LoadAssetAtPath<BlockData>(blockDataAssetPath);
-			if (blockData == null)
-			{
-				blockData = CreateInstance<BlockData>();
-				AssetDatabase.CreateAsset(blockData, blockDataAssetPath);
-			}
-
-			blockData.textureArray = textureArray;
-			blockData.blockTextures = blockEntries;
-
-			EditorUtility.SetDirty(blockData);
 			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
 
-			EditorUtility.DisplayDialog("Texture Packer", "Baked " + textures.Count + " block textures.", "OK");
+			EditorUtility.DisplayDialog("Texture Packer", "Baked " + textures.Count + " textures into " + totalSlices + " array slices.", "OK");
+		}
+
+		private static TextureNameInfo ExtractTextureInfo(string textureName)
+		{
+			string key = BlockData.GuessBlockKey(textureName);
+			string fileName = Path.GetFileNameWithoutExtension(textureName).ToLowerInvariant();
+
+			int digitStart = fileName.Length;
+			while (digitStart > 0 && char.IsDigit(fileName[digitStart - 1]))
+				digitStart--;
+
+			int variant = 0;
+			if (digitStart < fileName.Length)
+				int.TryParse(fileName.Substring(digitStart), out variant);
+
+			return new TextureNameInfo
+			{
+				baseName = string.IsNullOrEmpty(key) ? fileName : key,
+				variantIndex = variant
+			};
+		}
+
+		private static void GenerateTextureMapScript(string scriptPath, List<MapData> mapData)
+		{
+			StringBuilder content = new StringBuilder();
+			content.AppendLine("using System.Collections.Generic;");
+			content.AppendLine();
+			content.AppendLine("namespace VoxelEngine");
+			content.AppendLine("{");
+			content.AppendLine("\tpublic static class TextureMap");
+			content.AppendLine("\t{");
+			content.AppendLine("\t\tpublic static readonly Dictionary<string, int[]> Variations = new Dictionary<string, int[]>");
+			content.AppendLine("\t\t{");
+
+			for (int i = 0; i < mapData.Count; i++)
+			{
+				MapData entry = mapData[i];
+				string indices = string.Join(", ", entry.variationIndices.Select(value => value.ToString()).ToArray());
+				content.AppendLine("\t\t\t{ \"" + entry.name + "\", new int[] { " + indices + " } },");
+			}
+
+			content.AppendLine("\t\t};");
+			content.AppendLine();
+			content.AppendLine("\t\tpublic static readonly Dictionary<string, int> FrameCounts = new Dictionary<string, int>");
+			content.AppendLine("\t\t{");
+
+			for (int i = 0; i < mapData.Count; i++)
+			{
+				MapData entry = mapData[i];
+				content.AppendLine("\t\t\t{ \"" + entry.name + "\", " + entry.frames + " },");
+			}
+
+			content.AppendLine("\t\t};");
+			content.AppendLine("\t}");
+			content.AppendLine("}");
+
+			File.WriteAllText(scriptPath, content.ToString());
+			AssetDatabase.ImportAsset(scriptPath, ImportAssetOptions.ForceUpdate);
+		}
+
+		private static void EnsureStandardTextureImporter(string assetPath)
+		{
+			TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+			if (importer == null)
+				return;
+
+			bool changed = false;
+
+			if (importer.textureCompression != TextureImporterCompression.Uncompressed)
+			{
+				importer.textureCompression = TextureImporterCompression.Uncompressed;
+				changed = true;
+			}
+
+			if (!importer.isReadable)
+			{
+				importer.isReadable = true;
+				changed = true;
+			}
+
+			if (importer.mipmapEnabled)
+			{
+				importer.mipmapEnabled = false;
+				changed = true;
+			}
+
+			if (importer.filterMode != FilterMode.Point)
+			{
+				importer.filterMode = FilterMode.Point;
+				changed = true;
+			}
+
+			if (importer.wrapMode != TextureWrapMode.Clamp)
+			{
+				importer.wrapMode = TextureWrapMode.Clamp;
+				changed = true;
+			}
+
+			if (changed)
+				importer.SaveAndReimport();
+		}
+
+		private struct TextureInput
+		{
+			public string name;
+			public Texture2D texture;
+			public int frames;
+			public int variantIndex;
+		}
+
+		private struct TextureNameInfo
+		{
+			public string baseName;
+			public int variantIndex;
+		}
+
+		private struct MapData
+		{
+			public string name;
+			public int[] variationIndices;
+			public int frames;
 		}
 
 		private static void EnsureParentFolderExists(string assetPath)

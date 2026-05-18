@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace VoxelEngine
 {
-	[CreateAssetMenu(menuName = "Voxel Engine/Block Data")]
-	public class BlockData : ScriptableObject
+	public static class BlockData
 	{
 		public enum BlockType
 		{
@@ -20,87 +18,62 @@ namespace VoxelEngine
 			TerrSand,
 		}
 
-		[Serializable]
-		public struct BlockTextureEntry
-		{
-			public BlockType blockType;
-			public string name;
-			public Texture2D sourceTexture;
-			public int layerIndex;
-		}
-
-		public Texture2DArray textureArray;
-		public List<BlockTextureEntry> blockTextures = new List<BlockTextureEntry>();
-		public BlockType defaultBlockType = BlockType.RockStone;
-
-		public int Count
-		{
-			get { return blockTextures != null ? blockTextures.Count : 0; }
-		}
-
-		public bool TryGetBlockIndex(BlockType blockType, out int layerIndex)
-		{
-			if (blockTextures != null)
-			{
-				for (int i = 0; i < blockTextures.Count; i++)
-				{
-					if (blockTextures[i].blockType == blockType)
-					{
-						layerIndex = blockTextures[i].layerIndex;
-						return true;
-					}
-				}
-			}
-
-			layerIndex = GetDefaultLayerIndex();
-			return false;
-		}
-
-		public int GetBlockIndex(BlockType blockType)
-		{
-			int layerIndex;
-			return TryGetBlockIndex(blockType, out layerIndex) ? layerIndex : layerIndex;
-		}
-
-		public int GetDefaultLayerIndex()
-		{
-			if (blockTextures != null)
-			{
-				for (int i = 0; i < blockTextures.Count; i++)
-				{
-					if (blockTextures[i].blockType == defaultBlockType)
-						return blockTextures[i].layerIndex;
-				}
-			}
-
-			return 0;
-		}
-
-		public static BlockType GuessBlockType(string textureName)
+		public static string GuessBlockKey(string textureName)
 		{
 			if (string.IsNullOrEmpty(textureName))
-				return BlockType.Unknown;
+				return string.Empty;
 
 			string name = System.IO.Path.GetFileNameWithoutExtension(textureName).ToLowerInvariant();
+			while (name.Length > 0 && char.IsDigit(name[name.Length - 1]))
+				name = name.Substring(0, name.Length - 1);
 
-			if (name == "liqd_lava")
-				return BlockType.Lava;
-			if (name == "terr_moss")
-				return BlockType.TerrMoss;
-			if (name == "terr_grass")
-				return BlockType.TerrGrass;
-			if (name == "terr_dirt")
-				return BlockType.TerrDirt;
-			if (name == "rock_slate")
-				return BlockType.RockSlate;
-			if (name == "rock_core")
-				return BlockType.RockCore;
-			if (name == "rock_stone")
-				return BlockType.RockStone;
-			if (name == "terr_sand")
-				return BlockType.TerrSand;
+			return name.TrimEnd('_');
+		}
 
-			return BlockType.Unknown;
+		public static string GetBlockKey(BlockType blockType)
+		{
+			switch (blockType)
+			{
+				case BlockType.TerrGrass:
+					return "terr_grass";
+				case BlockType.TerrDirt:
+					return "terr_dirt";
+				case BlockType.TerrMoss:
+					return "terr_moss";
+				case BlockType.RockStone:
+					return "rock_stone";
+				case BlockType.RockSlate:
+					return "rock_slate";
+				case BlockType.RockCore:
+					return "rock_core";
+				case BlockType.Lava:
+					return "liqd_lava";
+				case BlockType.TerrSand:
+					return "terr_sand";
+				default:
+					return string.Empty;
+			}
+		}
+
+		public static int ResolveBlockIndex(BlockType blockType)
+		{
+			return ResolveBlockIndex(blockType, 0, 0, 0);
+		}
+
+		public static int ResolveBlockIndex(BlockType blockType, int x, int y, int z)
+		{
+			return ResolveBlockIndex(GetBlockKey(blockType), x, y, z);
+		}
+
+		public static int ResolveBlockIndex(string blockKey, int x, int y, int z)
+		{
+			int[] indices;
+			if (string.IsNullOrEmpty(blockKey) || !TextureMap.Variations.TryGetValue(blockKey, out indices) || indices == null || indices.Length == 0)
+				return 0;
+
+			int hash = unchecked((x * 73856093) ^ (y * 19349663) ^ (z * 83492791));
+			int choice = Math.Abs(hash) % indices.Length;
+			return indices[choice];
 		}
 	}
 }

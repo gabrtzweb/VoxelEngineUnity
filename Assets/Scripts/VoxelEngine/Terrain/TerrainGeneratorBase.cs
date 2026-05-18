@@ -5,8 +5,8 @@ namespace VoxelEngine
 	[ExecuteInEditMode]
 	public abstract class TerrainGeneratorBase : MonoBehaviour
 	{
-		[Header("Block Data")]
-		public BlockData blockData;
+		[Header("Textures")]
+		public Texture2DArray blockTextureArray;
 
 		protected float minHeight = float.MinValue;
 		protected float maxHeight = float.MaxValue;
@@ -45,15 +45,23 @@ namespace VoxelEngine
 
 		public Texture2DArray BlockTextureArray()
 		{
-			return blockData ? blockData.textureArray : null;
+			return blockTextureArray;
 		}
 
 		public int ResolveBlockIndex(BlockData.BlockType blockType)
 		{
-			if (blockData != null)
-				return blockData.GetBlockIndex(blockType);
+			return BlockData.ResolveBlockIndex(blockType);
+		}
 
-			return 0;
+		public int ResolveBlockIndex(BlockData.BlockType blockType, int x, int y, int z)
+		{
+			return BlockData.ResolveBlockIndex(blockType, x, y, z);
+		}
+
+		private void EnsureMapLoaded()
+		{
+			if (blockTextureArray == null)
+				blockTextureArray = Resources.Load<Texture2DArray>("Voxel/TextureArray");
 		}
 
 		public static void ChunkFillUpdate(Chunk chunk, Voxel voxel)
@@ -78,6 +86,7 @@ namespace VoxelEngine
 
 		public virtual void Awake()
 		{
+			EnsureMapLoaded();
 		}
 
 		// The higher the interpBitStep the less noise samples are taken and more interpolation is used, this is faster but can create less detailed terrain

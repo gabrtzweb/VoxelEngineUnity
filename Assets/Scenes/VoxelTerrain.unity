@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9405c77d4da84d445ac0880d8529a766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockData: {fileID: 11400000, guid: a8f02e2d04326bf4d9a6da8589824a43, type: 2}
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
   fastNoiseSIMDUnity:
   - {fileID: 69701490}
   - {fileID: 69701491}
@@ -342,7 +342,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ab2d075b9954ec4eb0a925bac5a5b6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockData: {fileID: 11400000, guid: a8f02e2d04326bf4d9a6da8589824a43, type: 2}
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
   fastNoiseUnity:
   - {fileID: 93157385}
   - {fileID: 93157388}
@@ -1067,7 +1067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9405c77d4da84d445ac0880d8529a766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockData: {fileID: 11400000, guid: a8f02e2d04326bf4d9a6da8589824a43, type: 2}
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
   fastNoiseSIMDUnity:
   - {fileID: 783630701}
   terrainProfile: 2
@@ -1600,7 +1600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9405c77d4da84d445ac0880d8529a766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockData: {fileID: 11400000, guid: a8f02e2d04326bf4d9a6da8589824a43, type: 2}
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
   fastNoiseSIMDUnity:
   - {fileID: 1550379466}
   - {fileID: 1550379466}
@@ -1713,7 +1713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ab2d075b9954ec4eb0a925bac5a5b6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockData: {fileID: 11400000, guid: a8f02e2d04326bf4d9a6da8589824a43, type: 2}
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
   fastNoiseUnity:
   - {fileID: 1683311064}
   terrainProfile: 2
@@ -1826,7 +1826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ab2d075b9954ec4eb0a925bac5a5b6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockData: {fileID: 11400000, guid: a8f02e2d04326bf4d9a6da8589824a43, type: 2}
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
   fastNoiseUnity:
   - {fileID: 1972986277}
   terrainProfile: 1

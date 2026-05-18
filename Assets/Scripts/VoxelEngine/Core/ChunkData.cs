@@ -295,9 +295,9 @@ namespace VoxelEngine
 			}
 
 			Material matToUse = voxelEngineManager.meshMaterial;
-			if (matToUse == null || matToUse.shader == null || matToUse.shader.name != "Custom/Voxel Texture Array URP" || !matToUse.shader.isSupported)
+			if (matToUse == null || matToUse.shader == null || matToUse.shader.name != "Custom/VoxelEngineURP" || !matToUse.shader.isSupported)
 			{
-				Shader custom = Shader.Find("Custom/Voxel Texture Array URP");
+				Shader custom = Shader.Find("Custom/VoxelEngineURP");
 				if (custom != null)
 				{
 					matToUse = new Material(custom);
@@ -318,7 +318,15 @@ namespace VoxelEngine
 			{
 				matToUse.SetTexture("_BlockTexArray", textureArray);
 				matToUse.SetColor("_GrassTint", new Color(0.75f, 1f, 0.75f, 1f));
-				matToUse.SetFloat("_GrassLayerIndex", voxelEngineManager.terrainGenerator.ResolveBlockIndex(BlockData.BlockType.TerrGrass));
+
+				// Determine the base variation index for grass so all grass variants are tinted
+				string grassKey = BlockData.GetBlockKey(BlockData.BlockType.TerrGrass);
+				int grassBaseIndex = 0;
+				int[] grassVariations;
+				if (!string.IsNullOrEmpty(grassKey) && TextureMap.Variations.TryGetValue(grassKey, out grassVariations) && grassVariations != null && grassVariations.Length > 0)
+					grassBaseIndex = grassVariations[0];
+
+				matToUse.SetFloat("_GrassLayerIndex", grassBaseIndex);
 			}
 
 			chunkGameObject.meshRenderer.sharedMaterial = matToUse;
