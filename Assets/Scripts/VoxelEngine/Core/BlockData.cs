@@ -16,7 +16,6 @@ namespace VoxelEngine
 			RockCore,
 			Lava,
 			TerrSand,
-			LiquidWater,
 		}
 
 		public static string GuessBlockKey(string textureName)
@@ -51,8 +50,6 @@ namespace VoxelEngine
 					return "liqd_lava";
 				case BlockType.TerrSand:
 					return "terr_sand";
-				case BlockType.LiquidWater:
-					return "liqd_water";
 				default:
 					return string.Empty;
 			}

@@ -5,7 +5,9 @@ namespace VoxelEngine.Editor
 {
     public class BiomeMapWindow : EditorWindow
     {
-        private VoxelEngine.BiomeWorldGenerator generator;
+        private FastNoiseSIMDUnity noiseSource;
+        private BiomeDefinition biomeA;
+        private BiomeDefinition biomeB;
         private int resolution = 256;
         private Texture2D previewTex;
         private bool showBiomeColors = true;
@@ -24,8 +26,10 @@ namespace VoxelEngine.Editor
                 "This window can preview either the raw selector noise or a simple two-biome color blend. It does not read the world manager; it only visualizes the noise source you assign here.",
                 MessageType.Info);
 
-            generator = (VoxelEngine.BiomeWorldGenerator)EditorGUILayout.ObjectField("Biome Generator", generator, typeof(VoxelEngine.BiomeWorldGenerator), true);
-            showBiomeColors = EditorGUILayout.ToggleLeft("Color by Biome Colors", showBiomeColors);
+            noiseSource = (FastNoiseSIMDUnity)EditorGUILayout.ObjectField("SIMD Noise", noiseSource, typeof(FastNoiseSIMDUnity), true);
+            showBiomeColors = EditorGUILayout.ToggleLeft("Color by Biome A/B", showBiomeColors);
+            biomeA = (BiomeDefinition)EditorGUILayout.ObjectField("Biome A", biomeA, typeof(BiomeDefinition), false);
+            biomeB = (BiomeDefinition)EditorGUILayout.ObjectField("Biome B", biomeB, typeof(BiomeDefinition), false);
             resolution = EditorGUILayout.IntSlider("Resolution", resolution, 32, 1024);
 
             if (GUILayout.Button("Generate Preview"))
@@ -39,75 +43,40 @@ namespace VoxelEngine.Editor
 
         private void GeneratePreview()
         {
-            if (generator == null)
+            if (noiseSource == null)
                 return;
 
             previewTex = new Texture2D(resolution, resolution, TextureFormat.RGBA32, false);
 
-            // Prepare per-pixel vectors (we map pixels to a 0..1 climate space)
-            FastNoiseSIMD.VectorSet vecSet = new FastNoiseSIMD.VectorSet(new Vector3[resolution * resolution]);
-            Vector3[] vecs = vecSet.vectors;
+            Vector3[] vectors = new Vector3[resolution * resolution];
             int idx = 0;
             for (int y = 0; y < resolution; y++)
-            {
                 for (int x = 0; x < resolution; x++)
+                    vectors[idx++] = new Vector3(x, y, 0);
+
+            float[] noiseSet = new float[vectors.Length];
+            noiseSource.fastNoiseSIMD.FillNoiseSetVector(noiseSet, new FastNoiseSIMD.VectorSet(vectors));
+
+            float min = float.MaxValue, max = float.MinValue;
+            for (int i = 0; i < noiseSet.Length; i++)
+            {
+                min = Mathf.Min(min, noiseSet[i]);
+                max = Mathf.Max(max, noiseSet[i]);
+            }
+
+            float scale = 1f / Mathf.Max(0.0001f, max - min);
+            Color32[] pixels = new Color32[noiseSet.Length];
+            for (int i = 0; i < noiseSet.Length; i++)
+            {
+                float t = Mathf.Clamp01((noiseSet[i] - min) * scale);
+
+                if (showBiomeColors && biomeA != null && biomeB != null)
+                    pixels[i] = Color32.Lerp(biomeA.topColor, biomeB.topColor, t);
+                else
                 {
-                    float u = (x + 0.5f) / resolution;
-                    float v = (y + 0.5f) / resolution;
-                    // pack into vector x=u,y=v,z=0
-                    vecs[idx++].x = u;
-                    vecs[idx - 1].y = v;
-                    vecs[idx - 1].z = 0f;
+                    byte v = (byte)Mathf.Clamp(t * 255f, 0f, 255f);
+                    pixels[i] = new Color32(v, v, v, 255);
                 }
-            }
-
-            float[] tempSet = null;
-            float[] humSet = null;
-
-            if (generator.temperatureNoise != null)
-            {
-                tempSet = new float[vecs.Length];
-                generator.temperatureNoise.fastNoiseSIMD.FillNoiseSetVector(tempSet, vecSet);
-            }
-
-            if (generator.humidityNoise != null)
-            {
-                humSet = new float[vecs.Length];
-                generator.humidityNoise.fastNoiseSIMD.FillNoiseSetVector(humSet, vecSet);
-            }
-
-            Color32[] pixels = new Color32[vecs.Length];
-
-            for (int i = 0; i < vecs.Length; i++)
-            {
-                float temp = tempSet != null ? Mathf.Clamp01((tempSet[i] + 1f) * 0.5f) : 0.5f;
-                float hum = humSet != null ? Mathf.Clamp01((humSet[i] + 1f) * 0.5f) : 0.5f;
-                float elev = 0.5f;
-
-                // choose nearest biome by climatePref
-                int best = 0;
-                float bestDist = float.MaxValue;
-                for (int b = 0; b < generator.biomeSources.Length; b++)
-                {
-                    var bs = generator.biomeSources[b];
-                    if (bs.biome == null) continue;
-                    Vector3 p = bs.climatePref;
-                    float dt = temp - p.x;
-                    float dh = hum - p.y;
-                    float de = elev - p.z;
-                    float dist = dt * dt + dh * dh + de * de;
-                    if (dist < bestDist)
-                    {
-                        bestDist = dist;
-                        best = b;
-                    }
-                }
-
-                Color32 col = new Color32(150, 150, 150, 255);
-                if (generator.biomeSources != null && generator.biomeSources.Length > 0 && generator.biomeSources[best].biome != null)
-                    col = generator.biomeSources[best].biome.topColor;
-
-                pixels[i] = showBiomeColors ? col : new Color32((byte)(temp * 255f), (byte)(hum * 255f), (byte)(elev * 255f), 255);
             }
 
             previewTex.SetPixels32(pixels);
