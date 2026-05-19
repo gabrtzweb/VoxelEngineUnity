@@ -9,6 +9,7 @@ namespace VoxelEngine
 	{
 		[Header("Debug Features")]
 		public bool showPooledChunks = true;
+		public bool showCurrentBiome = true;
 		public bool showPooledGameObjects = true;
 		public bool showLoadedChunks = true;
 		public bool showChunkQueue = true;
@@ -107,6 +108,37 @@ namespace VoxelEngine
 			{
 				Vector3 pos = targetTransform.position;
 				GUI.Label(rect, string.Format("Position: X:{0:0.0} Y:{1:0.0} Z:{2:0.0}", pos.x, pos.y, pos.z));
+				rect.y += labelSpacing;
+			}
+
+			// Draw current biome at player position
+			if (showCurrentBiome && targetTransform != null)
+			{
+				Vector3 pos = targetTransform.position;
+				Vector3i chunkPos = new Vector3i(Mathf.RoundToInt(pos.x) >> Chunk.BIT_SIZE,
+					Mathf.RoundToInt(pos.y) >> Chunk.BIT_SIZE,
+					Mathf.RoundToInt(pos.z) >> Chunk.BIT_SIZE);
+
+				Chunk chunk = voxelEngineManager.GetChunk(chunkPos);
+				string biomeName = "N/A";
+				if (chunk != null && chunk.biomeData != null)
+				{
+					int localX = Mathf.RoundToInt(pos.x) & Chunk.BIT_MASK;
+					int localY = Mathf.RoundToInt(pos.y) & Chunk.BIT_MASK;
+					int localZ = Mathf.RoundToInt(pos.z) & Chunk.BIT_MASK;
+					int idx = Chunk.VoxelDataIndex(localX, localY, localZ);
+					if (idx >= 0 && idx < chunk.biomeData.Length)
+					{
+						byte b = chunk.biomeData[idx];
+						var gen = voxelEngineManager.terrainGenerator as BiomeWorldGenerator;
+						if (gen != null && gen.biomeSources != null && b < gen.biomeSources.Length && gen.biomeSources[b].biome != null)
+							biomeName = gen.biomeSources[b].biome.biomeName;
+						else
+							biomeName = "Unknown";
+					}
+				}
+
+				GUI.Label(rect, "Current Biome: " + biomeName);
 				rect.y += labelSpacing;
 			}
 

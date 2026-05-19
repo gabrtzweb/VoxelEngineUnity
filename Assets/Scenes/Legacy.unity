@@ -119,6 +119,312 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &69701487
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 69701489}
+  - component: {fileID: 69701488}
+  - component: {fileID: 69701490}
+  - component: {fileID: 69701491}
+  m_Layer: 0
+  m_Name: TG SIMD - Desert
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &69701488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69701487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9405c77d4da84d445ac0880d8529a766, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
+  fastNoiseSIMDUnity:
+  - {fileID: 69701490}
+  - {fileID: 69701491}
+  terrainProfile: 0
+  desertInterpNoise: {fileID: 69701490}
+  desertCanyonNoise: {fileID: 69701491}
+  desertTerrainScale: 20
+  desertCanyonMaxHeight: 2
+  desertCanyonGradient: 3
+  desertSandColor:
+    serializedVersion: 2
+    rgba: 4278370032
+  desertStoneColor:
+    serializedVersion: 2
+    rgba: 4283463800
+  floatingIslandNoise: {fileID: 1550379466}
+  floatingTerrainNoise: {fileID: 1550379466}
+  floatingTerrainScale: 3
+  floatingGrassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  floatingDirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  floatingStoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveNoise: {fileID: 783630701}
+  caveRatio: 0.88
+  caveStoneMinColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveStoneMaxColor:
+    serializedVersion: 2
+    rgba: 4284769380
+--- !u!4 &69701489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69701487}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &69701490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69701487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noiseName: Sand Noise
+  seed: 1337
+  frequency: 0.004
+  noiseType: 5
+  axisScales: {x: 1, y: 1, z: 1}
+  octaves: 2
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 0
+  cellularDistanceFunction: 0
+  cellularReturnType: 5
+  cellularNoiseLookupType: 4
+  cellularNoiseLookupFrequency: 0.2
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  perturbType: 0
+  perturbAmp: 1
+  perturbFrequency: 0.5
+  perturbNormaliseLength: 1
+  perturbOctaves: 3
+  perturbLacunarity: 2
+  perturbGain: 0.5
+  generalSettingsFold: 1
+  fractalSettingsFold: 1
+  cellularSettingsFold: 0
+  perturbSettingsFold: 0
+--- !u!114 &69701491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69701487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noiseName: Canyon Noise
+  seed: 1234
+  frequency: 0.003
+  noiseType: 7
+  axisScales: {x: 1, y: 0.5, z: 1}
+  octaves: 3
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 0
+  cellularDistanceFunction: 2
+  cellularReturnType: 3
+  cellularNoiseLookupType: 4
+  cellularNoiseLookupFrequency: 0.2
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  perturbType: 2
+  perturbAmp: 1.75
+  perturbFrequency: 0.5
+  perturbNormaliseLength: 1
+  perturbOctaves: 2
+  perturbLacunarity: 2
+  perturbGain: 0.5
+  generalSettingsFold: 1
+  fractalSettingsFold: 0
+  cellularSettingsFold: 1
+  perturbSettingsFold: 1
+--- !u!1 &93157384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 93157387}
+  - component: {fileID: 93157386}
+  - component: {fileID: 93157385}
+  - component: {fileID: 93157388}
+  m_Layer: 0
+  m_Name: TG - Grass Hills
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &93157385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93157384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4769e140e33119d42aff1561d9dd7ca1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noiseName: Main Noise
+  seed: 1337
+  frequency: 0.007
+  interp: 2
+  noiseType: 5
+  octaves: 3
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 2
+  cellularDistanceFunction: 0
+  cellularReturnType: 0
+  cellularNoiseLookup: {fileID: 0}
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  gradientPerturbAmp: 1
+  generalSettingsFold: 1
+  fractalSettingsFold: 1
+  cellularSettingsFold: 1
+  positionWarpSettingsFold: 1
+--- !u!114 &93157386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93157384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ab2d075b9954ec4eb0a925bac5a5b6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
+  fastNoiseUnity:
+  - {fileID: 93157385}
+  - {fileID: 93157388}
+  terrainProfile: 0
+  grassMainNoise: {fileID: 93157385}
+  grassWarpNoise: {fileID: 93157388}
+  grassTerrainScale: 20
+  grassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  grassDirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  grassStoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  alienMainNoise: {fileID: 1972986277}
+  alienTerrainScale: 40
+  alienSurfaceColor:
+    serializedVersion: 2
+    rgba: 4286743170
+  alienCoreColor:
+    serializedVersion: 2
+    rgba: 4279703319
+  crackedMainNoise: {fileID: 1683311064}
+  crackedTerrainScale: 30
+  crackedSurfaceColor:
+    serializedVersion: 2
+    rgba: 4284835173
+  crackedCoreColor:
+    serializedVersion: 2
+    rgba: 4279703319
+  crackedLavaColor:
+    serializedVersion: 2
+    rgba: 4278227955
+--- !u!4 &93157387
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93157384}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &93157388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93157384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4769e140e33119d42aff1561d9dd7ca1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noiseName: Warp Noise
+  seed: 1337
+  frequency: 0.012
+  interp: 2
+  noiseType: 4
+  octaves: 2
+  lacunarity: 1.8
+  gain: 0.7
+  fractalType: 2
+  cellularDistanceFunction: 0
+  cellularReturnType: 0
+  cellularNoiseLookup: {fileID: 0}
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  gradientPerturbAmp: 30
+  generalSettingsFold: 1
+  fractalSettingsFold: 0
+  cellularSettingsFold: 0
+  positionWarpSettingsFold: 0
 --- !u!1 &274179776
 GameObject:
   m_ObjectHideFlags: 0
@@ -474,7 +780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84bc4116c6e867f49b870936045044d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainGenerator: {fileID: 1623999237}
+  terrainGenerator: {fileID: 93157386}
   targetTransform: {fileID: 1457011483}
   loadDistance: 256
   unloadDistanceModifier: 1.2
@@ -497,7 +803,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoxelEngine.DebugScreen
   showPooledChunks: 1
-  showCurrentBiome: 1
   showPooledGameObjects: 1
   showLoadedChunks: 1
   showChunkQueue: 0
@@ -897,123 +1202,12 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1 &603169270
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 603169273}
-  - component: {fileID: 603169272}
-  - component: {fileID: 603169271}
-  m_Layer: 0
-  m_Name: DesertNoise
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &603169271
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 603169270}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
-  noiseName: Canyon Noise
-  seed: 1234
-  frequency: 0.003
-  noiseType: 7
-  axisScales: {x: 1, y: 0.5, z: 1}
-  octaves: 3
-  lacunarity: 2
-  gain: 0.5
-  fractalType: 0
-  cellularDistanceFunction: 2
-  cellularReturnType: 3
-  cellularNoiseLookupType: 4
-  cellularNoiseLookupFrequency: 0.2
-  cellularDistanceIndex0: 0
-  cellularDistanceIndex1: 1
-  cellularJitter: 0.45
-  perturbType: 2
-  perturbAmp: 1.75
-  perturbFrequency: 0.5
-  perturbNormaliseLength: 1
-  perturbOctaves: 2
-  perturbLacunarity: 2
-  perturbGain: 0.5
-  generalSettingsFold: 1
-  fractalSettingsFold: 1
-  cellularSettingsFold: 1
-  perturbSettingsFold: 1
---- !u!114 &603169272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 603169270}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
-  noiseName: Sand Noise
-  seed: 1337
-  frequency: 0.004
-  noiseType: 5
-  axisScales: {x: 1, y: 1, z: 1}
-  octaves: 2
-  lacunarity: 2
-  gain: 0.5
-  fractalType: 0
-  cellularDistanceFunction: 0
-  cellularReturnType: 5
-  cellularNoiseLookupType: 4
-  cellularNoiseLookupFrequency: 0.2
-  cellularDistanceIndex0: 0
-  cellularDistanceIndex1: 1
-  cellularJitter: 0.45
-  perturbType: 0
-  perturbAmp: 1
-  perturbFrequency: 0.5
-  perturbNormaliseLength: 1
-  perturbOctaves: 3
-  perturbLacunarity: 2
-  perturbGain: 0.5
-  generalSettingsFold: 1
-  fractalSettingsFold: 1
-  cellularSettingsFold: 1
-  perturbSettingsFold: 1
---- !u!4 &603169273
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 603169270}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &684836410 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5335629501855457694, guid: 0487d6e7c4dd99449995656aae7948b8, type: 3}
   m_PrefabInstance: {fileID: 4573694839037452912}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &829130902
+--- !u!1 &783630700
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1021,22 +1215,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 829130905}
-  - component: {fileID: 829130903}
+  - component: {fileID: 783630703}
+  - component: {fileID: 783630702}
+  - component: {fileID: 783630701}
   m_Layer: 0
-  m_Name: CaveNoise
+  m_Name: TG SIMD - Caves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &829130903
+--- !u!114 &783630701
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829130902}
+  m_GameObject: {fileID: 783630700}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
@@ -1069,87 +1264,63 @@ MonoBehaviour:
   fractalSettingsFold: 0
   cellularSettingsFold: 1
   perturbSettingsFold: 1
---- !u!4 &829130905
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829130902}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1323023894
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1323023896}
-  - component: {fileID: 1323023895}
-  m_Layer: 0
-  m_Name: BiomeSelectorNoise
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1323023895
+--- !u!114 &783630702
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1323023894}
+  m_GameObject: {fileID: 783630700}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Script: {fileID: 11500000, guid: 9405c77d4da84d445ac0880d8529a766, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
-  noiseName: Default Noise
-  seed: 1337
-  frequency: 0.01
-  noiseType: 4
-  axisScales: {x: 1, y: 1, z: 1}
-  octaves: 3
-  lacunarity: 2
-  gain: 0.5
-  fractalType: 0
-  cellularDistanceFunction: 0
-  cellularReturnType: 1
-  cellularNoiseLookupType: 4
-  cellularNoiseLookupFrequency: 0.2
-  cellularDistanceIndex0: 0
-  cellularDistanceIndex1: 1
-  cellularJitter: 0.45
-  perturbType: 0
-  perturbAmp: 1
-  perturbFrequency: 0.5
-  perturbNormaliseLength: 1
-  perturbOctaves: 3
-  perturbLacunarity: 2
-  perturbGain: 0.5
-  generalSettingsFold: 1
-  fractalSettingsFold: 1
-  cellularSettingsFold: 1
-  perturbSettingsFold: 1
---- !u!4 &1323023896
+  m_EditorClassIdentifier: 
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
+  fastNoiseSIMDUnity:
+  - {fileID: 783630701}
+  terrainProfile: 2
+  desertInterpNoise: {fileID: 69701490}
+  desertCanyonNoise: {fileID: 69701490}
+  desertTerrainScale: 20
+  desertCanyonMaxHeight: 2
+  desertCanyonGradient: 3
+  desertSandColor:
+    serializedVersion: 2
+    rgba: 4278370032
+  desertStoneColor:
+    serializedVersion: 2
+    rgba: 4283463800
+  floatingIslandNoise: {fileID: 1550379466}
+  floatingTerrainNoise: {fileID: 1550379466}
+  floatingTerrainScale: 3
+  floatingGrassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  floatingDirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  floatingStoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveNoise: {fileID: 783630701}
+  caveRatio: 0.88
+  caveStoneMinColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveStoneMaxColor:
+    serializedVersion: 2
+    rgba: 4284769380
+--- !u!4 &783630703
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1323023894}
+  m_GameObject: {fileID: 783630700}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1529,7 +1700,7 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1 &1623999234
+--- !u!1 &1550379464
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1537,91 +1708,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1623999236}
-  - component: {fileID: 1623999237}
+  - component: {fileID: 1550379468}
+  - component: {fileID: 1550379467}
+  - component: {fileID: 1550379466}
+  - component: {fileID: 1550379465}
   m_Layer: 0
-  m_Name: BiomeGenerator
+  m_Name: TG SIMD - Floating Islands
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1623999236
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1623999234}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1623999237
+--- !u!114 &1550379465
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1623999234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 230bf31c5bd6b0e4da9ba5c57fb9ebe3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VoxelEngine.BiomeWorldGenerator
-  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
-  biomeSelector: {fileID: 1323023895}
-  biomeSources:
-  - biome: {fileID: 11400000, guid: bd33d7f4cbb418249b44500d7d4b797f, type: 2}
-    terrainNoise: {fileID: 2047168716}
-  - biome: {fileID: 11400000, guid: 520894d0b8e63db478c63bbb9ea464a8, type: 2}
-    terrainNoise: {fileID: 603169272}
-  caveNoise: {fileID: 829130903}
-  caveRatio: 0.88
---- !u!1 &2047168715
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2047168717}
-  - component: {fileID: 2047168716}
-  m_Layer: 0
-  m_Name: GrassNoise
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2047168716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2047168715}
+  m_GameObject: {fileID: 1550379464}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
-  noiseName: Main Noise
+  m_EditorClassIdentifier: 
+  noiseName: Terrain Noise
   seed: 1337
-  frequency: 0.007
+  frequency: 0.01
   noiseType: 5
   axisScales: {x: 1, y: 1, z: 1}
   octaves: 3
   lacunarity: 2
   gain: 0.5
   fractalType: 2
-  cellularDistanceFunction: 0
-  cellularReturnType: 0
+  cellularDistanceFunction: 2
+  cellularReturnType: 3
   cellularNoiseLookupType: 4
   cellularNoiseLookupFrequency: 0.2
   cellularDistanceIndex0: 0
@@ -1636,23 +1756,367 @@ MonoBehaviour:
   perturbGain: 0.5
   generalSettingsFold: 1
   fractalSettingsFold: 1
+  cellularSettingsFold: 0
+  perturbSettingsFold: 0
+--- !u!114 &1550379466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1550379464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noiseName: Island Noise
+  seed: 1337
+  frequency: 0.005
+  noiseType: 7
+  axisScales: {x: 1, y: 3, z: 1}
+  octaves: 2
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 0
+  cellularDistanceFunction: 0
+  cellularReturnType: 5
+  cellularNoiseLookupType: 4
+  cellularNoiseLookupFrequency: 0.2
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  perturbType: 0
+  perturbAmp: 1
+  perturbFrequency: 0.5
+  perturbNormaliseLength: 1
+  perturbOctaves: 3
+  perturbLacunarity: 2
+  perturbGain: 0.5
+  generalSettingsFold: 1
+  fractalSettingsFold: 0
   cellularSettingsFold: 1
-  perturbSettingsFold: 1
---- !u!4 &2047168717
+  perturbSettingsFold: 0
+--- !u!114 &1550379467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1550379464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9405c77d4da84d445ac0880d8529a766, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
+  fastNoiseSIMDUnity:
+  - {fileID: 1550379466}
+  - {fileID: 1550379466}
+  terrainProfile: 1
+  desertInterpNoise: {fileID: 69701490}
+  desertCanyonNoise: {fileID: 69701490}
+  desertTerrainScale: 20
+  desertCanyonMaxHeight: 2
+  desertCanyonGradient: 3
+  desertSandColor:
+    serializedVersion: 2
+    rgba: 4278370032
+  desertStoneColor:
+    serializedVersion: 2
+    rgba: 4283463800
+  floatingIslandNoise: {fileID: 1550379466}
+  floatingTerrainNoise: {fileID: 1550379466}
+  floatingTerrainScale: 3
+  floatingGrassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  floatingDirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  floatingStoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveNoise: {fileID: 783630701}
+  caveRatio: 0.88
+  caveStoneMinColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  caveStoneMaxColor:
+    serializedVersion: 2
+    rgba: 4284769380
+--- !u!4 &1550379468
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2047168715}
+  m_GameObject: {fileID: 1550379464}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1683311063
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1683311066}
+  - component: {fileID: 1683311065}
+  - component: {fileID: 1683311064}
+  m_Layer: 0
+  m_Name: TG - Cracked Surface
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1683311064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1683311063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4769e140e33119d42aff1561d9dd7ca1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noiseName: Default Noise
+  seed: 1337
+  frequency: 0.01
+  interp: 2
+  noiseType: 5
+  octaves: 3
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 0
+  cellularDistanceFunction: 0
+  cellularReturnType: 2
+  cellularNoiseLookup: {fileID: 0}
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  gradientPerturbAmp: 1
+  generalSettingsFold: 1
+  fractalSettingsFold: 1
+  cellularSettingsFold: 0
+  positionWarpSettingsFold: 0
+--- !u!114 &1683311065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1683311063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ab2d075b9954ec4eb0a925bac5a5b6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
+  fastNoiseUnity:
+  - {fileID: 1683311064}
+  terrainProfile: 2
+  grassMainNoise: {fileID: 93157385}
+  grassWarpNoise: {fileID: 93157385}
+  grassTerrainScale: 20
+  grassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  grassDirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  grassStoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  alienMainNoise: {fileID: 1972986277}
+  alienTerrainScale: 40
+  alienSurfaceColor:
+    serializedVersion: 2
+    rgba: 4286743170
+  alienCoreColor:
+    serializedVersion: 2
+    rgba: 4283433040
+  crackedMainNoise: {fileID: 1683311064}
+  crackedTerrainScale: 30
+  crackedSurfaceColor:
+    serializedVersion: 2
+    rgba: 4286743170
+  crackedCoreColor:
+    serializedVersion: 2
+    rgba: 4283433040
+  crackedLavaColor:
+    serializedVersion: 2
+    rgba: 4278227955
+--- !u!4 &1683311066
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1683311063}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1972986276
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1972986279}
+  - component: {fileID: 1972986278}
+  - component: {fileID: 1972986277}
+  - component: {fileID: 1972986280}
+  m_Layer: 0
+  m_Name: TG - Alien Planet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1972986277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972986276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4769e140e33119d42aff1561d9dd7ca1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noiseName: Main Noise
+  seed: 1337
+  frequency: 0.08
+  interp: 2
+  noiseType: 6
+  octaves: 3
+  lacunarity: 2.1
+  gain: 0.6
+  fractalType: 0
+  cellularDistanceFunction: 2
+  cellularReturnType: 1
+  cellularNoiseLookup: {fileID: 1972986280}
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  gradientPerturbAmp: 1
+  generalSettingsFold: 1
+  fractalSettingsFold: 0
+  cellularSettingsFold: 1
+  positionWarpSettingsFold: 0
+--- !u!114 &1972986278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972986276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ab2d075b9954ec4eb0a925bac5a5b6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
+  fastNoiseUnity:
+  - {fileID: 1972986277}
+  terrainProfile: 1
+  grassMainNoise: {fileID: 93157385}
+  grassWarpNoise: {fileID: 93157385}
+  grassTerrainScale: 20
+  grassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  grassDirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  grassStoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  alienMainNoise: {fileID: 1972986277}
+  alienTerrainScale: 40
+  alienSurfaceColor:
+    serializedVersion: 2
+    rgba: 4286743170
+  alienCoreColor:
+    serializedVersion: 2
+    rgba: 4283433040
+  crackedMainNoise: {fileID: 1683311064}
+  crackedTerrainScale: 30
+  crackedSurfaceColor:
+    serializedVersion: 2
+    rgba: 4286743170
+  crackedCoreColor:
+    serializedVersion: 2
+    rgba: 4283433040
+  crackedLavaColor:
+    serializedVersion: 2
+    rgba: 4278227955
+--- !u!4 &1972986279
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972986276}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1972986280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972986276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4769e140e33119d42aff1561d9dd7ca1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noiseName: Lookup
+  seed: 1337
+  frequency: 0.12
+  interp: 2
+  noiseType: 4
+  octaves: 3
+  lacunarity: 2.1
+  gain: 0.6
+  fractalType: 0
+  cellularDistanceFunction: 0
+  cellularReturnType: 1
+  cellularNoiseLookup: {fileID: 0}
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  gradientPerturbAmp: 1
+  generalSettingsFold: 1
+  fractalSettingsFold: 0
+  cellularSettingsFold: 0
+  positionWarpSettingsFold: 0
 --- !u!1001 &4573694839037452912
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1717,10 +2181,11 @@ SceneRoots:
   - {fileID: 461704163}
   - {fileID: 334346535}
   - {fileID: 274179778}
-  - {fileID: 4573694839037452912}
   - {fileID: 363349584}
-  - {fileID: 1623999236}
-  - {fileID: 1323023896}
-  - {fileID: 2047168717}
-  - {fileID: 603169273}
-  - {fileID: 829130905}
+  - {fileID: 93157387}
+  - {fileID: 1972986279}
+  - {fileID: 1683311066}
+  - {fileID: 69701489}
+  - {fileID: 1550379468}
+  - {fileID: 783630703}
+  - {fileID: 4573694839037452912}

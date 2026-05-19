@@ -92,8 +92,9 @@ namespace VoxelEngine
 						Voxel left = GetAdjVoxelLeft(index, x);
 						Voxel down = GetAdjVoxelDown(index, y);
 						Voxel back = GetAdjVoxelBack(index, z);
-						BlockData.BlockType blockType = terrainGenerator.DensityBlock(voxel);
-						int blockIndex = terrainGenerator.ResolveBlockIndex(blockType, x, y, z);
+						byte biomeIndex = GetBiomeIndex(index);
+						float surfaceDensity = GetSurfaceDensity(index);
+						int blockIndex = ResolveBlockIndex(terrainGenerator, voxel, biomeIndex, surfaceDensity, x, y, z);
 
 						if (voxel.IsSolid())
 						{
@@ -137,34 +138,40 @@ namespace VoxelEngine
 							// Left
 							if (left.IsSolid())
 							{
+								byte leftBiomeIndex = GetAdjBiomeLeft(index, x);
+								float leftSurfaceDensity = GetAdjSurfaceDensityLeft(index, x);
 								quads.Add(new Quad(
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									new Color32(255, 255, 255, 255), Direction.Right, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(left), x - 1, y, z)));
+									new Color32(255, 255, 255, 255), Direction.Right, ResolveBlockIndex(terrainGenerator, left, leftBiomeIndex, leftSurfaceDensity, x - 1, y, z)));
 							}
 
 							// Down
 							if (down.IsSolid())
 							{
+								byte downBiomeIndex = GetAdjBiomeDown(index, y);
+								float downSurfaceDensity = GetAdjSurfaceDensityDown(index, y);
 								quads.Add(new Quad(
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									new Color32(255, 255, 255, 255), Direction.Up, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(down), x, y - 1, z)));
+									new Color32(255, 255, 255, 255), Direction.Up, ResolveBlockIndex(terrainGenerator, down, downBiomeIndex, downSurfaceDensity, x, y - 1, z)));
 							}
 
 							// Back
 							if (back.IsSolid())
 							{
+								byte backBiomeIndex = GetAdjBiomeBack(index, z);
+								float backSurfaceDensity = GetAdjSurfaceDensityBack(index, z);
 								quads.Add(new Quad(
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									new Color32(255, 255, 255, 255), Direction.Forward, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(back), x, y, z - 1)));
+									new Color32(255, 255, 255, 255), Direction.Forward, ResolveBlockIndex(terrainGenerator, back, backBiomeIndex, backSurfaceDensity, x, y, z - 1)));
 							}
 						}
 					}
@@ -278,7 +285,9 @@ namespace VoxelEngine
 						if (voxel.IsSolid())
 						{
 							Color32 color = new Color32(255, 255, 255, 255);
-							int blockIndex = terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(voxel), x, y, z);
+							byte biomeIndex = GetAdjBiome(x, y, z);
+							float surfaceDensity = GetAdjSurfaceDensity(x, y, z);
+							int blockIndex = ResolveBlockIndex(terrainGenerator, voxel, biomeIndex, surfaceDensity, x, y, z);
 
 							// Left
 							if (!left.IsSolid())
@@ -339,12 +348,14 @@ namespace VoxelEngine
 							// Left
 							if (left.IsSolid())
 							{
+								byte leftBiomeIndex = GetAdjBiome(x - 1, y, z);
+								float leftSurfaceDensity = GetAdjSurfaceDensity(x - 1, y, z);
 								Quad q = new Quad(
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									new Color32(255, 255, 255, 255), Direction.Right, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(left), x - 1, y, z));
+									new Color32(255, 255, 255, 255), Direction.Right, ResolveBlockIndex(terrainGenerator, left, leftBiomeIndex, leftSurfaceDensity, x - 1, y, z));
 
 								q.i0 = LightLevelX(q.v0, q.color, y, z, 0.25f);
 								q.i1 = LightLevelX(q.v1, q.color, y, z, 0.25f);
@@ -357,12 +368,14 @@ namespace VoxelEngine
 							// Down
 							if (down.IsSolid())
 							{
+								byte downBiomeIndex = GetAdjBiome(x, y - 1, z);
+								float downSurfaceDensity = GetAdjSurfaceDensity(x, y - 1, z);
 								Quad q = new Quad(
 									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z + 0.5f),
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									new Color32(255, 255, 255, 255), Direction.Up, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(down), x, y - 1, z));
+									new Color32(255, 255, 255, 255), Direction.Up, ResolveBlockIndex(terrainGenerator, down, downBiomeIndex, downSurfaceDensity, x, y - 1, z));
 
 								q.i0 = LightLevelY(q.v0, q.color, x, z, 0.25f);
 								q.i1 = LightLevelY(q.v1, q.color, x, z, 0.25f);
@@ -375,12 +388,14 @@ namespace VoxelEngine
 							// Back
 							if (back.IsSolid())
 							{
+								byte backBiomeIndex = GetAdjBiome(x, y, z - 1);
+								float backSurfaceDensity = GetAdjSurfaceDensity(x, y, z - 1);
 								Quad q = new Quad(
 									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
 									new Vector3(x + 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
 									new Vector3(x - 0.5f, y - 0.5f, z - 0.5f),
-									new Color32(255, 255, 255, 255), Direction.Forward, terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(back), x, y, z - 1));
+									new Color32(255, 255, 255, 255), Direction.Forward, ResolveBlockIndex(terrainGenerator, back, backBiomeIndex, backSurfaceDensity, x, y, z - 1));
 
 								q.i0 = LightLevelZ(q.v0, q.color, x, y, 0.25f);
 								q.i1 = LightLevelZ(q.v1, q.color, x, y, 0.25f);
@@ -1029,6 +1044,92 @@ namespace VoxelEngine
 			return chunk.adjChunks[Math.Min(adjIndex, 6)].GetVoxelUnsafe(localX, localY, localZ);
 		}
 
+		private static byte GetAdjBiome(int localX, int localY, int localZ)
+		{
+			int adjIndex = -2;
+
+			if (localX < 0)
+			{
+				adjIndex += 2;
+				localX += Chunk.SIZE;
+			}
+			if (localY < 0)
+			{
+				adjIndex += 3;
+				localY += Chunk.SIZE;
+			}
+			if (localZ < 0)
+			{
+				adjIndex += 4;
+				localZ += Chunk.SIZE;
+			}
+
+			if (adjIndex == -2)
+			{
+				if (chunk.biomeData == null)
+					return 0;
+
+				int voxelIndex = Chunk.VoxelDataIndex(localX, localY, localZ);
+				if (voxelIndex < 0 || voxelIndex >= chunk.biomeData.Length)
+					return 0;
+
+				return chunk.biomeData[voxelIndex];
+			}
+
+			Chunk adjChunk = chunk.adjChunks[Math.Min(adjIndex, 6)];
+			if (adjChunk == null || adjChunk.biomeData == null)
+				return 0;
+
+			int adjVoxelIndex = Chunk.VoxelDataIndex(localX, localY, localZ);
+			if (adjVoxelIndex < 0 || adjVoxelIndex >= adjChunk.biomeData.Length)
+				return 0;
+
+			return adjChunk.biomeData[adjVoxelIndex];
+		}
+
+		private static float GetAdjSurfaceDensity(int localX, int localY, int localZ)
+		{
+			int adjIndex = -2;
+
+			if (localX < 0)
+			{
+				adjIndex += 2;
+				localX += Chunk.SIZE;
+			}
+			if (localY < 0)
+			{
+				adjIndex += 3;
+				localY += Chunk.SIZE;
+			}
+			if (localZ < 0)
+			{
+				adjIndex += 4;
+				localZ += Chunk.SIZE;
+			}
+
+			if (adjIndex == -2)
+			{
+				if (chunk.surfaceDensityData == null)
+					return 0f;
+
+				int voxelIndex = Chunk.VoxelDataIndex(localX, localY, localZ);
+				if (voxelIndex < 0 || voxelIndex >= chunk.surfaceDensityData.Length)
+					return 0f;
+
+				return chunk.surfaceDensityData[voxelIndex];
+			}
+
+			Chunk adjChunk = chunk.adjChunks[Math.Min(adjIndex, 6)];
+			if (adjChunk == null || adjChunk.surfaceDensityData == null)
+				return 0f;
+
+			int adjVoxelIndex = Chunk.VoxelDataIndex(localX, localY, localZ);
+			if (adjVoxelIndex < 0 || adjVoxelIndex >= adjChunk.surfaceDensityData.Length)
+				return 0f;
+
+			return adjChunk.surfaceDensityData[adjVoxelIndex];
+		}
+
 		private static Voxel GetAdjVoxelLeft(int voxelIndex, int localX)
 		{
 			voxelIndex -= Chunk.VOXEL_STEP_X;
@@ -1060,6 +1161,132 @@ namespace VoxelEngine
 
 			voxelIndex += Chunk.VOXEL_STEP_CHUNK_Z;
 			return chunk.adjChunks[(int)Chunk.AdjDirection.Back].voxelData[voxelIndex];
+		}
+
+		private static byte GetBiomeIndex(int voxelIndex)
+		{
+			if (chunk.biomeData == null)
+				return 0;
+
+			if (voxelIndex < 0 || voxelIndex >= chunk.biomeData.Length)
+				return 0;
+
+			return chunk.biomeData[voxelIndex];
+		}
+
+		private static float GetSurfaceDensity(int voxelIndex)
+		{
+			if (chunk.surfaceDensityData == null)
+				return 0f;
+
+			if (voxelIndex < 0 || voxelIndex >= chunk.surfaceDensityData.Length)
+				return 0f;
+
+			return chunk.surfaceDensityData[voxelIndex];
+		}
+
+		private static float GetAdjSurfaceDensityLeft(int voxelIndex, int localX)
+		{
+			voxelIndex -= Chunk.VOXEL_STEP_X;
+
+			if (localX > 0)
+				return GetSurfaceDensity(voxelIndex);
+
+			voxelIndex += Chunk.VOXEL_STEP_CHUNK_X;
+			var adj = chunk.adjChunks[(int)Chunk.AdjDirection.Left];
+			if (adj == null || adj.surfaceDensityData == null || voxelIndex < 0 || voxelIndex >= adj.surfaceDensityData.Length)
+				return 0f;
+			return adj.surfaceDensityData[voxelIndex];
+		}
+
+		private static float GetAdjSurfaceDensityDown(int voxelIndex, int localY)
+		{
+			voxelIndex -= Chunk.VOXEL_STEP_Y;
+
+			if (localY > 0)
+				return GetSurfaceDensity(voxelIndex);
+
+			voxelIndex += Chunk.VOXEL_STEP_CHUNK_Y;
+			var adj = chunk.adjChunks[(int)Chunk.AdjDirection.Down];
+			if (adj == null || adj.surfaceDensityData == null || voxelIndex < 0 || voxelIndex >= adj.surfaceDensityData.Length)
+				return 0f;
+			return adj.surfaceDensityData[voxelIndex];
+		}
+
+		private static float GetAdjSurfaceDensityBack(int voxelIndex, int localZ)
+		{
+			voxelIndex -= Chunk.VOXEL_STEP_Z;
+
+			if (localZ > 0)
+				return GetSurfaceDensity(voxelIndex);
+
+			voxelIndex += Chunk.VOXEL_STEP_CHUNK_Z;
+			var adj = chunk.adjChunks[(int)Chunk.AdjDirection.Back];
+			if (adj == null || adj.surfaceDensityData == null || voxelIndex < 0 || voxelIndex >= adj.surfaceDensityData.Length)
+				return 0f;
+			return adj.surfaceDensityData[voxelIndex];
+		}
+
+		private static byte GetAdjBiomeLeft(int voxelIndex, int localX)
+		{
+			voxelIndex -= Chunk.VOXEL_STEP_X;
+
+			if (localX > 0)
+			{
+				if (chunk.biomeData == null || voxelIndex < 0 || voxelIndex >= chunk.biomeData.Length)
+					return 0;
+				return chunk.biomeData[voxelIndex];
+			}
+
+			voxelIndex += Chunk.VOXEL_STEP_CHUNK_X;
+			var adj = chunk.adjChunks[(int)Chunk.AdjDirection.Left];
+			if (adj == null || adj.biomeData == null || voxelIndex < 0 || voxelIndex >= adj.biomeData.Length)
+				return 0;
+			return adj.biomeData[voxelIndex];
+		}
+
+		private static byte GetAdjBiomeDown(int voxelIndex, int localY)
+		{
+			voxelIndex -= Chunk.VOXEL_STEP_Y;
+
+			if (localY > 0)
+			{
+				if (chunk.biomeData == null || voxelIndex < 0 || voxelIndex >= chunk.biomeData.Length)
+					return 0;
+				return chunk.biomeData[voxelIndex];
+			}
+
+			voxelIndex += Chunk.VOXEL_STEP_CHUNK_Y;
+			var adj = chunk.adjChunks[(int)Chunk.AdjDirection.Down];
+			if (adj == null || adj.biomeData == null || voxelIndex < 0 || voxelIndex >= adj.biomeData.Length)
+				return 0;
+			return adj.biomeData[voxelIndex];
+		}
+
+		private static byte GetAdjBiomeBack(int voxelIndex, int localZ)
+		{
+			voxelIndex -= Chunk.VOXEL_STEP_Z;
+
+			if (localZ > 0)
+			{
+				if (chunk.biomeData == null || voxelIndex < 0 || voxelIndex >= chunk.biomeData.Length)
+					return 0;
+				return chunk.biomeData[voxelIndex];
+			}
+
+			voxelIndex += Chunk.VOXEL_STEP_CHUNK_Z;
+			var adj = chunk.adjChunks[(int)Chunk.AdjDirection.Back];
+			if (adj == null || adj.biomeData == null || voxelIndex < 0 || voxelIndex >= adj.biomeData.Length)
+				return 0;
+			return adj.biomeData[voxelIndex];
+		}
+
+		private static int ResolveBlockIndex(TerrainGeneratorBase terrainGenerator, Voxel voxel, byte biomeIndex, float surfaceDensity, int x, int y, int z)
+		{
+			int worldX = (chunk.chunkPos.x << Chunk.BIT_SIZE) + x;
+			int worldY = (chunk.chunkPos.y << Chunk.BIT_SIZE) + y;
+			int worldZ = (chunk.chunkPos.z << Chunk.BIT_SIZE) + z;
+			return terrainGenerator.ResolveBlockIndex(terrainGenerator.DensityBlock(voxel, biomeIndex, surfaceDensity), worldX, worldY, worldZ);
 		}
 
 		public struct Quad

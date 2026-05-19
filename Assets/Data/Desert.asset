@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a835c4001b2d3f468f0cd2e75ca9380, type: 3}
+  m_Name: Desert
+  m_EditorClassIdentifier: Assembly-CSharp::VoxelEngine.BiomeDefinition
+  biomeName: Desert
+  terrainScale: 20
+  topColor:
+    serializedVersion: 2
+    rgba: 4278370032
+  midColor:
+    serializedVersion: 2
+    rgba: 4283463800
+  deepColor:
+    serializedVersion: 2
+    rgba: 4283463800
+  topBlock: 8
+  midBlock: 4
+  deepBlock: 4

@@ -22,6 +22,14 @@ namespace VoxelEngine
 		public abstract void GenerateChunk(Chunk chunk);
 		public abstract Color32 DensityColor(Voxel voxel);
 		public abstract BlockData.BlockType DensityBlock(Voxel voxel);
+		public virtual BlockData.BlockType DensityBlock(Voxel voxel, byte biomeIndex)
+		{
+			return DensityBlock(voxel);
+		}
+		public virtual BlockData.BlockType DensityBlock(Voxel voxel, byte biomeIndex, float surfaceDensity)
+		{
+			return DensityBlock(voxel, biomeIndex);
+		}
 
 		public float MinHeight()
 		{

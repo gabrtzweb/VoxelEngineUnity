@@ -75,6 +75,8 @@ namespace VoxelEngine
 
 		internal FillType fillType = FillType.Null;
 		internal Voxel[] voxelData = new Voxel[SIZE * SIZE * SIZE];
+		internal float[] surfaceDensityData = new float[SIZE * SIZE * SIZE];
+		internal byte[] biomeData = new byte[SIZE * SIZE * SIZE];
 		internal Chunk[] adjChunks = new Chunk[ADJ_CHUNK_SIZE];
 		internal bool dirtyMesh = false;
 
