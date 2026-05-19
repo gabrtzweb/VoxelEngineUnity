@@ -45,8 +45,7 @@ namespace VoxelEngine.Editor
             previewTex = new Texture2D(resolution, resolution, TextureFormat.RGBA32, false);
 
             // Prepare per-pixel vectors (we map pixels to a 0..1 climate space)
-            FastNoiseSIMD.VectorSet vecSet = new FastNoiseSIMD.VectorSet(new Vector3[resolution * resolution]);
-            Vector3[] vecs = vecSet.vectors;
+            Vector3[] vecs = new Vector3[resolution * resolution];
             int idx = 0;
             for (int y = 0; y < resolution; y++)
             {
@@ -54,12 +53,11 @@ namespace VoxelEngine.Editor
                 {
                     float u = (x + 0.5f) / resolution;
                     float v = (y + 0.5f) / resolution;
-                    // pack into vector x=u,y=v,z=0
-                    vecs[idx++].x = u;
-                    vecs[idx - 1].y = v;
-                    vecs[idx - 1].z = 0f;
+                    vecs[idx++] = new Vector3(u, v, 0f);
                 }
             }
+
+            FastNoiseSIMD.VectorSet vecSet = new FastNoiseSIMD.VectorSet(vecs);
 
             float[] tempSet = null;
             float[] humSet = null;
