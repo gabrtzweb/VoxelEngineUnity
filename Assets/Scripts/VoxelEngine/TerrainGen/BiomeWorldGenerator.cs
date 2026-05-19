@@ -18,6 +18,8 @@ namespace VoxelEngine
         public int biomeSelectorInterpBitStep = 3;
         [Range(0f, 0.5f)]
         public float biomeSelectorBias = 0.08f;
+        [Range(0f, 0.49f)]
+        public float biomeBlendSoftness = 0.25f;
         public BiomeSource[] biomeSources = new BiomeSource[0];
 
         [Header("Caves")]
@@ -203,8 +205,26 @@ namespace VoxelEngine
             if (biomeSources.Length == 1)
                 return 0;
 
+            int n = biomeSources.Length;
             float t = Mathf.Clamp01(((selectorValue + 1f) * 0.5f) + biomeSelectorBias);
-            return (byte)(t >= 0.5f ? 1 : 0);
+
+            // Map t into an index range [0, n-1] and pick the nearest biome index
+            float pos = t * (n - 1);
+            int low = Mathf.FloorToInt(pos);
+            int high = Mathf.Clamp(low + 1, 0, n - 1);
+            float frac = pos - low;
+
+            float softness = Mathf.Clamp(biomeBlendSoftness, 0f, 0.49f);
+            float center = 0.5f;
+
+            if (frac < center - softness)
+                return (byte)Mathf.Clamp(low, 0, n - 1);
+
+            if (frac > center + softness)
+                return (byte)Mathf.Clamp(high, 0, n - 1);
+
+            // Within the soft band: pick the nearest side (this keeps storage simple — a single index).
+            return (byte)((frac < center) ? Mathf.Clamp(low, 0, n - 1) : Mathf.Clamp(high, 0, n - 1));
         }
 
         // Simple color mapping: sample first biome palette as fallback

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace VoxelEngine
 {
-    [CreateAssetMenu(menuName = "VoxelEngine/BiomeDefinition", fileName = "NewBiome")]
+    [CreateAssetMenu(fileName = "NewBiome", menuName = "VoxelEngine/Biome Definition")]
     public class BiomeDefinition : ScriptableObject
     {
         public string biomeName = "New Biome";
