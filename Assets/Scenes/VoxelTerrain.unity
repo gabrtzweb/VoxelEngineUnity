@@ -745,6 +745,7 @@ GameObject:
   m_Component:
   - component: {fileID: 363349584}
   - component: {fileID: 363349587}
+  - component: {fileID: 363349588}
   m_Layer: 0
   m_Name: WorldManager
   m_TagString: Untagged
@@ -787,9 +788,31 @@ MonoBehaviour:
   maxThreads: 8
   targetFPS: 90
   meshMaterial: {fileID: 2100000, guid: 883dd109ee28f294db0e283ce275e585, type: 2}
-  showDebugInfo: 1
   directionalLight: {fileID: 550396898}
   cameraLight: {fileID: 1466604069}
+--- !u!114 &363349588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363349583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d99a9f3dd869f8489a9381b2eca21a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoxelEngine.DebugScreen
+  showPooledChunks: 1
+  showPooledGameObjects: 1
+  showLoadedChunks: 1
+  showChunkQueue: 0
+  showMeshQueue: 0
+  showMeshesLastFrame: 0
+  showUpdateTime: 0
+  showThreadCount: 1
+  showFPS: 1
+  showPlayerCoordinates: 1
+  showFacingDirection: 1
 --- !u!1 &396826348
 GameObject:
   m_ObjectHideFlags: 0
