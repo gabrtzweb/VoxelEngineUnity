@@ -9,7 +9,6 @@ namespace VoxelEngine
 	{
 		[Header("Debug Features")]
 		public bool showPooledChunks = true;
-		public bool showCurrentBiome = true;
 		public bool showPooledGameObjects = true;
 		public bool showLoadedChunks = true;
 		public bool showChunkQueue = true;
@@ -20,6 +19,7 @@ namespace VoxelEngine
 		public bool showFPS = true;
 		public bool showPlayerCoordinates = true;
 		public bool showFacingDirection = true;
+		public bool showCurrentBiome = true;
 
 		private VoxelEngineManager voxelEngineManager;
 		private Transform targetTransform;
@@ -147,14 +147,12 @@ namespace VoxelEngine
 			{
 				Vector3 forward = targetTransform.forward;
 				string direction = GetDirectionName(forward);
-				GUI.Label(rect, "Facing: " + direction + string.Format(" ({0:0.0}, {1:0.0}, {2:0.0})", forward.x, forward.y, forward.z));
+				GUI.Label(rect, "Facing: " + direction);
 				rect.y += labelSpacing;
 			}
 		}
 
-		/// <summary>
-		/// Converts a forward vector into a cardinal direction name
-		/// </summary>
+		// Converts a forward vector into a cardinal direction name
 		private string GetDirectionName(Vector3 forward)
 		{
 			// Get the horizontal direction (ignore Y component)
@@ -181,9 +179,7 @@ namespace VoxelEngine
 			return "Unknown";
 		}
 
-		/// <summary>
-		/// Toggle a specific debug feature by name
-		/// </summary>
+		// Toggle a specific debug feature by name
 		public void ToggleFeature(string featureName)
 		{
 			switch (featureName.ToLower())
@@ -221,12 +217,13 @@ namespace VoxelEngine
 				case "facingdirection":
 					showFacingDirection = !showFacingDirection;
 					break;
+				case "currentbiome":
+					showCurrentBiome = !showCurrentBiome;
+					break;
 			}
 		}
 
-		/// <summary>
-		/// Enable all debug features
-		/// </summary>
+		// Enable all debug features
 		public void EnableAll()
 		{
 			showPooledChunks = true;
@@ -240,11 +237,10 @@ namespace VoxelEngine
 			showFPS = true;
 			showPlayerCoordinates = true;
 			showFacingDirection = true;
+			showCurrentBiome = true;
 		}
 
-		/// <summary>
-		/// Disable all debug features
-		/// </summary>
+		// Disable all debug features
 		public void DisableAll()
 		{
 			showPooledChunks = false;
@@ -258,6 +254,7 @@ namespace VoxelEngine
 			showFPS = false;
 			showPlayerCoordinates = false;
 			showFacingDirection = false;
+			showCurrentBiome = false;
 		}
 	}
 }
