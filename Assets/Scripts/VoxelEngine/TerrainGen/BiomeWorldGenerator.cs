@@ -10,6 +10,8 @@ namespace VoxelEngine
         {
             public BiomeDefinition biome;
             public FastNoiseSIMDUnity terrainNoise;
+            // Preferred climate point: x=temperature (0..1), y=humidity (0..1), z=elevation (0..1)
+            public Vector3 climatePref;
         }
 
         [Header("Biome selector")]
@@ -20,6 +22,16 @@ namespace VoxelEngine
         public float biomeSelectorBias = 0.08f;
         [Range(0f, 0.49f)]
         public float biomeBlendSoftness = 0.25f;
+        [Header("Climate selectors")]
+        public FastNoiseSIMDUnity temperatureNoise;
+        public FastNoiseSIMDUnity humidityNoise;
+        [Header("Climate weights")]
+        [Range(0f, 2f)]
+        public float tempWeight = 1f;
+        [Range(0f, 2f)]
+        public float humWeight = 1f;
+        [Range(0f, 2f)]
+        public float elevWeight = 1f;
         public BiomeSource[] biomeSources = new BiomeSource[0];
 
         [Header("Caves")]
@@ -180,17 +192,53 @@ namespace VoxelEngine
                         // carve caves out: choose the minimum between surface and cave fields
                         float finalDensity = Mathf.Min(surfaceDensity, caveDensity);
 
-                        // Sample the biome selector using the same interpolation lookup to avoid
-                        // chunk-aligned stepping and ensure smooth, larger biome regions.
+                        // Sample climate selectors (low-frequency) and the biome selector if present
                         float selectorValue = 0f;
                         if (selector != null)
-							selectorValue = VoxelInterpLookup(x, y, z, selector, selectorInterpSize, biomeSelectorInterpBitStep);
+                            selectorValue = VoxelInterpLookup(x, y, z, selector, selectorInterpSize, biomeSelectorInterpBitStep);
 
-                        byte biomeIndex = ChooseBiomeIndex(selectorValue);
+                        float tempVal = 0.5f;
+                        float humVal = 0.5f;
+                        if (temperatureNoise != null)
+                            tempVal = Mathf.Clamp01((VoxelInterpLookup(x, y, z, GetNoiseSet(temperatureNoise, chunk.chunkPos, biomeSelectorInterpBitStep), selectorInterpSize, biomeSelectorInterpBitStep) + 1f) * 0.5f);
+                        if (humidityNoise != null)
+                            humVal = Mathf.Clamp01((VoxelInterpLookup(x, y, z, GetNoiseSet(humidityNoise, chunk.chunkPos, biomeSelectorInterpBitStep), selectorInterpSize, biomeSelectorInterpBitStep) + 1f) * 0.5f);
 
-                        chunk.surfaceDensityData[index] = surfaceDensity;
-                        ChunkFillUpdate(chunk, voxelData[index] = new Voxel(finalDensity));
-                        biomeData[index] = biomeIndex;
+                        float elevNorm = Mathf.Clamp01(Mathf.InverseLerp(minHeight, maxHeight, surfaceDensity));
+
+                        byte biomeIndex = ChooseBiomeIndex(tempVal, humVal, elevNorm, selectorValue);
+
+                        // Sea level at world Y = 0: if the voxel is empty (finalDensity < 0)
+                        // and below or at sea level, fill with water block (simple solid water block)
+                        int worldY = (chunk.chunkPos.y << Chunk.BIT_SIZE) + y;
+
+                        if (finalDensity < 0f && worldY <= 0)
+                        {
+                            // mark as filled with water: solid voxel for rendering and special biome index 255
+                            chunk.surfaceDensityData[index] = surfaceDensity;
+                            ChunkFillUpdate(chunk, voxelData[index] = Voxel.Solid);
+                            biomeData[index] = 255;
+                        }
+                        else
+                        {
+                            // Beach rule: if voxel is near sea level and a 'Beach' biome exists, prefer it
+                            int beachIndex = -1;
+                            for (int bi = 0; bi < biomeSources.Length; bi++)
+                            {
+                                if (biomeSources[bi].biome != null && biomeSources[bi].biome.biomeName.ToLower().Contains("beach"))
+                                {
+                                    beachIndex = bi;
+                                    break;
+                                }
+                            }
+
+                            if (beachIndex >= 0 && worldY <= 1 && worldY >= -2)
+                                biomeIndex = (byte)beachIndex;
+
+                            chunk.surfaceDensityData[index] = surfaceDensity;
+                            ChunkFillUpdate(chunk, voxelData[index] = new Voxel(finalDensity));
+                            biomeData[index] = biomeIndex;
+                        }
                         index++;
                     }
                 }
@@ -227,6 +275,41 @@ namespace VoxelEngine
             return (byte)((frac < center) ? Mathf.Clamp(low, 0, n - 1) : Mathf.Clamp(high, 0, n - 1));
         }
 
+        // Climate-based selection: temperature (0..1), humidity (0..1), elevation (0..1)
+        private byte ChooseBiomeIndex(float temperature, float humidity, float elevation, float selectorValue)
+        {
+            if (biomeSources == null || biomeSources.Length == 0)
+                return 0;
+
+            int n = biomeSources.Length;
+            if (n == 1)
+                return 0;
+
+            float bestDist = float.MaxValue;
+            int bestIdx = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                Vector3 pref = biomeSources[i].climatePref;
+                float dt = temperature - pref.x;
+                float dh = humidity - pref.y;
+                float de = elevation - pref.z;
+
+                float dist = tempWeight * dt * dt + humWeight * dh * dh + elevWeight * de * de;
+
+                // Optionally bias using the old selector value so designer can nudge transitions
+                dist -= selectorValue * 0.001f;
+
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    bestIdx = i;
+                }
+            }
+
+            return (byte)Mathf.Clamp(bestIdx, 0, n - 1);
+        }
+
         // Simple color mapping: sample first biome palette as fallback
         public override Color32 DensityColor(Voxel voxel)
         {
@@ -254,6 +337,10 @@ namespace VoxelEngine
 
         public override BlockData.BlockType DensityBlock(Voxel voxel, byte biomeIndex, float surfaceDensity)
         {
+            // special water index
+            if (biomeIndex == 255)
+                return BlockData.BlockType.LiquidWater;
+
             BiomeDefinition biome = GetBiomeDefinition(biomeIndex);
 
             if (biome != null)
