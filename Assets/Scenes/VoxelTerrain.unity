@@ -496,18 +496,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d99a9f3dd869f8489a9381b2eca21a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoxelEngine.DebugScreen
-  showPooledChunks: 1
-  showCurrentBiome: 1
-  showPooledGameObjects: 1
-  showLoadedChunks: 1
+  showPooledChunks: 0
+  showPooledGameObjects: 0
+  showLoadedChunks: 0
   showChunkQueue: 0
   showMeshQueue: 0
   showMeshesLastFrame: 0
   showUpdateTime: 0
-  showThreadCount: 1
+  showThreadCount: 0
   showFPS: 1
   showPlayerCoordinates: 1
   showFacingDirection: 1
+  showCurrentBiome: 1
 --- !u!1 &396826348
 GameObject:
   m_ObjectHideFlags: 0
@@ -770,6 +770,71 @@ MonoBehaviour:
   highlightColor:
     serializedVersion: 2
     rgba: 4280032284
+--- !u!1 &518854416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 518854417}
+  - component: {fileID: 518854418}
+  m_Layer: 0
+  m_Name: TerrainGen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &518854417
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518854416}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1623999236}
+  - {fileID: 1323023896}
+  - {fileID: 2047168717}
+  - {fileID: 603169273}
+  - {fileID: 829130905}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &518854418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518854416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efdcc61dd80408248b8bfca364ef7f46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Gaskellgames.FolderSystem::Gaskellgames.FolderSystem.HierarchyFolders
+  verboseLogs: 0
+  gizmosOnSelected: 0
+  textStyle: 3
+  textAlignment: 0
+  customText: 0
+  textColor:
+    serializedVersion: 2
+    rgba: 4289967027
+  customIcon: 0
+  iconColor:
+    serializedVersion: 2
+    rgba: 4289967027
+  customHighlight: 1
+  highlightColor:
+    serializedVersion: 2
+    rgba: 4280032284
 --- !u!1 &550396897
 GameObject:
   m_ObjectHideFlags: 0
@@ -1001,12 +1066,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 603169270}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 518854417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &684836410 stripped
 Transform:
@@ -1082,7 +1147,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 518854417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1323023894
 GameObject:
@@ -1148,12 +1213,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1323023894}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 518854417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1362263051
 GameObject:
@@ -1554,12 +1619,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1623999234}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 518854417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1623999237
 MonoBehaviour:
@@ -1575,6 +1640,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoxelEngine.BiomeWorldGenerator
   blockTextureArray: {fileID: 18700000, guid: acb2bd12a700d904e91a0a957073e2db, type: 2}
   biomeSelector: {fileID: 1323023895}
+  biomeSelectorInterpBitStep: 3
+  biomeSelectorBias: 0.08
+  biomeBlendSoftness: 0.25
   biomeSources:
   - biome: {fileID: 11400000, guid: bd33d7f4cbb418249b44500d7d4b797f, type: 2}
     terrainNoise: {fileID: 2047168716}
@@ -1646,12 +1714,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2047168715}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 518854417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4573694839037452912
 PrefabInstance:
@@ -1718,9 +1786,5 @@ SceneRoots:
   - {fileID: 334346535}
   - {fileID: 274179778}
   - {fileID: 4573694839037452912}
+  - {fileID: 518854417}
   - {fileID: 363349584}
-  - {fileID: 1623999236}
-  - {fileID: 1323023896}
-  - {fileID: 2047168717}
-  - {fileID: 603169273}
-  - {fileID: 829130905}
