@@ -86,16 +86,6 @@ namespace VoxelEngine
 			labelSpacing = 22;
 		}
 
-		private void SelectTerrainGenerator(TerrainGenerator generator, TerrainGenerator.TerrainProfile profile, bool useCameraLight = false)
-		{
-			if (!generator)
-				return;
-
-			generator.SetProfile(profile);
-			terrainGenerator = generator;
-			ResetAll(useCameraLight);
-		}
-
 		private void SelectTerrainGenerator(TerrainGeneratorSIMD generator, TerrainGeneratorSIMD.TerrainProfile profile, bool useCameraLight = false)
 		{
 			if (!generator)
