@@ -1,16 +1,16 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(PlayerMovement), typeof(PlayerInteractions), typeof(CameraController))]
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(PlayerMovement),typeof(PlayerInteractions), typeof(CameraController))]
+
 public class InputHandler : MonoBehaviour {
     GameInput input;
     
     // Component References
+    public CharacterController CharController { get; private set; }
     public PlayerMovement Movement { get; private set; }
     public PlayerInteractions Interactions { get; private set; }
     public CameraController CameraCtrl { get; private set; }
-    public CharacterController CharController { get; private set; }
 
     // Input Accessors
     public Vector2 MoveInput => input.Player.Move.ReadValue<Vector2>();
@@ -22,14 +22,15 @@ public class InputHandler : MonoBehaviour {
     public bool IsCrouching => input.Player.Crouch.IsPressed();
     public bool IsCrawling => input.Player.Crawl.IsPressed();
 
-    public bool PrimaryActionPressed => input.Player.UsePrimary.WasPressedThisFrame();
-    public bool SecondaryActionPressed => input.Player.UseSecondary.WasPressedThisFrame();
-    public bool IsPrimaryActionHeld => input.Player.UsePrimary.IsPressed();
-    public bool IsSecondaryActionHeld => input.Player.UseSecondary.IsPressed()
+    public bool PrimaryActionPressed => input.Player.PrimaryAction.WasPressedThisFrame();
+    public bool SecondaryActionPressed => input.Player.SecondaryAction.WasPressedThisFrame();
+    public bool IsPrimaryActionHeld => input.Player.PrimaryAction.IsPressed();
+    public bool IsSecondaryActionHeld => input.Player.SecondaryAction.IsPressed()
     ;
     public bool PickActionPressed => input.Player.PickAction.WasPressedThisFrame();
     public bool DropActionPressed => input.Player.DropAction.WasPressedThisFrame();
 
+    // Initialization
     void Awake() {
         input = new GameInput();
         
@@ -38,6 +39,7 @@ public class InputHandler : MonoBehaviour {
         CameraCtrl = GetComponent<CameraController>();
         CharController = GetComponent<CharacterController>();
     }
+    
     void OnEnable() {
         input.Enable();
     }
