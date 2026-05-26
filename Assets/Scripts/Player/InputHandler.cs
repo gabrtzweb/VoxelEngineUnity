@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerMovement),typeof(PlayerInteractions), typeof(CameraController))]
 
 public class InputHandler : MonoBehaviour {
+	// Input Asset
     GameInput input;
     
     // Component References
@@ -29,6 +30,7 @@ public class InputHandler : MonoBehaviour {
     ;
     public bool PickActionPressed => input.Player.PickAction.WasPressedThisFrame();
     public bool DropActionPressed => input.Player.DropAction.WasPressedThisFrame();
+    public bool TogglePerspectivePressed => input.Player.TogglePerspective.WasPressedThisFrame();
 
     // Initialization
     void Awake() {
@@ -40,11 +42,16 @@ public class InputHandler : MonoBehaviour {
         CharController = GetComponent<CharacterController>();
     }
     
+    // Input Lifecycle
     void OnEnable() {
         input.Enable();
     }
 
     void OnDisable() {
         input.Disable();
+    }
+
+    void OnDestroy() {
+        input.Dispose();
     }
 }

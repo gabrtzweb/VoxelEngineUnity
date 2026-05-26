@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using UnityEngine.InputSystem;
 
 namespace VoxelEngine
 {
@@ -15,11 +16,11 @@ namespace VoxelEngine
 	{
 		public TerrainGeneratorBase terrainGenerator;
 		public Transform targetTransform;
-		public float loadDistance = 400f;
+		public float loadDistance = 256f;
 		public float unloadDistanceModifier = 1.2f;
 		public float yDistanceModifier = 1.5f;
 		public int maxThreads = 8;
-		public float targetFPS = 100f;
+		public float targetFPS = 60f;
 		public Material meshMaterial;
 		public bool showDebugInfo = true;
 
@@ -101,7 +102,7 @@ namespace VoxelEngine
 
 			averageFPS = Mathf.Lerp(averageFPS, 1f/deltaTimeFPS, 0.05f);
 			
-			if (Input.GetKeyDown(KeyCode.Escape))
+			if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
 				Application.Quit();
 		}
 

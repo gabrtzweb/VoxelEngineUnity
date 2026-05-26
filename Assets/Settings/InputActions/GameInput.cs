@@ -181,6 +181,15 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TogglePerspective"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a7e3cef-82af-41e1-a989-b1a0a8f0cc2e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -445,6 +454,28 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""DropAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""97b802ec-ff51-40f7-ae0c-d2abdb616461"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""TogglePerspective"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0cd9799f-463a-4e93-8d77-7f00628aa3dd"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""TogglePerspective"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -726,6 +757,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         m_Player_SecondaryAction = m_Player.FindAction("SecondaryAction", throwIfNotFound: true);
         m_Player_PickAction = m_Player.FindAction("PickAction", throwIfNotFound: true);
         m_Player_DropAction = m_Player.FindAction("DropAction", throwIfNotFound: true);
+        m_Player_TogglePerspective = m_Player.FindAction("TogglePerspective", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -822,6 +854,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_SecondaryAction;
     private readonly InputAction m_Player_PickAction;
     private readonly InputAction m_Player_DropAction;
+    private readonly InputAction m_Player_TogglePerspective;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -873,6 +906,10 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/DropAction".
         /// </summary>
         public InputAction @DropAction => m_Wrapper.m_Player_DropAction;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/TogglePerspective".
+        /// </summary>
+        public InputAction @TogglePerspective => m_Wrapper.m_Player_TogglePerspective;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -929,6 +966,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @DropAction.started += instance.OnDropAction;
             @DropAction.performed += instance.OnDropAction;
             @DropAction.canceled += instance.OnDropAction;
+            @TogglePerspective.started += instance.OnTogglePerspective;
+            @TogglePerspective.performed += instance.OnTogglePerspective;
+            @TogglePerspective.canceled += instance.OnTogglePerspective;
         }
 
         /// <summary>
@@ -970,6 +1010,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @DropAction.started -= instance.OnDropAction;
             @DropAction.performed -= instance.OnDropAction;
             @DropAction.canceled -= instance.OnDropAction;
+            @TogglePerspective.started -= instance.OnTogglePerspective;
+            @TogglePerspective.performed -= instance.OnTogglePerspective;
+            @TogglePerspective.canceled -= instance.OnTogglePerspective;
         }
 
         /// <summary>
@@ -1263,6 +1306,13 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDropAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "TogglePerspective" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTogglePerspective(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
