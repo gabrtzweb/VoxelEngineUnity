@@ -1,0 +1,19 @@
+# Game Design Document: VoxelEngineUnity
+
+## 1. Game Overview
+**Genre:** Sandbox Voxel Builder
+**Engine:** Unity 3D
+**Target Platform:** PC
+**Core Concept:** A procedural block-building game where players explore infinite terrain, gather resources, and construct custom structures.
+
+## 2. Core Mechanics
+* **Block Interaction:** Left-click to destroy blocks. Right-click to place blocks from the active hotbar slot.
+* **Movement:** Standard first-person controls (WASD, jump, sprint, crouch, crawl).
+* **Inventory:** A grid-based system holding various block types and stackable resources.
+
+## 3. Terrain Generation Architecture (FastNoise)
+The world uses procedural generation powered by the FastNoise library to create natural landscapes.
+* **Chunk System:** The world is divided into 16x16x16 block chunks. Only chunks within a specific radius of the player are active and rendered.
+* **Base Elevation (2D Noise):** Use FastNoise Simplex or Fractal Perlin noise to generate a 2D heightmap. This determines the surface level of the terrain.
+* **Biomes:** Implement a secondary noise map (using Cellular noise) to represent moisture and temperature. The intersection of these values dictates the biome and surface block types (e.g., sand, grass, snow).
+* **Caves and Overhangs (3D Noise):** Use 3D Simplex or Ridge noise evaluated at every XYZ coordinate below the surface. If the noise value falls below a specific threshold, that block is set to "air" to carve out cave networks.
