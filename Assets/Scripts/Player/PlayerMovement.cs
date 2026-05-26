@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
 	// Runtime State
 	private CharacterController characterController;
 	private InputHandler inputHandler;
+	[SerializeField] private Animator animator;
+	[SerializeField] private bool debugAnimator = false;
 	private float verticalVelocity;
 	private bool isFlying;
 	private float lastJumpPressedTime = -10f;
@@ -28,6 +30,18 @@ public class PlayerMovement : MonoBehaviour
 	{
 		characterController = GetComponent<CharacterController>();
 		inputHandler = GetComponent<InputHandler>();
+		if (animator == null)
+		{
+			animator = GetComponent<Animator>();
+			if (animator == null)
+			{
+				animator = GetComponentInChildren<Animator>();
+			}
+			if (animator == null && debugAnimator)
+			{
+				Debug.LogWarning("PlayerMovement: Animator not found on GameObject or children. Please assign an Animator in the inspector.");
+			}
+		}
 	}
 
 	private void Update()
@@ -37,10 +51,12 @@ public class PlayerMovement : MonoBehaviour
 		if (isFlying)
 		{
 			HandleFlightMovement();
+			UpdateAnimatorParameters(Vector2.zero); // flight movement sets its own speed inside the handler
 			return;
 		}
 
 		HandleGroundedMovement();
+		// animator params updated inside grounded handler
 	}
 
 	private void UpdateFlightToggle()
@@ -77,12 +93,18 @@ public class PlayerMovement : MonoBehaviour
 		if (isGrounded && inputHandler.IsJumping)
 		{
 			verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+			if (animator != null)
+			{
+				animator.SetTrigger("JumpTrigger");
+			}
 		}
 
 		verticalVelocity += gravity * Time.deltaTime;
 		horizontalMove.y = verticalVelocity;
 
 		characterController.Move(horizontalMove * Time.deltaTime);
+
+		UpdateAnimatorParameters(moveInput, isGrounded);
 	}
 
 	private void HandleFlightMovement()
@@ -103,5 +125,25 @@ public class PlayerMovement : MonoBehaviour
 		move.y = verticalInput * flightVerticalSpeed;
 
 		characterController.Move(move * Time.deltaTime);
+
+		UpdateAnimatorParameters(moveInput, /*isGrounded*/ false);
+	}
+
+	private void UpdateAnimatorParameters(Vector2 moveInput, bool isGrounded = true)
+	{
+		if (animator == null) return;
+
+		// Speed: use normalized horizontal input magnitude (0..1) for blending
+		float normalizedSpeed = Mathf.Clamp01(moveInput.magnitude);
+		animator.SetFloat("Speed", normalizedSpeed);
+
+		if (debugAnimator)
+		{
+			Debug.Log($"Animator Params -> Speed: {normalizedSpeed}, IsGrounded: {isGrounded}, IsFlying: {isFlying}, IsSprinting: {inputHandler.IsSprinting}");
+		}
+
+		animator.SetBool("IsGrounded", isGrounded);
+		animator.SetBool("IsSprinting", inputHandler.IsSprinting);
+		animator.SetBool("IsFlying", isFlying);
 	}
 }
