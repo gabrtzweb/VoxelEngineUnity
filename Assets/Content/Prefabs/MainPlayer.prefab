@@ -77,8 +77,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 5
   sprintSpeed: 8
+  crouchSpeed: 2.6
+  crawlSpeed: 1.5
   jumpHeight: 1.25
   gravity: -25
+  flightSpeed: 7
+  flightSprintMultiplier: 2
+  flightVerticalSpeed: 6
+  doubleTapJumpWindow: 0.28
+  standingHeight: 1.8
+  crouchHeight: 1.4
+  crawlHeight: 0.6
+  cameraTarget: {fileID: 2557458961549695365}
 --- !u!114 &5775300402452204387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,7 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   cameraPivot: {fileID: 2557458961549695365}
   yawRoot: {fileID: 0}
-  lookSensitivity: 0.12
+  lookSensitivity: 0.4
   minPitch: -89
   maxPitch: 89
 --- !u!114 &5018029380731804262
