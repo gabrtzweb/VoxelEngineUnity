@@ -13,6 +13,7 @@ namespace VoxelEngine
 		public float caveStartDepth = 4f;
 		public float caveEndDepth = 64f;
 		public float caveFadeDepth = 16f;
+		public float biomeBlendWidth = 0.12f;
 
 		public Color32 grassColor = new Color32(112, 150, 48, 255);
 		public Color32 dirtColor = new Color32(97, 75, 66, 255);
@@ -24,6 +25,7 @@ namespace VoxelEngine
 			SetInterpBitStep(1);
 			SetNoiseArraySize(6);
 			EnsureNoiseComponents();
+			ConfigureNoiseComponents();
 
 			minHeight = Mathf.Min(-grassTerrainScale - fastNoiseSIMDUnity[2].perturbAmp, -desertTerrainScale)
 				- caveEndDepth - caveFadeDepth;
@@ -51,10 +53,14 @@ namespace VoxelEngine
 				for (int y = 0; y < interpSize; y++)
 				{
 					float yf = (y << interpBitStep) + yOffset;
+					float undergroundDepth = Mathf.Max(0f, -yf);
+					float caveMix = GetCaveMix(undergroundDepth);
 
 					for (int z = 0; z < interpSize; z++)
 					{
-						float biomeMix = (biomeNoise[index] + 1f)*0.5f;
+						float biomeMix = Mathf.InverseLerp(0.5f - biomeBlendWidth, 0.5f + biomeBlendWidth,
+							(biomeNoise[index] + 1f)*0.5f);
+						biomeMix = biomeMix*biomeMix*(3f - 2f*biomeMix);
 
 						float grassDensity = grassTerrainNoise[index]*grassTerrainScale - yf;
 						grassDensity += grassPerturbNoise[index]*fastNoiseSIMDUnity[2].perturbAmp;
@@ -65,7 +71,6 @@ namespace VoxelEngine
 						desertDensity = desertDensity*desertTerrainScale - yf;
 
 						float surfaceDensity = Mathf.Lerp(grassDensity, desertDensity, biomeMix);
-						float caveMix = GetCaveMix(surfaceDensity);
 						float caveDensity = (caveRatio - caveNoise[index])*32f;
 						float undergroundDensity = Mathf.Lerp(32f, caveDensity, caveMix);
 
@@ -93,10 +98,10 @@ namespace VoxelEngine
 			return stoneColor;
 		}
 
-		private float GetCaveMix(float surfaceDensity)
+		private float GetCaveMix(float undergroundDepth)
 		{
-			float enter = Mathf.InverseLerp(caveStartDepth, caveStartDepth + caveFadeDepth, surfaceDensity);
-			float exit = 1f - Mathf.InverseLerp(caveEndDepth, caveEndDepth + caveFadeDepth, surfaceDensity);
+			float enter = Mathf.InverseLerp(caveStartDepth, caveStartDepth + caveFadeDepth, undergroundDepth);
+			float exit = 1f - Mathf.InverseLerp(caveEndDepth, caveEndDepth + caveFadeDepth, undergroundDepth);
 
 			return Mathf.Clamp01(enter*exit);
 		}
@@ -110,6 +115,24 @@ namespace VoxelEngine
 
 				if (string.IsNullOrEmpty(fastNoiseSIMDUnity[i].noiseName) || fastNoiseSIMDUnity[i].noiseName == "Default Noise")
 					fastNoiseSIMDUnity[i].noiseName = GetNoiseSlotName(i);
+			}
+		}
+
+		private void ConfigureNoiseComponents()
+		{
+			for (int i = 0; i < fastNoiseSIMDUnity.Length; i++)
+			{
+				FastNoiseSIMDUnity noise = fastNoiseSIMDUnity[i];
+
+				if (noise == null)
+					continue;
+
+				if (i < 5)
+					noise.axisScales = new Vector3(1f, 0f, 1f);
+				else
+					noise.axisScales = Vector3.one;
+
+				noise.SaveSettings();
 			}
 		}
 
