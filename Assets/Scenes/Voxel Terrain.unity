@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 180904047}
   - component: {fileID: 180904046}
   m_Layer: 0
-  m_Name: firstPersonCamera
+  m_Name: FPCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -670,7 +670,7 @@ GameObject:
   - component: {fileID: 922716811}
   - component: {fileID: 922716810}
   m_Layer: 0
-  m_Name: thirdPersonCamera
+  m_Name: TPCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -724,11 +724,11 @@ MonoBehaviour:
   CameraSide: 1
   CameraDistance: 2
   AvoidObstacles:
-    Enabled: 0
+    Enabled: 1
     CollisionFilter:
       serializedVersion: 2
       m_Bits: 1
-    IgnoreTag: 
+    IgnoreTag: Player
     CameraRadius: 0.2
     DampingIntoCollision: 0
     DampingFromCollision: 0.5
