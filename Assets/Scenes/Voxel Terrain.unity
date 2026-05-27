@@ -214,8 +214,8 @@ MonoBehaviour:
   perturbGain: 0.5
   generalSettingsFold: 1
   fractalSettingsFold: 1
-  cellularSettingsFold: 0
-  perturbSettingsFold: 0
+  cellularSettingsFold: 1
+  perturbSettingsFold: 1
 --- !u!114 &69701491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,7 +252,7 @@ MonoBehaviour:
   perturbLacunarity: 2
   perturbGain: 0.5
   generalSettingsFold: 1
-  fractalSettingsFold: 0
+  fractalSettingsFold: 1
   cellularSettingsFold: 1
   perturbSettingsFold: 1
 --- !u!1 &180904045
@@ -420,7 +420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84bc4116c6e867f49b870936045044d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainGenerator: {fileID: 1550379471}
+  terrainGenerator: {fileID: 379847230}
   targetTransform: {fileID: 848267899}
   loadDistance: 256
   unloadDistanceModifier: 1.2
@@ -431,6 +431,317 @@ MonoBehaviour:
   showDebugInfo: 1
   directionalLight: {fileID: 550396898}
   cameraLight: {fileID: 1466604065}
+--- !u!1 &379847223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 379847231}
+  - component: {fileID: 379847230}
+  - component: {fileID: 379847229}
+  - component: {fileID: 379847228}
+  - component: {fileID: 379847227}
+  - component: {fileID: 379847226}
+  - component: {fileID: 379847225}
+  - component: {fileID: 379847224}
+  m_Layer: 0
+  m_Name: TG SIMD - World
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &379847224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379847223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
+  noiseName: Caves
+  seed: 1337
+  frequency: 0.003
+  noiseType: 7
+  axisScales: {x: 1, y: 1, z: 1}
+  octaves: 3
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 0
+  cellularDistanceFunction: 0
+  cellularReturnType: 8
+  cellularNoiseLookupType: 4
+  cellularNoiseLookupFrequency: 0.2
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.3
+  perturbType: 2
+  perturbAmp: 0.3
+  perturbFrequency: 3
+  perturbNormaliseLength: 1
+  perturbOctaves: 2
+  perturbLacunarity: 12
+  perturbGain: 0.08
+  generalSettingsFold: 1
+  fractalSettingsFold: 1
+  cellularSettingsFold: 1
+  perturbSettingsFold: 1
+--- !u!114 &379847225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379847223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
+  noiseName: Desert Canyon
+  seed: 1234
+  frequency: 0.003
+  noiseType: 7
+  axisScales: {x: 1, y: 0.5, z: 1}
+  octaves: 3
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 0
+  cellularDistanceFunction: 2
+  cellularReturnType: 3
+  cellularNoiseLookupType: 4
+  cellularNoiseLookupFrequency: 0.2
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  perturbType: 2
+  perturbAmp: 1.75
+  perturbFrequency: 0.5
+  perturbNormaliseLength: 1
+  perturbOctaves: 3
+  perturbLacunarity: 2
+  perturbGain: 0.5
+  generalSettingsFold: 1
+  fractalSettingsFold: 1
+  cellularSettingsFold: 1
+  perturbSettingsFold: 1
+--- !u!114 &379847226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379847223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
+  noiseName: Desert Height
+  seed: 1337
+  frequency: 0.004
+  noiseType: 3
+  axisScales: {x: 1, y: 1, z: 1}
+  octaves: 3
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 0
+  cellularDistanceFunction: 0
+  cellularReturnType: 5
+  cellularNoiseLookupType: 4
+  cellularNoiseLookupFrequency: 0.2
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  perturbType: 0
+  perturbAmp: 1
+  perturbFrequency: 0.5
+  perturbNormaliseLength: 1
+  perturbOctaves: 3
+  perturbLacunarity: 2
+  perturbGain: 0.5
+  generalSettingsFold: 1
+  fractalSettingsFold: 1
+  cellularSettingsFold: 1
+  perturbSettingsFold: 1
+--- !u!114 &379847227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379847223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
+  noiseName: Grass Warp
+  seed: 1337
+  frequency: 0.012
+  noiseType: 4
+  axisScales: {x: 1, y: 1, z: 1}
+  octaves: 2
+  lacunarity: 1.8
+  gain: 0.7
+  fractalType: 2
+  cellularDistanceFunction: 0
+  cellularReturnType: 0
+  cellularNoiseLookupType: 4
+  cellularNoiseLookupFrequency: 0.2
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  perturbType: 0
+  perturbAmp: 1
+  perturbFrequency: 0.5
+  perturbNormaliseLength: 1
+  perturbOctaves: 3
+  perturbLacunarity: 2
+  perturbGain: 0.5
+  generalSettingsFold: 1
+  fractalSettingsFold: 1
+  cellularSettingsFold: 1
+  perturbSettingsFold: 1
+--- !u!114 &379847228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379847223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
+  noiseName: Grass Height
+  seed: 1337
+  frequency: 0.007
+  noiseType: 5
+  axisScales: {x: 1, y: 1, z: 1}
+  octaves: 3
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 2
+  cellularDistanceFunction: 0
+  cellularReturnType: 0
+  cellularNoiseLookupType: 4
+  cellularNoiseLookupFrequency: 0.2
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  perturbType: 0
+  perturbAmp: 1
+  perturbFrequency: 0.5
+  perturbNormaliseLength: 1
+  perturbOctaves: 3
+  perturbLacunarity: 2
+  perturbGain: 0.5
+  generalSettingsFold: 1
+  fractalSettingsFold: 1
+  cellularSettingsFold: 1
+  perturbSettingsFold: 0
+--- !u!114 &379847229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379847223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7826176e38e08409e4f3effeb8a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FastNoiseSIMDUnity
+  noiseName: Biome Blend
+  seed: 1337
+  frequency: 0.004
+  noiseType: 4
+  axisScales: {x: 1, y: 1, z: 1}
+  octaves: 3
+  lacunarity: 2
+  gain: 0.5
+  fractalType: 0
+  cellularDistanceFunction: 0
+  cellularReturnType: 1
+  cellularNoiseLookupType: 4
+  cellularNoiseLookupFrequency: 0.2
+  cellularDistanceIndex0: 0
+  cellularDistanceIndex1: 1
+  cellularJitter: 0.45
+  perturbType: 0
+  perturbAmp: 1
+  perturbFrequency: 0.5
+  perturbNormaliseLength: 1
+  perturbOctaves: 3
+  perturbLacunarity: 2
+  perturbGain: 0.5
+  generalSettingsFold: 1
+  fractalSettingsFold: 1
+  cellularSettingsFold: 1
+  perturbSettingsFold: 1
+--- !u!114 &379847230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379847223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a10792423ba5aaf41a7295ee8fb7511b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoxelEngine.TerrainGeneratorSIMD_World
+  fastNoiseSIMDUnity:
+  - {fileID: 379847229}
+  - {fileID: 379847228}
+  - {fileID: 379847227}
+  - {fileID: 379847226}
+  - {fileID: 379847225}
+  - {fileID: 379847224}
+  grassTerrainScale: 20
+  desertTerrainScale: 20
+  canyonMaxHeight: 2
+  canyonGradient: 3
+  caveRatio: 0.88
+  caveStartDepth: 4
+  caveEndDepth: 64
+  caveFadeDepth: 16
+  grassColor:
+    serializedVersion: 2
+    rgba: 4281374320
+  dirtColor:
+    serializedVersion: 2
+    rgba: 4282534753
+  stoneColor:
+    serializedVersion: 2
+    rgba: 4288059030
+  sandColor:
+    serializedVersion: 2
+    rgba: 4278370032
+--- !u!4 &379847231
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379847223}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &550396897
 GameObject:
   m_ObjectHideFlags: 0
@@ -612,7 +923,7 @@ MonoBehaviour:
   perturbLacunarity: 12
   perturbGain: 0.08
   generalSettingsFold: 1
-  fractalSettingsFold: 0
+  fractalSettingsFold: 1
   cellularSettingsFold: 1
   perturbSettingsFold: 1
 --- !u!114 &783630702
@@ -1137,7 +1448,7 @@ MonoBehaviour:
   generalSettingsFold: 1
   fractalSettingsFold: 1
   cellularSettingsFold: 1
-  perturbSettingsFold: 0
+  perturbSettingsFold: 1
 --- !u!114 &1550379470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1176,7 +1487,7 @@ MonoBehaviour:
   generalSettingsFold: 1
   fractalSettingsFold: 1
   cellularSettingsFold: 1
-  perturbSettingsFold: 0
+  perturbSettingsFold: 1
 --- !u!114 &1550379471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1337,4 +1648,5 @@ SceneRoots:
   - {fileID: 1550379468}
   - {fileID: 69701489}
   - {fileID: 783630703}
+  - {fileID: 379847231}
   - {fileID: 1931700746}
