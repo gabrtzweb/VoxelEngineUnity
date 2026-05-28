@@ -5,10 +5,7 @@ namespace VoxelEngine
 	public class TerrainGeneratorSIMD_World : TerrainGeneratorSIMD
 	{
 		public float grassTerrainScale = 20f;
-		public float grassWarpStrength = 4f;
 		public float desertTerrainScale = 20f;
-		public float canyonMaxHeight = 2f;
-		public float canyonGradient = 3f;
 
 		public float caveRatio = .88f;
 		public float caveStartDepth = 4f;
@@ -29,11 +26,11 @@ namespace VoxelEngine
 			EnsureNoiseComponents();
 			ConfigureNoiseComponents();
 
-			minHeight = Mathf.Min(-grassTerrainScale - grassWarpStrength, -desertTerrainScale)
+			minHeight = Mathf.Min(-grassTerrainScale, -desertTerrainScale)
 				- caveEndDepth - caveFadeDepth;
 			maxHeight = Mathf.Max(
-				grassTerrainScale + grassWarpStrength,
-				desertTerrainScale*(canyonMaxHeight + 1f));
+				grassTerrainScale,
+				desertTerrainScale);
 		}
 
 		public override void GenerateChunk(Chunk chunk)
@@ -61,11 +58,8 @@ namespace VoxelEngine
 					biomeMixes[surfaceIndex] = biomeMix;
 
 					float grassHeight = grassNoise[surfaceIndex] * grassTerrainScale;
-					grassHeight += Mathf.Sin((worldX + worldZ) * 0.0007f) * grassWarpStrength;
 
 					float desertHeight = desertNoise[surfaceIndex] * desertTerrainScale;
-					desertHeight = Mathf.Min(desertHeight + canyonMaxHeight,
-						Mathf.Max(desertHeight, canyonGradient * desertNoise[surfaceIndex] * Mathf.Abs(desertNoise[surfaceIndex])));
 
 					surfaceHeights[surfaceIndex++] = Mathf.Lerp(grassHeight, desertHeight, biomeMix);
 				}
@@ -199,10 +193,10 @@ namespace VoxelEngine
 			return Voxel.BlockType.Stone;
 		}
 
-			private static float NoiseTo01(float value)
-			{
-				return Mathf.Clamp01((value + 1f) * 0.5f);
-			}
+		private static float NoiseTo01(float value)
+		{
+			return Mathf.Clamp01((value + 1f) * 0.5f);
+		}
 
 		private float GetCaveMix(float undergroundDepth)
 		{
