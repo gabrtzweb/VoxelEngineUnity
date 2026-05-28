@@ -30,8 +30,25 @@ namespace VoxelEngine
 
 	public struct Voxel
 	{
-		public static readonly Voxel Solid = new Voxel(1f);
-		public static readonly Voxel Empty = new Voxel(-1f);
+		public enum BlockType : byte
+		{
+			Empty,
+			Grass,
+			Dirt,
+			Sand,
+			Stone,
+		}
+
+		public static readonly Voxel Solid = new Voxel(1f, BlockType.Stone);
+		public static readonly Voxel Empty = new Voxel(-1f, BlockType.Empty);
+
+		private byte _blockTypeByte;
+
+		public BlockType blockType
+		{
+			get { return (BlockType)_blockTypeByte; }
+			set { _blockTypeByte = (byte)value; }
+		}
 
 #if STORE_AS_BYTE
 		private byte _densityByte;
@@ -46,9 +63,10 @@ namespace VoxelEngine
 			set { _densityByte = (byte) (Math.Min(DENSITY_BYTE_LIMIT, Math.Max(-DENSITY_BYTE_LIMIT, value)) * DENSITY_BYTE_CONVERT + 127.5f); }
 		}
 
-		public Voxel(float density = -1.0f)
+		public Voxel(float density = -1.0f, BlockType blockType = BlockType.Stone)
 		{
 			_densityByte = (byte)(Math.Min(DENSITY_BYTE_LIMIT, Math.Max(-DENSITY_BYTE_LIMIT, density)) * DENSITY_BYTE_CONVERT + 127.5f);
+			_blockTypeByte = (byte)blockType;
 		}
 
 		public bool IsSolid()
@@ -65,9 +83,10 @@ namespace VoxelEngine
 			set { _densityHalf = HalfHelper.SingleToHalf(value); }
 		}
 
-		public Voxel(float density = -1.0f)
+		public Voxel(float density = -1.0f, BlockType blockType = BlockType.Stone)
 		{
 			_densityHalf = HalfHelper.SingleToHalf(density);
+			_blockTypeByte = (byte)blockType;
 		}
 
 		public bool IsSolid()
@@ -78,9 +97,10 @@ namespace VoxelEngine
 #elif STORE_AS_FLOAT
 		public float density;
 
-		public Voxel(float density = -1.0f)
+		public Voxel(float density = -1.0f, BlockType blockType = BlockType.Stone)
 		{
 			this.density = density;
+			_blockTypeByte = (byte)blockType;
 		}
 
 		public bool IsSolid()

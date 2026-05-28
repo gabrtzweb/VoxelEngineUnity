@@ -168,7 +168,7 @@ public class FastNoiseSIMDUnityEditor : Editor
 		{
 			for (int x = 0; x < tex.width; x++)
 			{
-				vectors[index++] = new Vector3(x, y);
+				vectors[index++] = new Vector3(x, 0f, y);
 			}
 		}
 

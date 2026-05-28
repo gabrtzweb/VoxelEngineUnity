@@ -43,6 +43,15 @@ namespace VoxelEngine
 		public Light directionalLight;
 		public Light cameraLight;
 
+		void Awake()
+		{
+			if (terrainGenerator == null)
+				terrainGenerator = FindAnyObjectByType<TerrainGeneratorBase>();
+
+			if (terrainGenerator == null)
+				UnityEngine.Debug.LogError("VoxelEngineManager needs a terrainGenerator assigned.");
+		}
+
 		void Start()
 		{
 			averageFPS = targetFPS;
