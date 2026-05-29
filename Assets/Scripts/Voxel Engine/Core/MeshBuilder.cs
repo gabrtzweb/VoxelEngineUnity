@@ -985,7 +985,8 @@ namespace VoxelEngine
 			if (adjIndex == -2)
 				return chunk.voxelData[voxelIndex];
 
-			return chunk.adjChunks[Math.Min(adjIndex, 6)].voxelData[voxelIndex];
+			Chunk adjChunk = chunk.adjChunks[Math.Min(adjIndex, 6)];
+			return adjChunk != null ? adjChunk.voxelData[voxelIndex] : Voxel.Empty;
 		}
 
 		private static Voxel GetAdjVoxel(int localX, int localY, int localZ)
@@ -1011,7 +1012,8 @@ namespace VoxelEngine
 			if (adjIndex == -2)
 				return chunk.GetVoxelUnsafe(localX, localY, localZ);
 
-			return chunk.adjChunks[Math.Min(adjIndex, 6)].GetVoxelUnsafe(localX, localY, localZ);
+			Chunk adjChunk = chunk.adjChunks[Math.Min(adjIndex, 6)];
+			return adjChunk != null ? adjChunk.GetVoxelUnsafe(localX, localY, localZ) : Voxel.Empty;
 		}
 
 		private static Voxel GetAdjVoxelLeft(int voxelIndex, int localX)
@@ -1022,7 +1024,8 @@ namespace VoxelEngine
 				return chunk.voxelData[voxelIndex];
 
 			voxelIndex += Chunk.VOXEL_STEP_CHUNK_X;
-			return chunk.adjChunks[(int)Chunk.AdjDirection.Left].voxelData[voxelIndex];
+			Chunk adjChunk = chunk.adjChunks[(int)Chunk.AdjDirection.Left];
+			return adjChunk != null ? adjChunk.voxelData[voxelIndex] : Voxel.Empty;
 		}
 
 		private static Voxel GetAdjVoxelDown(int voxelIndex, int localY)
@@ -1033,7 +1036,8 @@ namespace VoxelEngine
 				return chunk.voxelData[voxelIndex];
 
 			voxelIndex += Chunk.VOXEL_STEP_CHUNK_Y;
-			return chunk.adjChunks[(int)Chunk.AdjDirection.Down].voxelData[voxelIndex];
+			Chunk adjChunk = chunk.adjChunks[(int)Chunk.AdjDirection.Down];
+			return adjChunk != null ? adjChunk.voxelData[voxelIndex] : Voxel.Empty;
 		}
 
 		private static Voxel GetAdjVoxelBack(int voxelIndex, int localZ)
@@ -1044,7 +1048,8 @@ namespace VoxelEngine
 				return chunk.voxelData[voxelIndex];
 
 			voxelIndex += Chunk.VOXEL_STEP_CHUNK_Z;
-			return chunk.adjChunks[(int)Chunk.AdjDirection.Back].voxelData[voxelIndex];
+			Chunk adjChunk = chunk.adjChunks[(int)Chunk.AdjDirection.Back];
+			return adjChunk != null ? adjChunk.voxelData[voxelIndex] : Voxel.Empty;
 		}
 
 		public struct Quad

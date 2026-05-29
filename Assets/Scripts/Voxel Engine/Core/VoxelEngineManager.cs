@@ -213,13 +213,15 @@ namespace VoxelEngine
 
 			// Allow more time meshing if above target FPS
 			int milliMax = Mathf.RoundToInt(averageFPS - targetFPS);
+			int itemsToProcess = chunkMeshQueue.Count;
 
-			while (chunkMeshQueue.Count > 0)
+			while (itemsToProcess-- > 0 && chunkMeshQueue.Count > 0)
 			{
 				Chunk chunk;
+				Vector3i chunkPos = chunkMeshQueue.Dequeue();
 
 				// Try and get the chunk from it's postion (it may have been unloaded since it was added to queue)
-				if (!chunkMap.TryGetValue(chunkMeshQueue.Dequeue(), out chunk))
+				if (!chunkMap.TryGetValue(chunkPos, out chunk))
 					continue;
 
 				// This should always be true, but adjacent chunks may have unloaded since being added to queue
@@ -229,7 +231,10 @@ namespace VoxelEngine
 					meshesLastFrame++;
 				}
 				else
+				{
+					chunkMeshQueue.Enqueue(chunkPos);
 					continue;
+				}
 				
 				// Stop meshing if too long has been spent updating this frame
 				// This is at the end of the loop to ensure at least 1 mesh will generate per frame
