@@ -36,6 +36,7 @@ namespace VoxelEngine
 			Grass,
 			Dirt,
 			Sand,
+			Water,
 			Stone,
 		}
 

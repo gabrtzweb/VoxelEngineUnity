@@ -13,11 +13,7 @@ namespace VoxelEngine
 		public float caveFadeDepth = 16f;
 
 		public float biomeTransitionWidth = 0.1f;
-
-		public Color32 grassColor = new Color32(112, 150, 48, 255);
-		public Color32 dirtColor = new Color32(97, 75, 66, 255);
-		public Color32 stoneColor = new Color32(150, 150, 150, 255);
-		public Color32 sandColor = new Color32(240, 190, 2, 255);
+		public float seaLevel = 0f;
 
 		public override void Awake()
 		{
@@ -30,7 +26,8 @@ namespace VoxelEngine
 				- caveEndDepth - caveFadeDepth;
 			maxHeight = Mathf.Max(
 				grassTerrainScale,
-				desertTerrainScale);
+				desertTerrainScale,
+				seaLevel);
 		}
 
 		public override void GenerateChunk(Chunk chunk)
@@ -87,6 +84,13 @@ namespace VoxelEngine
 								blockType = Voxel.BlockType.Stone;
 						}
 
+						// Fill only open air up to sea level (does not flood enclosed caves below terrain).
+						if (density <= 0f && worldY <= seaLevel && worldY > surfaceHeight)
+						{
+							density = 1f;
+							blockType = Voxel.BlockType.Water;
+						}
+
 						ChunkFillUpdate(chunk, voxelData[voxelIndex++] = new Voxel(density, blockType));
 					}
 				}
@@ -95,19 +99,29 @@ namespace VoxelEngine
 
 		public override Color32 DensityColor(Voxel voxel)
 		{
-			switch (voxel.blockType)
-			{
-				case Voxel.BlockType.Grass:
-					return grassColor;
-				case Voxel.BlockType.Dirt:
-					return dirtColor;
-				case Voxel.BlockType.Sand:
-					return sandColor;
-				case Voxel.BlockType.Stone:
-					return stoneColor;
-				default:
-					return stoneColor;
-			}
+			return BlockData.GetColor(voxel.blockType);
+		}
+
+		public string GetSurfaceBiomeName(Vector3 worldPosition)
+		{
+			Vector3i sampleChunkPos = new Vector3i(
+				Mathf.FloorToInt(worldPosition.x) >> Chunk.BIT_SIZE,
+				0,
+				Mathf.FloorToInt(worldPosition.z) >> Chunk.BIT_SIZE);
+
+			float[] worldNoise = GetSurfaceNoise(0, sampleChunkPos);
+			float[] grassNoise = GetSurfaceNoise(1, sampleChunkPos);
+			float[] desertNoise = GetSurfaceNoise(2, sampleChunkPos);
+
+			int localX = Mathf.Clamp(Mathf.FloorToInt(worldPosition.x) & Chunk.BIT_MASK, 0, Chunk.SIZE - 1);
+			int localZ = Mathf.Clamp(Mathf.FloorToInt(worldPosition.z) & Chunk.BIT_MASK, 0, Chunk.SIZE - 1);
+
+			float surfaceHeight = BilinearSurfaceLookup(localX, localZ, BuildSurfaceHeights(worldNoise, grassNoise, desertNoise));
+			if (surfaceHeight <= seaLevel)
+				return "Ocean";
+
+			float biomeMix = BilinearSurfaceLookup(localX, localZ, BuildBiomeMixes(worldNoise));
+			return biomeMix < 0.5f ? "Grasslands" : "Desert";
 		}
 
 		private float[] GetSurfaceNoise(int noiseArrayIndex, Vector3i chunkPos)
@@ -122,6 +136,34 @@ namespace VoxelEngine
 				1,
 				interpSize,
 				1 << interpBitStep);
+		}
+
+		private float[] BuildSurfaceHeights(float[] worldNoise, float[] grassNoise, float[] desertNoise)
+		{
+			float[] surfaceHeights = new float[interpSize * interpSize];
+			int surfaceIndex = 0;
+
+			for (int x = 0; x < interpSize; x++)
+			{
+				for (int z = 0; z < interpSize; z++)
+				{
+					float biomeMix = GetBiomeMix(worldNoise[surfaceIndex]);
+					float grassHeight = grassNoise[surfaceIndex] * grassTerrainScale;
+					float desertHeight = desertNoise[surfaceIndex] * desertTerrainScale;
+					surfaceHeights[surfaceIndex++] = Mathf.Lerp(grassHeight, desertHeight, biomeMix);
+				}
+			}
+
+			return surfaceHeights;
+		}
+
+		private float[] BuildBiomeMixes(float[] worldNoise)
+		{
+			float[] biomeMixes = new float[interpSize * interpSize];
+			for (int i = 0; i < worldNoise.Length; i++)
+				biomeMixes[i] = GetBiomeMix(worldNoise[i]);
+
+			return biomeMixes;
 		}
 
 		private float BilinearSurfaceLookup(float localX, float localZ, float[] surfaceHeights)

@@ -22,7 +22,6 @@ namespace VoxelEngine
 		public int maxThreads = 8;
 		public float targetFPS = 60f;
 		public Material meshMaterial;
-		public bool showDebugInfo = true;
 
 		// More low level voxel engine settings can be found in Chunk.cs
 
@@ -56,42 +55,18 @@ namespace VoxelEngine
 		{
 			averageFPS = targetFPS;
 
-			if (showDebugInfo)
-				UnityEngine.Debug.Log("FastNoiseSIMD level: " + FastNoiseSIMD.GetSIMDLevel());
-
 			ResetAll();
 		}
 
-		// Draw debug info and terrain generator buttons
-		void OnGUI()
-		{
-			int labelSpacing = 18;
-			Rect rect = new Rect(4, 0, 300, 20);
-
-			if (showDebugInfo)
-			{
-				GUI.Label(rect, "Pooled Chunks: " + chunkPool.Count);
-				rect.y += labelSpacing;
-				GUI.Label(rect, "Pooled Chunk GameObjects: " + Chunk.chunkGameObjectPool.Count);
-				rect.y += labelSpacing;
-				GUI.Label(rect, "Chunks Loaded: " + chunkMap.Count);
-				rect.y += labelSpacing;
-				GUI.Label(rect, "Chunk Queue: " + chunkQueue.Count);
-				rect.y += labelSpacing;
-				GUI.Label(rect, "Chunk Mesh Queue: " + chunkMeshQueue.Count);
-				rect.y += labelSpacing;
-				GUI.Label(rect, "Meshes Last Frame: " + meshesLastFrame);
-				rect.y += labelSpacing;
-				GUI.Label(rect, "Update Time Last Frame: " + updateTimerLastFrame + "ms");
-				rect.y += labelSpacing;
-				GUI.Label(rect, "Thread Count: " + threadCount);
-				rect.y += labelSpacing;
-				GUI.Label(rect, "FPS: " + string.Format("{0:0.0}", averageFPS));
-			}
-
-			rect = new Rect(Screen.width - 172, 2, 170, 20);
-			labelSpacing = 22;
-		}
+		public int PooledChunkCount => chunkPool.Count;
+		public int PooledChunkGameObjectCount => Chunk.chunkGameObjectPool.Count;
+		public int LoadedChunkCount => chunkMap.Count;
+		public int ChunkQueueCount => chunkQueue.Count;
+		public int ChunkMeshQueueCount => chunkMeshQueue.Count;
+		public int MeshesLastFrame => meshesLastFrame;
+		public int UpdateTimeLastFrameMs => updateTimerLastFrame;
+		public int ThreadCount => threadCount;
+		public float AverageFPS => averageFPS;
 
 		void ResetAll(bool useCameraLight = false)
 		{
