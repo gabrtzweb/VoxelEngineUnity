@@ -85,7 +85,7 @@ namespace VoxelEngine
 						}
 
 						// Fill only open air up to sea level (does not flood enclosed caves below terrain).
-						if (density <= 0f && worldY <= seaLevel && worldY > surfaceHeight)
+						if (density <= 0f && worldY <= seaLevel && worldY >= surfaceHeight - 0.001f)
 						{
 							density = 1f;
 							blockType = Voxel.BlockType.Water;

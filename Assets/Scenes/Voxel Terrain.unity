@@ -434,7 +434,7 @@ MonoBehaviour:
   - {fileID: 344263518}
   - {fileID: 344263517}
   - {fileID: 344263516}
-  grassTerrainScale: 20
+  grassTerrainScale: 40
   desertTerrainScale: 20
   caveRatio: 0.88
   caveStartDepth: 4

@@ -61,12 +61,17 @@ namespace VoxelEngine
 		public float density
 		{
 			get { return (_densityByte - 127.5f) * DENSITY_BYTE_CONVERT_INV; }
-			set { _densityByte = (byte) (Math.Min(DENSITY_BYTE_LIMIT, Math.Max(-DENSITY_BYTE_LIMIT, value)) * DENSITY_BYTE_CONVERT + 127.5f); }
+			set
+			{
+				float encoded = Math.Min(DENSITY_BYTE_LIMIT, Math.Max(-DENSITY_BYTE_LIMIT, value)) * DENSITY_BYTE_CONVERT + 127.5f;
+				_densityByte = (byte)Math.Max(0f, Math.Min(255f, encoded + 0.5f));
+			}
 		}
 
 		public Voxel(float density = -1.0f, BlockType blockType = BlockType.Stone)
 		{
-			_densityByte = (byte)(Math.Min(DENSITY_BYTE_LIMIT, Math.Max(-DENSITY_BYTE_LIMIT, density)) * DENSITY_BYTE_CONVERT + 127.5f);
+			float encoded = Math.Min(DENSITY_BYTE_LIMIT, Math.Max(-DENSITY_BYTE_LIMIT, density)) * DENSITY_BYTE_CONVERT + 127.5f;
+			_densityByte = (byte)Math.Max(0f, Math.Min(255f, encoded + 0.5f));
 			_blockTypeByte = (byte)blockType;
 		}
 
