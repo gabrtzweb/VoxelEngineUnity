@@ -172,25 +172,17 @@ public class PlayerInteractions : MonoBehaviour
 	private void RefreshChunkAndNeighbors(Chunk chunk, int localX, int localY, int localZ)
 	{
 		RefreshChunkImmediate(chunk);
-		MarkBoundaryNeighborsDirty(chunk, localX, localY, localZ);
+		RefreshAdjacentChunks(chunk);
 	}
 
-	private void MarkBoundaryNeighborsDirty(Chunk chunk, int localX, int localY, int localZ)
+	private void RefreshAdjacentChunks(Chunk chunk)
 	{
-		if (localX == 0)
-			RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.left));
-		else if (localX == Chunk.BIT_MASK)
-			RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.right));
-
-		if (localY == 0)
-			RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.down));
-		else if (localY == Chunk.BIT_MASK)
-			RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.up));
-
-		if (localZ == 0)
-			RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.back));
-		else if (localZ == Chunk.BIT_MASK)
-			RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.forward));
+		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.left));
+		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.right));
+		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.down));
+		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.up));
+		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.back));
+		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.forward));
 	}
 
 	private void RefreshChunkImmediate(Chunk chunk)
@@ -198,9 +190,9 @@ public class PlayerInteractions : MonoBehaviour
 		if (chunk == null)
 			return;
 
-		chunk.FillAdjChunks();
 		chunk.dirtyMesh = true;
 		chunk.fillType = Chunk.FillType.Mixed;
+		chunk.FillAdjChunks();
 		chunk.BuildMesh();
 
 		if (voxelEngineManager != null && !chunk.CanBuildMesh())
