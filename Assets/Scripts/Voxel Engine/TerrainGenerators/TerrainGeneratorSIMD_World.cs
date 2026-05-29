@@ -51,9 +51,6 @@ namespace VoxelEngine
 			{
 				for (int z = 0; z < interpSize; z++)
 				{
-					int worldX = (chunk.chunkPos.x << Chunk.BIT_SIZE) + (x << interpBitStep);
-					int worldZ = (chunk.chunkPos.z << Chunk.BIT_SIZE) + (z << interpBitStep);
-
 					float biomeMix = GetBiomeMix(worldNoise[surfaceIndex]);
 					biomeMixes[surfaceIndex] = biomeMix;
 
@@ -68,17 +65,14 @@ namespace VoxelEngine
 			int voxelIndex = 0;
 			for (int x = 0; x < Chunk.SIZE; x++)
 			{
-				float localX = x * interpScale;
-
 				for (int y = 0; y < Chunk.SIZE; y++)
 				{
 					float worldY = yOffset + y;
 
 					for (int z = 0; z < Chunk.SIZE; z++)
 					{
-						float localZ = z * interpScale;
-						float surfaceHeight = BilinearSurfaceLookup(localX, localZ, surfaceHeights);
-						float biomeMix = BilinearSurfaceLookup(localX, localZ, biomeMixes);
+						float surfaceHeight = BilinearSurfaceLookup(x, z, surfaceHeights);
+						float biomeMix = BilinearSurfaceLookup(x, z, biomeMixes);
 						float density = surfaceHeight - worldY;
 						Voxel.BlockType blockType = GetBlockType(density, biomeMix);
 
@@ -144,8 +138,8 @@ namespace VoxelEngine
 			int index = z0 + x0 * interpSize;
 
 			return Lerp(
-				Lerp(surfaceHeights[index], surfaceHeights[index + interpSize], zs),
-				Lerp(surfaceHeights[index + 1], surfaceHeights[index + interpSize + 1], zs),
+				Lerp(surfaceHeights[index], surfaceHeights[index + 1], zs),
+				Lerp(surfaceHeights[index + interpSize], surfaceHeights[index + interpSize + 1], zs),
 				xs);
 		}
 
