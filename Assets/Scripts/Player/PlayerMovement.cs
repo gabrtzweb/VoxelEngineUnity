@@ -4,17 +4,22 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 	// Movement Speeds
-	[SerializeField] private float walkSpeed = 5f;
-	[SerializeField] private float sprintSpeed = 8f;
+	[SerializeField] private float walkSpeed = 4.317f;
+	[SerializeField] private float sprintSpeed = 5.612f;
 
 	// Jump and Gravity
-	[SerializeField] private float jumpHeight = 1.25f;
-	[SerializeField] private float gravity = -25f;
+	[SerializeField] private float jumpHeight = 1.252f;
+	[SerializeField] private float gravity = -20f;
+	[SerializeField] private float groundAcceleration = 35f;
+	[SerializeField] private float groundDeceleration = 40f;
+	[SerializeField] private float airAcceleration = 12f;
+
+	private Vector3 currentHorizontalVelocity;
 
 	// Flight Mode
-	[SerializeField] private float flightSpeed = 7f;
+	[SerializeField] private float flightSpeed = 10.92f;
 	[SerializeField] private float flightSprintMultiplier = 2f;
-	[SerializeField] private float flightVerticalSpeed = 6f;
+	[SerializeField] private float flightVerticalSpeed = 10.92f;
 	[SerializeField] private float doubleTapJumpWindow = 0.28f;
 
 	// Runtime State
@@ -87,8 +92,29 @@ public class PlayerMovement : MonoBehaviour
 		}
 
 		Vector2 moveInput = inputHandler.MoveInput;
-		float speed = inputHandler.IsSprinting ? sprintSpeed : walkSpeed;
-		Vector3 horizontalMove = (transform.right * moveInput.x + transform.forward * moveInput.y) * speed;
+
+		float targetSpeed =
+			inputHandler.IsSprinting
+				? sprintSpeed
+				: walkSpeed;
+
+		Vector3 desiredVelocity =
+			(transform.right * moveInput.x +
+			transform.forward * moveInput.y).normalized
+			* targetSpeed;
+
+		float acceleration =
+			isGrounded
+				? (moveInput.sqrMagnitude > 0.01f
+					? groundAcceleration
+					: groundDeceleration)
+				: airAcceleration;
+
+		currentHorizontalVelocity =
+			Vector3.MoveTowards(
+				currentHorizontalVelocity,
+				desiredVelocity,
+				acceleration * Time.deltaTime);
 
 		if (isGrounded && inputHandler.IsJumping)
 		{
@@ -100,9 +126,10 @@ public class PlayerMovement : MonoBehaviour
 		}
 
 		verticalVelocity += gravity * Time.deltaTime;
-		horizontalMove.y = verticalVelocity;
+		Vector3 finalMove = currentHorizontalVelocity;
+		finalMove.y = verticalVelocity;
 
-		characterController.Move(horizontalMove * Time.deltaTime);
+		characterController.Move(finalMove * Time.deltaTime);
 
 		UpdateAnimatorParameters(moveInput, isGrounded);
 	}

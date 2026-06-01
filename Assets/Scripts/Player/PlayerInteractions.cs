@@ -3,10 +3,10 @@ using VoxelEngine;
 
 public class PlayerInteractions : MonoBehaviour
 {
-	[SerializeField] private float interactionRange = 8f;
+	[SerializeField] private float interactionRange = 4.5f;
 	[SerializeField] private float hitEpsilon = 0.05f;
 	[SerializeField] private LayerMask interactionMask = ~0;
-	[SerializeField] private Voxel.BlockType equippedBlock = Voxel.BlockType.Dirt;
+	[SerializeField] private Voxel.BlockType equippedBlock = Voxel.BlockType.Stone;
 	[SerializeField] private bool allowPickWater = true;
 	[SerializeField] private float holdRepeatDelay = 0.35f;
 	[SerializeField] private float holdRepeatInterval = 0.08f;

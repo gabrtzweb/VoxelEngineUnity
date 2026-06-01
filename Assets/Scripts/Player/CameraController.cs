@@ -16,6 +16,9 @@ public class CameraController : MonoBehaviour
 	[SerializeField] private bool startInFirstPerson = true;
 	[SerializeField] private int activeCameraPriority = 20;
 	[SerializeField] private int inactiveCameraPriority = 0;
+	[SerializeField] private float normalFov = 70f;
+	[SerializeField] private float sprintFov = 84f;
+	[SerializeField] private float fovLerpSpeed = 10f;
 
 	// Runtime State
 	private InputHandler inputHandler;
@@ -65,6 +68,20 @@ public class CameraController : MonoBehaviour
 
 		pitch = Mathf.Clamp(pitch - lookInput.y, minPitch, maxPitch);
 		cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+
+		if (firstPersonCamera != null)
+		{
+			float targetFov =
+				inputHandler.IsSprinting
+					? sprintFov
+					: normalFov;
+
+			firstPersonCamera.Lens.FieldOfView =
+				Mathf.Lerp(
+					firstPersonCamera.Lens.FieldOfView,
+					targetFov,
+					fovLerpSpeed * Time.deltaTime);
+		}
 	}
 
 	private void OnApplicationFocus(bool hasFocus)
