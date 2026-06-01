@@ -140,7 +140,58 @@ namespace VoxelEngine
 		// Return the voxel at the given local position, no bounds checking
 		public Voxel GetVoxelUnsafe(int localX, int localY, int localZ)
 		{
-			return voxelData[VoxelDataIndex(localX, localY, localZ)];
+			// Fast path: if indices are inside this chunk, return directly
+			if ((localX & BIT_MASK) == localX &&
+				(localY & BIT_MASK) == localY &&
+				(localZ & BIT_MASK) == localZ)
+			{
+				return voxelData[VoxelDataIndex(localX, localY, localZ)];
+			}
+
+			// If indices are out of range, map them to the correct adjacent chunk
+			int nx = localX;
+			int ny = localY;
+			int nz = localZ;
+			int chunkOffsetX = 0;
+			int chunkOffsetY = 0;
+			int chunkOffsetZ = 0;
+
+			// Normalize coordinates into [0, SIZE)
+			if (nx < 0)
+			{
+				while (nx < 0) { nx += SIZE; chunkOffsetX--; }
+			}
+			else if (nx >= SIZE)
+			{
+				while (nx >= SIZE) { nx -= SIZE; chunkOffsetX++; }
+			}
+
+			if (ny < 0)
+			{
+				while (ny < 0) { ny += SIZE; chunkOffsetY--; }
+			}
+			else if (ny >= SIZE)
+			{
+				while (ny >= SIZE) { ny -= SIZE; chunkOffsetY++; }
+			}
+
+			if (nz < 0)
+			{
+				while (nz < 0) { nz += SIZE; chunkOffsetZ--; }
+			}
+			else if (nz >= SIZE)
+			{
+				while (nz >= SIZE) { nz -= SIZE; chunkOffsetZ++; }
+			}
+
+			// If the offsets are zero we would have returned earlier
+			Vector3i neighborChunkPos = new Vector3i(chunkPos.x + chunkOffsetX, chunkPos.y + chunkOffsetY, chunkPos.z + chunkOffsetZ);
+			Chunk neighbor = voxelEngineManager.GetChunk(neighborChunkPos);
+			if (neighbor != null)
+				return neighbor.GetVoxel(nx, ny, nz);
+
+			// Fallback: return an empty voxel when neighbor chunk isn't loaded
+			return Voxel.Empty;
 		}
 
 		// Return the voxel at the given local position if within chunk bounds
@@ -157,7 +208,6 @@ namespace VoxelEngine
 		// Try to find adjacent chunks to inform them of this chunk and fill the adjChunk lookup
 		public void FillAdjChunks()
 		{
-			bool adjReady = true;
 			FillType adjType = fillType;
 
 			// Adjacent chunks are needed to mesh the chunk
@@ -169,8 +219,6 @@ namespace VoxelEngine
 				{
 					adjType = adjChunks[i].fillType == adjType ? adjType : FillType.Mixed;
 				}
-				else
-					adjReady = false;
 
 				Chunk invAdjChunk = voxelEngineManager.GetChunk(chunkPos - adjChunkVectors[i]);
 
@@ -178,12 +226,9 @@ namespace VoxelEngine
 					invAdjChunk.UpdateAdjChunk(this, i);
 			}
 
-			// Cancel meshing if not all adjacent chunks are loaded
-			if (!adjReady)
-				return;
-
-			// If adjacent chunks are all full or all empty no meshing is needed
-			if (adjType != FillType.Mixed)
+			// If all loaded adjacent chunks agree with this chunk, there is nothing visible to mesh.
+			// If some neighbors are missing, still allow meshing so border faces can update immediately.
+			if (adjType != FillType.Mixed && !HasMissingAdjChunks())
 			{
 				dirtyMesh = false;
 				return;
@@ -198,13 +243,18 @@ namespace VoxelEngine
 		public void UpdateAdjChunk(Chunk chunk, int side)
 		{
 			adjChunks[side] = chunk;
-			
-			if (!dirtyMesh || (chunk == null))
-				return;
+			dirtyMesh = true;
 
-			// Check if all adjacent chunks are ready to queue for meshing
+			// Any adjacency change can affect a border face, so rebuild immediately when possible.
 			if (CanBuildMesh())
+			{
+				voxelEngineManager.RemoveQueuedChunkMeshing(chunkPos);
+				BuildMesh();
+			}
+			else
+			{
 				voxelEngineManager.QueueChunkMeshing(chunkPos);
+			}
 		}
 
 		// Checks if all adjacent chunks are loaded and not all full or all empty
@@ -215,7 +265,7 @@ namespace VoxelEngine
 			for (int i = 0; i < ADJ_CHUNK_SIZE; i++)
 			{
 				if (adjChunks[i] == null)
-					return false;
+					return true;
 
 				adjType = adjChunks[i].fillType == adjType ? adjType : FillType.Mixed;
 			}
@@ -226,6 +276,17 @@ namespace VoxelEngine
 				return false;
 			}
 			return true;
+		}
+
+		private bool HasMissingAdjChunks()
+		{
+			for (int i = 0; i < ADJ_CHUNK_SIZE; i++)
+			{
+				if (adjChunks[i] == null)
+					return true;
+			}
+
+			return false;
 		}
 
 		// Get the min and max height from the terrain generator to check if this chunk is in it's bounds

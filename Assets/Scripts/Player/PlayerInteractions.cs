@@ -35,7 +35,7 @@ public class PlayerInteractions : MonoBehaviour
 
 	private void BreakBlock()
 	{
-		if (!TryGetTargetedVoxel(out Vector3i targetWorldVoxel, out _, out Voxel targetVoxel))
+		if (!TryGetTargetedVoxel(out Vector3i targetWorldVoxel, out Vector3i adjacentWorldVoxel, out Voxel targetVoxel))
 			return;
 
 		if (!targetVoxel.IsSolid())
@@ -114,7 +114,7 @@ public class PlayerInteractions : MonoBehaviour
 			return false;
 
 		Vector3i breakVoxel = WorldToVoxel(hit.point - hit.normal * hitEpsilon);
-		Vector3i placeVoxel = WorldToVoxel(hit.point + hit.normal * hitEpsilon);
+		Vector3i placeVoxel = breakVoxel + NormalToVoxelOffset(hit.normal);
 
 		if (!TryGetVoxelWorld(breakVoxel, out hitVoxel))
 			return false;
@@ -141,8 +141,11 @@ public class PlayerInteractions : MonoBehaviour
 			return false;
 
 		int voxelIndex = Chunk.VoxelDataIndex(localX, localY, localZ);
+		if (chunk.voxelData[voxelIndex].density == voxel.density && chunk.voxelData[voxelIndex].blockType == voxel.blockType)
+			return true;
+
 		chunk.voxelData[voxelIndex] = voxel;
-		RefreshChunkAndNeighbors(chunk, localX, localY, localZ);
+		RefreshChunkImmediate(chunk);
 
 		return true;
 	}
@@ -169,34 +172,16 @@ public class PlayerInteractions : MonoBehaviour
 		return true;
 	}
 
-	private void RefreshChunkAndNeighbors(Chunk chunk, int localX, int localY, int localZ)
-	{
-		RefreshChunkImmediate(chunk);
-		RefreshAdjacentChunks(chunk);
-	}
-
-	private void RefreshAdjacentChunks(Chunk chunk)
-	{
-		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.left));
-		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.right));
-		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.down));
-		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.up));
-		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.back));
-		RefreshChunkImmediate(voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.forward));
-	}
-
 	private void RefreshChunkImmediate(Chunk chunk)
 	{
 		if (chunk == null)
 			return;
 
+		voxelEngineManager.RemoveQueuedChunkMeshing(chunk.chunkPos);
 		chunk.dirtyMesh = true;
 		chunk.fillType = Chunk.FillType.Mixed;
 		chunk.FillAdjChunks();
 		chunk.BuildMesh();
-
-		if (voxelEngineManager != null && !chunk.CanBuildMesh())
-			voxelEngineManager.QueueChunkMeshing(chunk.chunkPos);
 	}
 
 	private bool WouldCollideWithPlayer(Vector3i worldVoxel)
@@ -216,4 +201,13 @@ public class PlayerInteractions : MonoBehaviour
 			Mathf.FloorToInt(point.y + 0.5f),
 			Mathf.FloorToInt(point.z + 0.5f));
 	}
+
+	private static Vector3i NormalToVoxelOffset(Vector3 normal)
+	{
+		return new Vector3i(
+			Mathf.RoundToInt(normal.x),
+			Mathf.RoundToInt(normal.y),
+			Mathf.RoundToInt(normal.z));
+	}
+
 }

@@ -329,6 +329,78 @@ namespace VoxelEngine
 
 								quads.Add(q);
 							}
+
+							if (!GetAdjVoxelRight(x, y, z).IsSolid())
+							{
+								if (!colorInit)
+								{
+									colorInit = true;
+									color = terrainGenerator.DensityColor(voxel);
+								}
+
+								Quad q = new Quad(
+									new Vector3(x + 0.5f, y + 0.5f, z - 0.5f),
+									new Vector3(x + 0.5f, y + 0.5f, z + 0.5f),
+									new Vector3(x + 0.5f, y - 0.5f, z + 0.5f),
+									new Vector3(x + 0.5f, y - 0.5f, z - 0.5f),
+									color,
+									Direction.Right);
+
+								q.i0 = LightLevelX(q.v0, color, y, z, 0.25f);
+								q.i1 = LightLevelX(q.v1, color, y, z, 0.25f);
+								q.i2 = LightLevelX(q.v2, color, y, z, 0.25f);
+								q.i3 = LightLevelX(q.v3, color, y, z, 0.25f);
+
+								quads.Add(q);
+							}
+
+							if (!GetAdjVoxelUp(x, y, z).IsSolid())
+							{
+								if (!colorInit)
+								{
+									colorInit = true;
+									color = terrainGenerator.DensityColor(voxel);
+								}
+
+								Quad q = new Quad(
+									new Vector3(x - 0.5f, y + 0.5f, z - 0.5f),
+									new Vector3(x + 0.5f, y + 0.5f, z - 0.5f),
+									new Vector3(x + 0.5f, y + 0.5f, z + 0.5f),
+									new Vector3(x - 0.5f, y + 0.5f, z + 0.5f),
+									color,
+									Direction.Up);
+
+								q.i0 = LightLevelY(q.v0, color, x, z, 0.25f);
+								q.i1 = LightLevelY(q.v1, color, x, z, 0.25f);
+								q.i2 = LightLevelY(q.v2, color, x, z, 0.25f);
+								q.i3 = LightLevelY(q.v3, color, x, z, 0.25f);
+
+								quads.Add(q);
+							}
+
+							if (!GetAdjVoxelForward(x, y, z).IsSolid())
+							{
+								if (!colorInit)
+								{
+									colorInit = true;
+									color = terrainGenerator.DensityColor(voxel);
+								}
+
+								Quad q = new Quad(
+									new Vector3(x - 0.5f, y - 0.5f, z + 0.5f),
+									new Vector3(x - 0.5f, y + 0.5f, z + 0.5f),
+									new Vector3(x + 0.5f, y + 0.5f, z + 0.5f),
+									new Vector3(x + 0.5f, y - 0.5f, z + 0.5f),
+									color,
+									Direction.Forward);
+
+								q.i0 = LightLevelZ(q.v0, color, x, y, 0.25f);
+								q.i1 = LightLevelZ(q.v1, color, x, y, 0.25f);
+								q.i2 = LightLevelZ(q.v2, color, x, y, 0.25f);
+								q.i3 = LightLevelZ(q.v3, color, x, y, 0.25f);
+
+								quads.Add(q);
+							}
 						}
 						else // Voxel not solid
 						{
@@ -1050,6 +1122,33 @@ namespace VoxelEngine
 			voxelIndex += Chunk.VOXEL_STEP_CHUNK_Z;
 			Chunk adjChunk = chunk.adjChunks[(int)Chunk.AdjDirection.Back];
 			return adjChunk != null ? adjChunk.voxelData[voxelIndex] : Voxel.Empty;
+		}
+
+		private static Voxel GetAdjVoxelRight(int localX, int localY, int localZ)
+		{
+			if (localX < Chunk.SIZE - 1)
+				return chunk.GetVoxelUnsafe(localX + 1, localY, localZ);
+
+			Chunk adjChunk = chunk.voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.right);
+			return adjChunk != null ? adjChunk.GetVoxelUnsafe(0, localY, localZ) : Voxel.Empty;
+		}
+
+		private static Voxel GetAdjVoxelUp(int localX, int localY, int localZ)
+		{
+			if (localY < Chunk.SIZE - 1)
+				return chunk.GetVoxelUnsafe(localX, localY + 1, localZ);
+
+			Chunk adjChunk = chunk.voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.up);
+			return adjChunk != null ? adjChunk.GetVoxelUnsafe(localX, 0, localZ) : Voxel.Empty;
+		}
+
+		private static Voxel GetAdjVoxelForward(int localX, int localY, int localZ)
+		{
+			if (localZ < Chunk.SIZE - 1)
+				return chunk.GetVoxelUnsafe(localX, localY, localZ + 1);
+
+			Chunk adjChunk = chunk.voxelEngineManager.GetChunk(chunk.chunkPos + Vector3i.forward);
+			return adjChunk != null ? adjChunk.GetVoxelUnsafe(localX, localY, 0) : Voxel.Empty;
 		}
 
 		public struct Quad

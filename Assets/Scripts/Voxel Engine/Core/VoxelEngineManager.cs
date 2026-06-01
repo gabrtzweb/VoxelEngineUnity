@@ -29,6 +29,7 @@ namespace VoxelEngine
 		private Dictionary<Vector3i, Chunk> chunkMap = new Dictionary<Vector3i, Chunk>();
 		private ChunkQueue chunkQueue = new ChunkQueue();
 		private Queue<Vector3i> chunkMeshQueue = new Queue<Vector3i>();
+		private HashSet<Vector3i> chunkMeshQueueSet = new HashSet<Vector3i>();
 		private Stack<Chunk> chunkUnloadStack = new Stack<Chunk>();
 
 		private int yLoadTick = -1;
@@ -219,6 +220,7 @@ namespace VoxelEngine
 			{
 				Chunk chunk;
 				Vector3i chunkPos = chunkMeshQueue.Dequeue();
+				chunkMeshQueueSet.Remove(chunkPos);
 
 				// Try and get the chunk from it's postion (it may have been unloaded since it was added to queue)
 				if (!chunkMap.TryGetValue(chunkPos, out chunk))
@@ -330,6 +332,7 @@ namespace VoxelEngine
 
 			chunkQueue.Clear();
 			chunkMeshQueue.Clear();
+			chunkMeshQueueSet.Clear();
 		}
 
 		public void UnloadChunk(Chunk chunk)
@@ -360,7 +363,24 @@ namespace VoxelEngine
 		// Used by chunks to queue themselves for meshing
 		public void QueueChunkMeshing(Vector3i chunkPos)
 		{
-			chunkMeshQueue.Enqueue(chunkPos);
+			if (chunkMeshQueueSet.Add(chunkPos))
+				chunkMeshQueue.Enqueue(chunkPos);
+		}
+
+		public void RemoveQueuedChunkMeshing(Vector3i chunkPos)
+		{
+			if (!chunkMeshQueueSet.Remove(chunkPos))
+				return;
+
+			Queue<Vector3i> filteredQueue = new Queue<Vector3i>(chunkMeshQueue.Count);
+			while (chunkMeshQueue.Count > 0)
+			{
+				Vector3i queuedChunkPos = chunkMeshQueue.Dequeue();
+				if (queuedChunkPos != chunkPos)
+					filteredQueue.Enqueue(queuedChunkPos);
+			}
+
+			chunkMeshQueue = filteredQueue;
 		}
 	}
 }
