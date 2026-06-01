@@ -8,9 +8,13 @@ public class PlayerInteractions : MonoBehaviour
 	[SerializeField] private LayerMask interactionMask = ~0;
 	[SerializeField] private Voxel.BlockType equippedBlock = Voxel.BlockType.Dirt;
 	[SerializeField] private bool allowPickWater = true;
+	[SerializeField] private float holdRepeatDelay = 0.35f;
+	[SerializeField] private float holdRepeatInterval = 0.08f;
 
 	private InputHandler inputHandler;
 	private VoxelEngineManager voxelEngineManager;
+	private float nextPrimaryRepeatTime;
+	private float nextSecondaryRepeatTime;
 
 	private void Awake()
 	{
@@ -26,11 +30,31 @@ public class PlayerInteractions : MonoBehaviour
 		if (inputHandler.PickActionPressed)
 			PickBlock();
 
-		if (inputHandler.PrimaryActionPressed)
-			BreakBlock();
+		HandleRepeatAction(inputHandler.PrimaryActionPressed, inputHandler.IsPrimaryActionHeld, BreakBlock, ref nextPrimaryRepeatTime);
 
-		if (inputHandler.SecondaryActionPressed)
-			PlaceBlock();
+		HandleRepeatAction(inputHandler.SecondaryActionPressed, inputHandler.IsSecondaryActionHeld, PlaceBlock, ref nextSecondaryRepeatTime);
+	}
+
+	private void HandleRepeatAction(bool pressedThisFrame, bool held, System.Action action, ref float nextRepeatTime)
+	{
+		if (pressedThisFrame)
+		{
+			action();
+			nextRepeatTime = Time.time + holdRepeatDelay;
+			return;
+		}
+
+		if (!held)
+		{
+			nextRepeatTime = 0f;
+			return;
+		}
+
+		if (Time.time < nextRepeatTime)
+			return;
+
+		action();
+		nextRepeatTime = Time.time + holdRepeatInterval;
 	}
 
 	private void BreakBlock()

@@ -504,7 +504,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrainGenerator: {fileID: 344263520}
   targetTransform: {fileID: 848267899}
-  loadDistance: 256
+  loadDistance: 128
   unloadDistanceModifier: 1.2
   yDistanceModifier: 1.5
   maxThreads: 8
@@ -1092,6 +1092,14 @@ PrefabInstance:
     - target: {fileID: 5233341890339653508, guid: 7207b98f2757b2141b1c27169a22a7f4, type: 3}
       propertyPath: m_Name
       value: MainPlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 5775300402452204387, guid: 7207b98f2757b2141b1c27169a22a7f4, type: 3}
+      propertyPath: continuousActionInterval
+      value: 0.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5775300402452204387, guid: 7207b98f2757b2141b1c27169a22a7f4, type: 3}
+      propertyPath: continuousActionStartDelay
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 6281369157236991012, guid: 7207b98f2757b2141b1c27169a22a7f4, type: 3}
       propertyPath: crawlHeight

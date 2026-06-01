@@ -97,6 +97,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4806c09ccd917d14588ccca4909ae002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractions
+  interactionRange: 8
+  hitEpsilon: 0.05
+  interactionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  equippedBlock: 5
+  allowPickWater: 1
+  continuousActionStartDelay: 0.4
+  continuousActionInterval: 0.24
 --- !u!114 &8595646699761913960
 MonoBehaviour:
   m_ObjectHideFlags: 0
