@@ -231,7 +231,12 @@ namespace VoxelEngine
 
 			// Cancel meshing if not all adjacent chunks are loaded
 			if (!adjReady)
+			{
+				if (dirtyMesh)
+					voxelEngineManager.QueueChunkMeshing(chunkPos);
+
 				return;
+			}
 
 			// If adjacent chunks are all full or all empty no meshing is needed
 			if (adjType != FillType.Mixed)
@@ -254,9 +259,16 @@ namespace VoxelEngine
 			if (!dirtyMesh || (chunk == null))
 				return;
 
-			// Check if all adjacent chunks are ready to queue for meshing
-			if (CanBuildMesh())
+			// Border updates should rebuild immediately when the neighboring chunk changes.
+			if (chunkGameObject != null && CanBuildMesh())
+			{
+				voxelEngineManager.RemoveQueuedChunkMeshing(chunkPos);
+				BuildMesh();
+			}
+			else
+			{
 				voxelEngineManager.QueueChunkMeshing(chunkPos);
+			}
 		}
 
 		// Checks if all adjacent chunks are loaded and not all full or all empty

@@ -191,7 +191,7 @@ namespace VoxelEngine
 		{
 			Vector3i chunkPos = new Vector3i();
 
-			int adjustedMaxThreads = Mathf.RoundToInt(maxThreads - chunkMeshQueue.Count*0.2f);
+			int adjustedMaxThreads = Mathf.Max(1, Mathf.RoundToInt(maxThreads - chunkMeshQueue.Count * 0.2f));
 
 			while (threadCount < adjustedMaxThreads)
 			{
