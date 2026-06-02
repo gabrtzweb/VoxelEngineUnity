@@ -107,8 +107,8 @@ MonoBehaviour:
     m_Bits: 4294967295
   equippedBlock: 5
   allowPickWater: 1
-  holdRepeatDelay: 0.35
-  holdRepeatInterval: 0.08
+  holdRepeatDelay: 0.2
+  holdRepeatInterval: 0.2
 --- !u!114 &8595646699761913960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   cameraPivot: {fileID: 2557458961549695365}
-  yawRoot: {fileID: 0}
+  characterVisualRoot: {fileID: 1247426362189685023}
   firstPersonCamera: {fileID: 0}
   thirdPersonCamera: {fileID: 0}
   lookSensitivity: 0.4
@@ -134,6 +134,7 @@ MonoBehaviour:
   normalFov: 90
   sprintFov: 108
   fovLerpSpeed: 10
+  firstPersonNearClipPlane: 0.03
 --- !u!114 &5018029380731804262
 MonoBehaviour:
   m_ObjectHideFlags: 0

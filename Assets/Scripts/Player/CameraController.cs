@@ -5,12 +5,12 @@ public class CameraController : MonoBehaviour
 {
 	// Rig References
 	[SerializeField] private Transform cameraPivot;
-	[SerializeField] private Transform yawRoot;
+	[SerializeField] private Transform characterVisualRoot;
 	[SerializeField] private CinemachineCamera firstPersonCamera;
 	[SerializeField] private CinemachineCamera thirdPersonCamera;
 
 	// Camera Tuning
-	[SerializeField] private float lookSensitivity = 1.5f;
+	[SerializeField] private float lookSensitivity = 0.4f;
 	[SerializeField] private float minPitch = -89f;
 	[SerializeField] private float maxPitch = 89f;
 	[SerializeField] private bool startInFirstPerson = true;
@@ -19,9 +19,15 @@ public class CameraController : MonoBehaviour
 	[SerializeField] private float normalFov = 70f;
 	[SerializeField] private float sprintFov = 84f;
 	[SerializeField] private float fovLerpSpeed = 10f;
+	[SerializeField] private float firstPersonNearClipPlane = 0.03f;
 
 	// Runtime State
 	private InputHandler inputHandler;
+	private Renderer[] characterRenderers;
+	private bool[] characterRendererInitialStates;
+	private Camera outputCamera;
+	private float defaultNearClipPlane;
+	private float defaultFirstPersonNearClipPlane;
 	private float pitch;
 	private bool isFirstPerson;
 
@@ -29,15 +35,23 @@ public class CameraController : MonoBehaviour
 	{
 		inputHandler = GetComponent<InputHandler>();
 
-		if (yawRoot == null)
-		{
-			yawRoot = transform;
-		}
-
 		if (cameraPivot == null)
 		{
 			cameraPivot = transform.Find("CameraPivot");
 		}
+
+		outputCamera = Camera.main;
+		if (outputCamera != null)
+		{
+			defaultNearClipPlane = outputCamera.nearClipPlane;
+		}
+
+		if (firstPersonCamera != null)
+		{
+			defaultFirstPersonNearClipPlane = firstPersonCamera.Lens.NearClipPlane;
+		}
+
+		CacheCharacterVisuals();
 
 		isFirstPerson = startInFirstPerson;
 		ApplyPerspective();
@@ -64,10 +78,11 @@ public class CameraController : MonoBehaviour
 
 		Vector2 lookInput = inputHandler.LookInput * lookSensitivity;
 
-		yawRoot.Rotate(Vector3.up * lookInput.x, Space.World);
+		transform.Rotate(Vector3.up * lookInput.x, Space.World);
 
 		pitch = Mathf.Clamp(pitch - lookInput.y, minPitch, maxPitch);
 		cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+		UpdateCameraNearClip();
 
 		if (firstPersonCamera != null)
 		{
@@ -102,6 +117,9 @@ public class CameraController : MonoBehaviour
 	// Perspective Switching
 	private void ApplyPerspective()
 	{
+		SetCharacterVisualVisible(!isFirstPerson);
+		UpdateCameraNearClip();
+
 		if (firstPersonCamera != null)
 		{
 			firstPersonCamera.Priority = isFirstPerson ? activeCameraPriority : inactiveCameraPriority;
@@ -113,6 +131,97 @@ public class CameraController : MonoBehaviour
 		}
 
 		pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
-		cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+		if (cameraPivot != null)
+		{
+			cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+		}
+	}
+
+	private void UpdateCameraNearClip()
+	{
+		if (firstPersonCamera != null)
+		{
+			firstPersonCamera.Lens.NearClipPlane = isFirstPerson
+				? firstPersonNearClipPlane
+				: defaultFirstPersonNearClipPlane;
+		}
+
+		if (outputCamera == null)
+		{
+			outputCamera = Camera.main;
+			if (outputCamera == null)
+			{
+				return;
+			}
+
+			defaultNearClipPlane = outputCamera.nearClipPlane;
+		}
+
+		outputCamera.nearClipPlane = isFirstPerson
+			? Mathf.Min(defaultNearClipPlane, firstPersonNearClipPlane)
+			: defaultNearClipPlane;
+	}
+
+	private void CacheCharacterVisuals()
+	{
+		if (characterVisualRoot == null)
+		{
+			characterVisualRoot = FindVisualRoot();
+		}
+
+		if (characterVisualRoot == null)
+		{
+			return;
+		}
+
+		characterRenderers = characterVisualRoot.GetComponentsInChildren<Renderer>(true);
+		characterRendererInitialStates = new bool[characterRenderers.Length];
+
+		for (int i = 0; i < characterRenderers.Length; i++)
+		{
+			characterRendererInitialStates[i] = characterRenderers[i] != null && characterRenderers[i].enabled;
+		}
+	}
+
+	private Transform FindVisualRoot()
+	{
+		Transform bestRoot = null;
+		int bestRendererCount = 0;
+
+		foreach (Transform child in transform)
+		{
+			if (child == cameraPivot)
+			{
+				continue;
+			}
+
+			int rendererCount = child.GetComponentsInChildren<Renderer>(true).Length;
+			if (rendererCount > bestRendererCount)
+			{
+				bestRendererCount = rendererCount;
+				bestRoot = child;
+			}
+		}
+
+		return bestRoot;
+	}
+
+	private void SetCharacterVisualVisible(bool visible)
+	{
+		if (characterRenderers == null || characterRendererInitialStates == null)
+		{
+			return;
+		}
+
+		for (int i = 0; i < characterRenderers.Length; i++)
+		{
+			Renderer characterRenderer = characterRenderers[i];
+			if (characterRenderer == null)
+			{
+				continue;
+			}
+
+			characterRenderer.enabled = visible && characterRendererInitialStates[i];
+		}
 	}
 }

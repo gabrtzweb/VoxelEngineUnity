@@ -8,8 +8,8 @@ public class PlayerInteractions : MonoBehaviour
 	[SerializeField] private LayerMask interactionMask = ~0;
 	[SerializeField] private Voxel.BlockType equippedBlock = Voxel.BlockType.Stone;
 	[SerializeField] private bool allowPickWater = true;
-	[SerializeField] private float holdRepeatDelay = 0.35f;
-	[SerializeField] private float holdRepeatInterval = 0.08f;
+	[SerializeField] private float holdRepeatDelay = 0.2f;
+	[SerializeField] private float holdRepeatInterval = 0.2f;
 
 	private InputHandler inputHandler;
 	private VoxelEngineManager voxelEngineManager;

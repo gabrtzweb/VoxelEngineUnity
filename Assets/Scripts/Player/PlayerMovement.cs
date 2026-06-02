@@ -92,29 +92,28 @@ public class PlayerMovement : MonoBehaviour
 		}
 
 		Vector2 moveInput = inputHandler.MoveInput;
+		Vector3 moveDirection = GetPlanarMoveDirection(moveInput);
+		float targetSpeed = GetTargetMoveSpeed();
+		Vector3 desiredVelocity = moveDirection * targetSpeed;
+		bool hasMoveInput = moveInput.sqrMagnitude > 0.01f;
 
-		float targetSpeed =
-			inputHandler.IsSprinting
-				? sprintSpeed
-				: walkSpeed;
-
-		Vector3 desiredVelocity =
-			(transform.right * moveInput.x +
-			transform.forward * moveInput.y).normalized
-			* targetSpeed;
-
-		float acceleration =
-			isGrounded
-				? (moveInput.sqrMagnitude > 0.01f
-					? groundAcceleration
-					: groundDeceleration)
-				: airAcceleration;
-
-		currentHorizontalVelocity =
-			Vector3.MoveTowards(
-				currentHorizontalVelocity,
-				desiredVelocity,
-				acceleration * Time.deltaTime);
+		if (isGrounded)
+		{
+			float acceleration = hasMoveInput ? groundAcceleration : groundDeceleration;
+			currentHorizontalVelocity =
+				Vector3.MoveTowards(
+					currentHorizontalVelocity,
+					hasMoveInput ? desiredVelocity : Vector3.zero,
+					acceleration * Time.deltaTime);
+		}
+		else if (hasMoveInput)
+		{
+			currentHorizontalVelocity =
+				Vector3.MoveTowards(
+					currentHorizontalVelocity,
+					desiredVelocity,
+					airAcceleration * Time.deltaTime);
+		}
 
 		if (isGrounded && inputHandler.IsJumping)
 		{
@@ -138,7 +137,7 @@ public class PlayerMovement : MonoBehaviour
 	{
 		Vector2 moveInput = inputHandler.MoveInput;
 		float speed = inputHandler.IsSprinting ? flightSpeed * flightSprintMultiplier : flightSpeed;
-		Vector3 move = (transform.right * moveInput.x + transform.forward * moveInput.y) * speed;
+		Vector3 move = GetPlanarMoveDirection(moveInput) * speed;
 
 		float verticalInput = 0f;
 		if (inputHandler.IsJumpHeld)
@@ -154,6 +153,17 @@ public class PlayerMovement : MonoBehaviour
 		characterController.Move(move * Time.deltaTime);
 
 		UpdateAnimatorParameters(moveInput, /*isGrounded*/ false);
+	}
+
+	private Vector3 GetPlanarMoveDirection(Vector2 moveInput)
+	{
+		Vector3 moveDirection = transform.right * moveInput.x + transform.forward * moveInput.y;
+		return moveDirection.sqrMagnitude > 1f ? moveDirection.normalized : moveDirection;
+	}
+
+	private float GetTargetMoveSpeed()
+	{
+		return inputHandler.IsSprinting ? sprintSpeed : walkSpeed;
 	}
 
 	private void UpdateAnimatorParameters(Vector2 moveInput, bool isGrounded = true)
