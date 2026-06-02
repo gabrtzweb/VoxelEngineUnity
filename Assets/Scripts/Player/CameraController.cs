@@ -104,6 +104,7 @@ public class CameraController : MonoBehaviour
 		transform.Rotate(Vector3.up * lookInput.x, Space.World);
 
 		pitch = Mathf.Clamp(pitch - lookInput.y, minPitch, maxPitch);
+		UpdateCameraHeightFromStance();
 		UpdateSprintSway();
 		ApplyCameraPivotRotation();
 		UpdateCameraNearClip();
@@ -147,6 +148,7 @@ public class CameraController : MonoBehaviour
 	private void ApplyPerspective()
 	{
 		SetCharacterVisualVisible(!isFirstPerson);
+		UpdateCameraHeightFromStance();
 		UpdateCameraNearClip();
 		ResetCameraBob();
 
@@ -166,6 +168,19 @@ public class CameraController : MonoBehaviour
 			ApplyCameraPivotRotation();
 			cameraPivot.localPosition = cameraPivotBaseLocalPosition;
 		}
+	}
+
+	private void UpdateCameraHeightFromStance()
+	{
+		if (cameraPivot == null || inputHandler == null || inputHandler.Movement == null)
+		{
+			return;
+		}
+
+		cameraPivotBaseLocalPosition = new Vector3(
+			cameraPivotBaseLocalPosition.x,
+			inputHandler.Movement.CameraEyeHeight,
+			cameraPivotBaseLocalPosition.z);
 	}
 
 	private void UpdateSprintSway()
