@@ -1,4 +1,4 @@
-Shader "Custom/Vertex Colored URP"
+Shader "VoxelEngine/Vertex Colored URP"
 {
     Properties
     {

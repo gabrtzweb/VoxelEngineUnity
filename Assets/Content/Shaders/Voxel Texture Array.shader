@@ -1,10 +1,10 @@
-Shader "Custom/Voxel Texture Array URP"
+Shader "VoxelEngine/Voxel Texture Array URP"
 {
 	Properties
 	{
 		_Color ("Tint Color", Color) = (1,1,1,1)
 		_MainTexArray ("Texture Array", 2DArray) = "white" {}
-		_WaterAnimationSpeed ("Water Animation Speed", Float) = 6
+		_WaterAnimationSpeed ("Water Animation Speed", Float) = 20
 	}
 
 	SubShader
@@ -64,7 +64,7 @@ Shader "Custom/Voxel Texture Array URP"
 
 				if (frameCount > 1.0)
 				{
-					float frameIndex = floor(frac(_Time.y * _WaterAnimationSpeed) * frameCount);
+					float frameIndex = fmod(floor(_Time.y * _WaterAnimationSpeed), frameCount);
 					textureLayer += frameIndex;
 				}
 

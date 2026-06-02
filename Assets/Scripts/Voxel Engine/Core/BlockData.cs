@@ -10,7 +10,7 @@ namespace VoxelEngine
 		public static readonly Color32 SandColor = new Color32(229, 204, 113, 255); // #E5CC71
 		public static readonly Color32 WaterColor = new Color32(0, 74, 111, 255); // #004A6F
 		public static readonly Color32 StoneColor = new Color32(150, 150, 150, 255); // #969696
-		public static readonly Color32 SlateColor = new Color32(110, 113, 121, 255); // #6E7179
+		public static readonly Color32 SlateColor = new Color32(63, 64, 68, 255); // #3f4044
 
 		public static readonly string GrassTopTextureKey = "grass_top";
 		public static readonly string GrassSideTextureKey = "grass_side";
@@ -62,7 +62,7 @@ namespace VoxelEngine
 			{
 				case Voxel.BlockType.Grass:
 					if (faceDirection == MeshBuilder.Direction.Down)
-						return GrassBottomTextureKey;
+						return DirtTextureKey;
 
 					if (faceDirection == MeshBuilder.Direction.Up)
 						return GrassTopTextureKey;

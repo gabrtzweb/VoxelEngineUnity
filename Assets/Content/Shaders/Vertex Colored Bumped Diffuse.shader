@@ -1,4 +1,4 @@
-Shader "Custom/Vertex Colored Bumped Diffuse URP"
+Shader "VoxelEngine/Vertex Colored Bumped Diffuse URP"
 {
     Properties
     {

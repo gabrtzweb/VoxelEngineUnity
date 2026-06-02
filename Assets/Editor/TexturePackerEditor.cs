@@ -15,7 +15,6 @@ namespace VoxelEngine
 		{
 			new TextureDefinition(BlockData.GrassTopTextureKey, Voxel.BlockType.Grass, MeshBuilder.Direction.Up, BlockData.GrassTopTextureNames, 1),
 			new TextureDefinition(BlockData.GrassSideTextureKey, Voxel.BlockType.Grass, MeshBuilder.Direction.Forward, BlockData.GrassSideTextureNames, 1),
-			new TextureDefinition(BlockData.GrassBottomTextureKey, Voxel.BlockType.Grass, MeshBuilder.Direction.Down, BlockData.GrassBottomTextureNames, 1),
 			new TextureDefinition(BlockData.DirtTextureKey, Voxel.BlockType.Dirt, MeshBuilder.Direction.Up, BlockData.DirtTextureNames, 1),
 			new TextureDefinition(BlockData.SandTextureKey, Voxel.BlockType.Sand, MeshBuilder.Direction.Up, BlockData.SandTextureNames, 1),
 			new TextureDefinition(BlockData.SlateTextureKey, Voxel.BlockType.Slate, MeshBuilder.Direction.Up, BlockData.SlateTextureNames, 1),
@@ -26,35 +25,41 @@ namespace VoxelEngine
 		[MenuItem("VoxelEngine/Texture Packer")]
 		public static void PackTextures()
 		{
-			Dictionary<string, Texture2D> texturesByName = LoadTexturesByName();
+			Dictionary<string, string> texturesByName = LoadTexturesByName();
 			List<PackedSlice> slices = new List<PackedSlice>();
+			List<Texture2D> temporaryTextures = new List<Texture2D>();
 
 			foreach (TextureDefinition definition in TextureDefinitions)
 			{
 				for (int i = 0; i < definition.textureNames.Length; i++)
 				{
 					string textureName = definition.textureNames[i];
-					if (!texturesByName.TryGetValue(textureName, out Texture2D texture))
+					if (!texturesByName.TryGetValue(textureName, out string assetPath))
 					{
 						Debug.LogWarning("Texture Packer: missing texture asset '" + textureName + "' for key '" + definition.textureKey + "'.");
 						continue;
 					}
 
-					AddTextureSlices(definition, textureName, texture, slices);
+					Texture2D texture = LoadReadableTexture(assetPath);
+					if (!texture)
+						continue;
+
+					temporaryTextures.Add(texture);
+					AddTextureSlices(definition, textureName, assetPath, texture, slices);
 				}
 			}
 
 			if (slices.Count == 0)
 			{
 				Debug.LogWarning("Texture Packer: no textures found in " + BlocksFolder);
+				for (int i = 0; i < temporaryTextures.Count; i++)
+					Object.DestroyImmediate(temporaryTextures[i]);
 				return;
 			}
 
 			Texture2D firstTexture = slices[0].texture;
 			int width = slices[0].width;
 			int height = slices[0].height;
-			TextureFormat format = firstTexture.format;
-			bool mipChain = firstTexture.mipmapCount > 1;
 			TextureImporter firstImporter = AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(firstTexture)) as TextureImporter;
 			bool linear = firstImporter != null && !firstImporter.sRGBTexture;
 
@@ -68,12 +73,6 @@ namespace VoxelEngine
 					continue;
 				}
 
-				if (slice.texture.format != format)
-				{
-					Debug.LogWarning("Texture Packer: skipping " + slice.assetPath + " because it does not match the base texture format " + format + ".");
-					continue;
-				}
-
 				validSlices.Add(slice);
 			}
 
@@ -83,18 +82,20 @@ namespace VoxelEngine
 				return;
 			}
 
-			Texture2DArray textureArray = new Texture2DArray(width, height, validSlices.Count, format, mipChain, linear)
+			Texture2DArray textureArray = new Texture2DArray(width, height, validSlices.Count, TextureFormat.RGBA32, false, linear)
 			{
 				name = "TextureArray",
 				wrapMode = TextureWrapMode.Repeat,
-				filterMode = FilterMode.Bilinear,
+				filterMode = FilterMode.Point,
 				anisoLevel = 1
 			};
 
 			for (int layer = 0; layer < validSlices.Count; layer++)
 			{
-				CopySlice(validSlices[layer], textureArray, layer, mipChain);
+				textureArray.SetPixels32(validSlices[layer].pixels, layer);
 			}
+
+			textureArray.Apply(false, false);
 
 			AssetDatabase.DeleteAsset(TextureArrayPath);
 			AssetDatabase.CreateAsset(textureArray, TextureArrayPath);
@@ -103,29 +104,50 @@ namespace VoxelEngine
 
 			WriteTextureMap(validSlices);
 
+			for (int i = 0; i < temporaryTextures.Count; i++)
+				Object.DestroyImmediate(temporaryTextures[i]);
+
 			Debug.Log("Texture Packer: packed " + validSlices.Count + " slices into " + TextureArrayPath + " and updated TextureMap.cs.");
 		}
 
-		private static Dictionary<string, Texture2D> LoadTexturesByName()
+		private static Dictionary<string, string> LoadTexturesByName()
 		{
-			Dictionary<string, Texture2D> texturesByName = new Dictionary<string, Texture2D>();
+			Dictionary<string, string> texturesByName = new Dictionary<string, string>();
 			string[] textureGuids = AssetDatabase.FindAssets("t:Texture2D", new[] { BlocksFolder });
 
 			foreach (string guid in textureGuids)
 			{
 				string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-				Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
-
-				if (!texture)
-					continue;
-
-				texturesByName[Path.GetFileNameWithoutExtension(assetPath)] = texture;
+				texturesByName[Path.GetFileNameWithoutExtension(assetPath)] = assetPath;
 			}
 
 			return texturesByName;
 		}
 
-		private static void AddTextureSlices(TextureDefinition definition, string textureName, Texture2D texture, List<PackedSlice> slices)
+		private static Texture2D LoadReadableTexture(string assetPath)
+		{
+			string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+			string fullPath = Path.Combine(projectRoot, assetPath);
+
+			if (!File.Exists(fullPath))
+			{
+				Debug.LogWarning("Texture Packer: file not found " + fullPath);
+				return null;
+			}
+
+			byte[] bytes = File.ReadAllBytes(fullPath);
+			Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false, false);
+			if (!texture.LoadImage(bytes, false))
+			{
+				Object.DestroyImmediate(texture);
+				Debug.LogWarning("Texture Packer: could not decode " + assetPath);
+				return null;
+			}
+
+			return texture;
+		}
+
+		private static void AddTextureSlices(TextureDefinition definition, string textureName, string assetPath, Texture2D texture, List<PackedSlice> slices)
 		{
 			int sourceWidth = texture.width;
 			int sourceHeight = texture.height;
@@ -151,11 +173,13 @@ namespace VoxelEngine
 
 			if (frameCount > 1)
 			{
+				Color32[] sourcePixels = texture.GetPixels32();
 				for (int frame = 0; frame < frameCount; frame++)
 				{
+					Color32[] pixels = ExtractFramePixels(sourcePixels, sourceWidth, sourceHeight, frame, frameHeight);
 					slices.Add(new PackedSlice
 					{
-						assetPath = AssetDatabase.GetAssetPath(texture),
+						assetPath = assetPath,
 						texture = texture,
 						textureKey = definition.textureKey,
 						textureName = textureName,
@@ -165,15 +189,17 @@ namespace VoxelEngine
 						sourceY = frame * frameHeight,
 						width = sourceWidth,
 						height = frameHeight,
-						frameCount = frameCount
+						frameCount = frameCount,
+						pixels = pixels
 					});
 				}
 				return;
 			}
 
+			Color32[] singlePixels = texture.GetPixels32();
 			slices.Add(new PackedSlice
 			{
-				assetPath = AssetDatabase.GetAssetPath(texture),
+				assetPath = assetPath,
 				texture = texture,
 				textureKey = definition.textureKey,
 				textureName = textureName,
@@ -183,23 +209,27 @@ namespace VoxelEngine
 				sourceY = 0,
 				width = sourceWidth,
 				height = sourceHeight,
-				frameCount = frameCount
+				frameCount = frameCount,
+				pixels = singlePixels
 			});
 		}
 
-		private static void CopySlice(PackedSlice slice, Texture2DArray textureArray, int layer, bool mipChain)
+		private static Color32[] ExtractFramePixels(Color32[] sourcePixels, int sourceWidth, int sourceHeight, int frame, int frameHeight)
 		{
-			int mipCount = mipChain ? slice.texture.mipmapCount : 1;
+			Color32[] framePixels = new Color32[sourceWidth * frameHeight];
+			int sourceRowStart = frame * frameHeight * sourceWidth;
 
-			for (int mip = 0; mip < mipCount; mip++)
+			for (int y = 0; y < frameHeight; y++)
 			{
-				int sourceX = Mathf.Max(0, slice.sourceX >> mip);
-				int sourceY = Mathf.Max(0, slice.sourceY >> mip);
-				int sourceWidth = Mathf.Max(1, slice.width >> mip);
-				int sourceHeight = Mathf.Max(1, slice.height >> mip);
-
-				Graphics.CopyTexture(slice.texture, 0, mip, sourceX, sourceY, sourceWidth, sourceHeight, textureArray, layer, mip, 0, 0);
+				int sourceIndex = sourceRowStart + y * sourceWidth;
+				int targetIndex = y * sourceWidth;
+				for (int x = 0; x < sourceWidth; x++)
+				{
+					framePixels[targetIndex + x] = sourcePixels[sourceIndex + x];
+				}
 			}
+
+			return framePixels;
 		}
 
 		private static void WriteTextureMap(List<PackedSlice> slices)
@@ -482,6 +512,7 @@ namespace VoxelEngine
 			public int width;
 			public int height;
 			public int frameCount;
+			public Color32[] pixels;
 		}
 	}
 }

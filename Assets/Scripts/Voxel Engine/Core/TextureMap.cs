@@ -5,11 +5,11 @@ namespace VoxelEngine
 {
 	public static class TextureMap
 	{
+
 		public static readonly Dictionary<string, string[]> TextureNames = new Dictionary<string, string[]>
 		{
 			{ "grass_top", new[] { "terr_grass", "terr_grass1", "terr_grass2", "terr_grass3", "terr_grass4", "terr_grass5", "terr_grass6", "terr_grass7" } },
 			{ "grass_side", new[] { "terr_grass_side", "terr_grass_side1" } },
-			{ "grass_bottom", new[] { "terr_dirt", "terr_dirt1" } },
 			{ "dirt", new[] { "terr_dirt", "terr_dirt1" } },
 			{ "sand", new[] { "terr_sand", "terr_sand1" } },
 			{ "slate", new[] { "rock_slate", "rock_slate1" } },
@@ -19,21 +19,19 @@ namespace VoxelEngine
 
 		public static readonly Dictionary<string, int[]> Variations = new Dictionary<string, int[]>
 		{
-			{ "grass_top", new[] { 0, 1, 2, 3, 4, 5, 6, 7 } },
-			{ "grass_side", new[] { 8, 9 } },
-			{ "grass_bottom", new[] { 10, 11 } },
-			{ "dirt", new[] { 12, 13 } },
-			{ "sand", new[] { 14, 15 } },
-			{ "slate", new[] { 16, 17 } },
-			{ "stone", new[] { 18, 19 } },
-			{ "water", new[] { 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55 } },
+			{ "grass_top", new int[] { 0, 1, 2, 3, 4, 5, 6, 7 } },
+			{ "grass_side", new int[] { 8, 9 } },
+			{ "dirt", new int[] { 10, 11 } },
+			{ "sand", new int[] { 12, 13 } },
+			{ "slate", new int[] { 14, 15 } },
+			{ "stone", new int[] { 16, 17 } },
+			{ "water", new int[] { 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53 } },
 		};
 
 		public static readonly Dictionary<string, int> FrameCounts = new Dictionary<string, int>
 		{
 			{ "grass_top", 1 },
 			{ "grass_side", 1 },
-			{ "grass_bottom", 1 },
 			{ "dirt", 1 },
 			{ "sand", 1 },
 			{ "slate", 1 },
@@ -115,24 +113,18 @@ namespace VoxelEngine
 			if (string.IsNullOrEmpty(textureKey))
 				return 0;
 
-			if (!Variations.TryGetValue(textureKey, out int[] variationIndices) || variationIndices.Length == 0)
+			if (!Variations.TryGetValue(textureKey, out int[] layers) || layers.Length == 0)
 				return 0;
 
 			if (frameCount > 1)
-				return variationIndices[0];
+				return layers[0];
 
-			if (variationIndices.Length == 1)
-				return variationIndices[0];
+			if (layers.Length == 1)
+				return layers[0];
 
-			int hash = Hash(worldX, worldY, worldZ, textureKey);
-			int variationIndex = PositiveModulo(hash, variationIndices.Length);
-			return variationIndices[variationIndex];
-		}
-
-		public static int GetTextureCount(Voxel.BlockType blockType)
-		{
-			string textureKey = GetTextureKey(blockType);
-			return Variations.TryGetValue(textureKey, out int[] variationIndices) ? variationIndices.Length : 0;
+			int hash = Hash(worldX, worldY, worldZ, (int)blockType);
+			int layerIndex = PositiveModulo(hash, layers.Length);
+			return layers[layerIndex];
 		}
 
 		public static int GetTextureFrameCount(Voxel.BlockType blockType)
@@ -153,33 +145,13 @@ namespace VoxelEngine
 			return FrameCounts.TryGetValue(textureKey, out int frameCount) ? Mathf.Max(1, frameCount) : 1;
 		}
 
-		public static int GetTextureLayer(string textureKey, int worldX, int worldY, int worldZ)
+		public static int GetTextureCount(Voxel.BlockType blockType)
 		{
-			return GetTextureLayer(textureKey, worldX, worldY, worldZ, out _);
+			string textureKey = GetTextureKey(blockType);
+			return Variations.TryGetValue(textureKey, out int[] layers) ? layers.Length : 0;
 		}
 
-		public static int GetTextureLayer(string textureKey, int worldX, int worldY, int worldZ, out int frameCount)
-		{
-			frameCount = GetTextureFrameCount(textureKey);
-
-			if (string.IsNullOrEmpty(textureKey))
-				return 0;
-
-			if (!Variations.TryGetValue(textureKey, out int[] variationIndices) || variationIndices.Length == 0)
-				return 0;
-
-			if (frameCount > 1)
-				return variationIndices[0];
-
-			if (variationIndices.Length == 1)
-				return variationIndices[0];
-
-			int hash = Hash(worldX, worldY, worldZ, textureKey);
-			int variationIndex = PositiveModulo(hash, variationIndices.Length);
-			return variationIndices[variationIndex];
-		}
-
-		private static int Hash(int x, int y, int z, string textureKey)
+		private static int Hash(int x, int y, int z, int blockType)
 		{
 			unchecked
 			{
@@ -187,8 +159,7 @@ namespace VoxelEngine
 				hash = hash * 31 + x;
 				hash = hash * 31 + y;
 				hash = hash * 31 + z;
-				for (int i = 0; i < textureKey.Length; i++)
-					hash = hash * 31 + textureKey[i];
+				hash = hash * 31 + blockType;
 				return hash;
 			}
 		}
