@@ -264,10 +264,11 @@ namespace VoxelEngine
 			if (chunk.CheckTerrainBounds())
 				chunk.GenerateVoxelData();
 
+			// Add the chunk to the dictionary before adjacency updates so neighbors can see it
+			chunkMap.Add(chunkPos, chunk);
+
 			// Notify adjacent chunks this chunk can be used for meshing
 			chunk.FillAdjChunks();
-			// Added the chunk to the dictionary
-			chunkMap.Add(chunkPos, chunk);
 			// Mark the chunk position as complete and remove from the queue
 			chunkQueue.Remove(chunkPos);
 		}
@@ -301,11 +302,11 @@ namespace VoxelEngine
 				threadCount--;
 			}
 
+			// Add the chunk to the dictionary before adjacency updates so neighbors can see it
+			chunkMap.Add(chunkPos, chunk);
+
 			// Notify adjacent chunks this chunk can be used for meshing
 			chunk.FillAdjChunks();
-
-			// Added the chunk to the dictionary
-			chunkMap.Add(chunkPos, chunk);
 
 			// Mark the chunk position as complete and remove from the queue
 			// This is needed for threaded loading as there is a delay between dequeuing and it being added to the chunkMap

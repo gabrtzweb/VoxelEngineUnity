@@ -208,6 +208,7 @@ namespace VoxelEngine
 		// Try to find adjacent chunks to inform them of this chunk and fill the adjChunk lookup
 		public void FillAdjChunks()
 		{
+			bool adjReady = true;
 			FillType adjType = fillType;
 
 			// Adjacent chunks are needed to mesh the chunk
@@ -219,6 +220,8 @@ namespace VoxelEngine
 				{
 					adjType = adjChunks[i].fillType == adjType ? adjType : FillType.Mixed;
 				}
+				else
+					adjReady = false;
 
 				Chunk invAdjChunk = voxelEngineManager.GetChunk(chunkPos - adjChunkVectors[i]);
 
@@ -226,9 +229,12 @@ namespace VoxelEngine
 					invAdjChunk.UpdateAdjChunk(this, i);
 			}
 
-			// If all loaded adjacent chunks agree with this chunk, there is nothing visible to mesh.
-			// If some neighbors are missing, still allow meshing so border faces can update immediately.
-			if (adjType != FillType.Mixed && !HasMissingAdjChunks())
+			// Cancel meshing if not all adjacent chunks are loaded
+			if (!adjReady)
+				return;
+
+			// If adjacent chunks are all full or all empty no meshing is needed
+			if (adjType != FillType.Mixed)
 			{
 				dirtyMesh = false;
 				return;
@@ -245,16 +251,12 @@ namespace VoxelEngine
 			adjChunks[side] = chunk;
 			dirtyMesh = true;
 
-			// Any adjacency change can affect a border face, so rebuild immediately when possible.
+			if (!dirtyMesh || (chunk == null))
+				return;
+
+			// Check if all adjacent chunks are ready to queue for meshing
 			if (CanBuildMesh())
-			{
-				voxelEngineManager.RemoveQueuedChunkMeshing(chunkPos);
-				BuildMesh();
-			}
-			else
-			{
 				voxelEngineManager.QueueChunkMeshing(chunkPos);
-			}
 		}
 
 		// Checks if all adjacent chunks are loaded and not all full or all empty
@@ -265,7 +267,7 @@ namespace VoxelEngine
 			for (int i = 0; i < ADJ_CHUNK_SIZE; i++)
 			{
 				if (adjChunks[i] == null)
-					return true;
+					return false;
 
 				adjType = adjChunks[i].fillType == adjType ? adjType : FillType.Mixed;
 			}
@@ -276,17 +278,6 @@ namespace VoxelEngine
 				return false;
 			}
 			return true;
-		}
-
-		private bool HasMissingAdjChunks()
-		{
-			for (int i = 0; i < ADJ_CHUNK_SIZE; i++)
-			{
-				if (adjChunks[i] == null)
-					return true;
-			}
-
-			return false;
 		}
 
 		// Get the min and max height from the terrain generator to check if this chunk is in it's bounds
