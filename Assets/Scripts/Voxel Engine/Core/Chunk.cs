@@ -12,9 +12,6 @@ namespace VoxelEngine
 		// Create mesh colliders on chunk game objects
 		public const bool GENERATE_COLLIDERS = true;
 
-		// Use gradient adjustment to smooth mesh (Not blocky)
-		public const bool GRADIENT_MESH = false;
-
 		// Calculate and bake ambient occlusion into voxel colours
 		public const bool GENERATE_AMBIENT_OCCLUSION = true;
 
@@ -34,8 +31,8 @@ namespace VoxelEngine
 		internal const int VOXEL_STEP_CHUNK_Z = VOXEL_STEP_Z * SIZE;
 #pragma warning disable 0429
 		internal const int ADJ_CHUNK_SIZE = GENERATE_AMBIENT_OCCLUSION ? 7 : 3;
-		internal const MeshBuilder.MeshType MESH_TYPE = GRADIENT_MESH ? MeshBuilder.MeshType.Gradient :
-			GENERATE_AMBIENT_OCCLUSION ? MeshBuilder.MeshType.AmbientOcclusion : MeshBuilder.MeshType.Basic;
+		internal const MeshBuilder.MeshType MESH_TYPE = GENERATE_AMBIENT_OCCLUSION ?
+			MeshBuilder.MeshType.AmbientOcclusion : MeshBuilder.MeshType.Basic;
 #pragma warning restore 0429
 
 		private static readonly Vector3i[] adjChunkVectors =

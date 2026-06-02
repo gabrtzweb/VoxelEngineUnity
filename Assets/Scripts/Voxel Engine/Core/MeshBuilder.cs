@@ -7,12 +7,6 @@ namespace VoxelEngine
 {
 	public class MeshBuilder
 	{
-		private const int ADJ_BIT_SIZE = Chunk.BIT_SIZE + 1;
-		private const int ADJ_SIZE = 1 << ADJ_BIT_SIZE;
-		private const int ADJ_VOXEL_STEP_X = ADJ_SIZE * ADJ_SIZE;
-		private const int ADJ_VOXEL_STEP_Y = ADJ_SIZE;
-		private const int ADJ_VOXEL_STEP_Z = 1;
-
 		public static readonly Vector3[] directionNormals =
 		{
 			Vector3.left,
@@ -37,20 +31,17 @@ namespace VoxelEngine
 		{
 			Basic,
 			AmbientOcclusion,
-			Gradient,
 		}
 
 		private static Chunk chunk;
 		private static List<Quad> quads = new List<Quad>();
 		private static Dictionary<Vector3, int> lightLevels = new Dictionary<Vector3, int>();
-		private static Dictionary<int, Vector3> gradientVerts = new Dictionary<int, Vector3>();
 
 		public static void Clean()
 		{
 			chunk = null;
 			quads.Clear();
 			lightLevels.Clear();
-			gradientVerts.Clear();
 		}
 
 		public static Mesh BuildMesh(Chunk chunk, MeshType meshType)
@@ -65,9 +56,6 @@ namespace VoxelEngine
 					break;
 				case MeshType.AmbientOcclusion:
 					mesh = AmbientOcclusionMesh();
-					break;
-				case MeshType.Gradient:
-					mesh = GradientMesh();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException("meshType", meshType, null);
@@ -700,318 +688,6 @@ namespace VoxelEngine
 		private static int FastFloor(float f) { return f >= 0.0f ? (int)f : (int)f - 1; }
 		private static int FastRound(float f) { return (f >= 0.0f) ? (int)(f + 0.5f) : (int)(f - 0.5f); }
 
-
-		private static Mesh GradientMesh()
-		{
-			TerrainGeneratorBase terrainGenerator = chunk.voxelEngineManager.terrainGenerator;
-			int index = -Chunk.VOXEL_STEP_X - Chunk.VOXEL_STEP_Y - Chunk.VOXEL_STEP_Z - 1;
-
-			for (int x = -1; x < Chunk.SIZE - 1; x++)
-			{
-				for (int y = -1; y < Chunk.SIZE - 1; y++)
-				{
-					for (int z = -1; z < Chunk.SIZE - 1; z++)
-					{
-						Voxel voxel, left, down, back;
-						int adjIndex = -1;
-
-						if (x == -1 || y == -1 || z == -1)
-						{
-							voxel = GetAdjVoxel(++index, x, y, z);
-							left = GetAdjVoxel(index - Chunk.VOXEL_STEP_X, x - 1, y, z);
-							down = GetAdjVoxel(index - Chunk.VOXEL_STEP_Y, x, y - 1, z);
-							back = GetAdjVoxel(index - Chunk.VOXEL_STEP_Z, x, y, z - 1);
-						}
-						else
-						{
-							voxel = chunk.voxelData[++index];
-							left = GetAdjVoxelLeft(index, x);
-							down = GetAdjVoxelDown(index, y);
-							back = GetAdjVoxelBack(index, z);
-						}
-
-						if (voxel.IsSolid())
-						{
-							Color32 color = new Color32();
-							bool colorInit = false;
-							Voxel.BlockType blockType = voxel.blockType;
-
-							// Left
-							if (!left.IsSolid())
-							{
-								colorInit = true;
-								color = GetFaceTintColor(terrainGenerator.DensityColor(voxel), blockType, Direction.Left);
-
-								if (adjIndex == -1)
-									adjIndex = AdjIndex(x, y, z);
-
-								Quad q = new Quad(
-									adjIndex,
-									adjIndex + ADJ_VOXEL_STEP_Z,
-									adjIndex + ADJ_VOXEL_STEP_Y + ADJ_VOXEL_STEP_Z,
-									adjIndex + ADJ_VOXEL_STEP_Y,
-									color, blockType, Direction.Left);
-
-								if (!gradientVerts.ContainsKey(q.i0))
-									gradientVerts[q.i0] = new Vector3(x - 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x - 1, y - 1, z - 1);
-								if (!gradientVerts.ContainsKey(q.i1))
-									gradientVerts[q.i1] = new Vector3(x - 0.5f, y - 0.5f, z + 0.5f) + VoxelGradient(x - 1, y - 1, z);
-								if (!gradientVerts.ContainsKey(q.i2))
-									gradientVerts[q.i2] = new Vector3(x - 0.5f, y + 0.5f, z + 0.5f) + VoxelGradient(x - 1, y, z);
-								if (!gradientVerts.ContainsKey(q.i3))
-									gradientVerts[q.i3] = new Vector3(x - 0.5f, y + 0.5f, z - 0.5f) + VoxelGradient(x - 1, y, z - 1);
-
-								quads.Add(q);
-							}
-
-							// Down
-							if (!down.IsSolid())
-							{
-								if (!colorInit)
-								{
-									colorInit = true;
-									color = GetFaceTintColor(terrainGenerator.DensityColor(voxel), blockType, Direction.Down);
-								}
-
-								if (adjIndex == -1)
-									adjIndex = AdjIndex(x, y, z);
-
-								Quad q = new Quad(
-									adjIndex,
-									adjIndex + ADJ_VOXEL_STEP_X,
-									adjIndex + ADJ_VOXEL_STEP_X + ADJ_VOXEL_STEP_Z,
-									adjIndex + ADJ_VOXEL_STEP_Z,
-									color, blockType, Direction.Down);
-
-								if (!gradientVerts.ContainsKey(q.i0))
-									gradientVerts[q.i0] = new Vector3(x - 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x - 1, y - 1, z - 1);
-								if (!gradientVerts.ContainsKey(q.i1))
-									gradientVerts[q.i1] = new Vector3(x + 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x, y - 1, z - 1);
-								if (!gradientVerts.ContainsKey(q.i2))
-									gradientVerts[q.i2] = new Vector3(x + 0.5f, y - 0.5f, z + 0.5f) + VoxelGradient(x, y - 1, z);
-								if (!gradientVerts.ContainsKey(q.i3))
-									gradientVerts[q.i3] = new Vector3(x - 0.5f, y - 0.5f, z + 0.5f) + VoxelGradient(x - 1, y - 1, z);
-
-								quads.Add(q);
-							}
-
-							// Back
-							if (!back.IsSolid())
-							{
-								if (!colorInit)
-									color = GetFaceTintColor(terrainGenerator.DensityColor(voxel), blockType, Direction.Back);
-
-								if (adjIndex == -1)
-									adjIndex = AdjIndex(x, y, z);
-
-								Quad q = new Quad(
-									adjIndex,
-									adjIndex + ADJ_VOXEL_STEP_Y,
-									adjIndex + ADJ_VOXEL_STEP_X + ADJ_VOXEL_STEP_Y,
-									adjIndex + ADJ_VOXEL_STEP_X,
-									color, blockType, Direction.Back);
-
-								if (!gradientVerts.ContainsKey(q.i0))
-									gradientVerts[q.i0] = new Vector3(x - 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x - 1, y - 1, z - 1);
-								if (!gradientVerts.ContainsKey(q.i1))
-									gradientVerts[q.i1] = new Vector3(x - 0.5f, y + 0.5f, z - 0.5f) + VoxelGradient(x - 1, y, z - 1);
-								if (!gradientVerts.ContainsKey(q.i2))
-									gradientVerts[q.i2] = new Vector3(x + 0.5f, y + 0.5f, z - 0.5f) + VoxelGradient(x, y, z - 1);
-								if (!gradientVerts.ContainsKey(q.i3))
-									gradientVerts[q.i3] = new Vector3(x + 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x, y - 1, z - 1);
-
-								quads.Add(q);
-							}
-						}
-						else // Voxel not solid
-						{
-							// Left
-							if (left.IsSolid())
-							{
-								if (adjIndex == -1)
-									adjIndex = AdjIndex(x, y, z);
-								Voxel.BlockType faceBlockType = left.blockType;
-								Color32 faceColor = GetFaceTintColor(terrainGenerator.DensityColor(left), faceBlockType, Direction.Right);
-
-								Quad q = new Quad(
-									adjIndex + ADJ_VOXEL_STEP_Y,
-									adjIndex + ADJ_VOXEL_STEP_Y + ADJ_VOXEL_STEP_Z,
-									adjIndex + ADJ_VOXEL_STEP_Z,
-									adjIndex,
-									faceColor, faceBlockType, Direction.Right);
-
-								if (!gradientVerts.ContainsKey(q.i0))
-									gradientVerts[q.i0] = new Vector3(x - 0.5f, y + 0.5f, z - 0.5f) + VoxelGradient(x - 1, y, z - 1);
-								if (!gradientVerts.ContainsKey(q.i1))
-									gradientVerts[q.i1] = new Vector3(x - 0.5f, y + 0.5f, z + 0.5f) + VoxelGradient(x - 1, y, z);
-								if (!gradientVerts.ContainsKey(q.i2))
-									gradientVerts[q.i2] = new Vector3(x - 0.5f, y - 0.5f, z + 0.5f) + VoxelGradient(x - 1, y - 1, z);
-								if (!gradientVerts.ContainsKey(q.i3))
-									gradientVerts[q.i3] = new Vector3(x - 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x - 1, y - 1, z - 1);
-
-								quads.Add(q);
-							}
-
-							// Down
-							if (down.IsSolid())
-							{
-								if (adjIndex == -1)
-									adjIndex = AdjIndex(x, y, z);
-								Voxel.BlockType faceBlockType = down.blockType;
-								Color32 faceColor = GetFaceTintColor(terrainGenerator.DensityColor(down), faceBlockType, Direction.Up);
-
-								Quad q = new Quad(
-									adjIndex + ADJ_VOXEL_STEP_Z,
-									adjIndex + ADJ_VOXEL_STEP_X + ADJ_VOXEL_STEP_Z,
-									adjIndex + ADJ_VOXEL_STEP_X,
-									adjIndex,
-									faceColor, faceBlockType, Direction.Up);
-
-								if (!gradientVerts.ContainsKey(q.i0))
-									gradientVerts[q.i0] = new Vector3(x - 0.5f, y - 0.5f, z + 0.5f) + VoxelGradient(x - 1, y - 1, z);
-								if (!gradientVerts.ContainsKey(q.i1))
-									gradientVerts[q.i1] = new Vector3(x + 0.5f, y - 0.5f, z + 0.5f) + VoxelGradient(x, y - 1, z);
-								if (!gradientVerts.ContainsKey(q.i2))
-									gradientVerts[q.i2] = new Vector3(x + 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x, y - 1, z - 1);
-								if (!gradientVerts.ContainsKey(q.i3))
-									gradientVerts[q.i3] = new Vector3(x - 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x - 1, y - 1, z - 1);
-
-								quads.Add(q);
-							}
-
-							// Back
-							if (back.IsSolid())
-							{
-								if (adjIndex == -1)
-									adjIndex = AdjIndex(x, y, z);
-								Voxel.BlockType faceBlockType = back.blockType;
-								Color32 faceColor = GetFaceTintColor(terrainGenerator.DensityColor(back), faceBlockType, Direction.Forward);
-
-								Quad q = new Quad(
-									adjIndex + ADJ_VOXEL_STEP_X,
-									adjIndex + ADJ_VOXEL_STEP_X + ADJ_VOXEL_STEP_Y,
-									adjIndex + ADJ_VOXEL_STEP_Y,
-									adjIndex,
-									faceColor, faceBlockType, Direction.Forward);
-
-								if (!gradientVerts.ContainsKey(q.i0))
-									gradientVerts[q.i0] = new Vector3(x + 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x, y - 1, z - 1);
-								if (!gradientVerts.ContainsKey(q.i1))
-									gradientVerts[q.i1] = new Vector3(x + 0.5f, y + 0.5f, z - 0.5f) + VoxelGradient(x, y, z - 1);
-								if (!gradientVerts.ContainsKey(q.i2))
-									gradientVerts[q.i2] = new Vector3(x - 0.5f, y + 0.5f, z - 0.5f) + VoxelGradient(x - 1, y, z - 1);
-								if (!gradientVerts.ContainsKey(q.i3))
-									gradientVerts[q.i3] = new Vector3(x - 0.5f, y - 0.5f, z - 0.5f) + VoxelGradient(x - 1, y - 1, z - 1);
-
-								quads.Add(q);
-							}
-						}
-					}
-				}
-			}
-
-			if (quads.Count == 0)
-				return null;
-
-			Vector3[] verts = new Vector3[quads.Count * 4];
-			Vector2[] uvs = new Vector2[quads.Count * 4];
-			Vector2[] uv2 = new Vector2[quads.Count * 4];
-			Color32[] colors = new Color32[quads.Count * 4];
-			int[] tris = new int[quads.Count * 6];
-
-			int vertIndex = 0;
-			int triIndex = 0;
-
-			foreach (Quad quad in quads)
-			{
-				int textureLayer = GetTextureLayer(quad, out int frameCount);
-				int baseVertIndex = vertIndex;
-
-				colors[vertIndex] = quad.color;
-				verts[vertIndex++] = gradientVerts[quad.i0];
-				colors[vertIndex] = quad.color;
-				verts[vertIndex++] = gradientVerts[quad.i1];
-				colors[vertIndex] = quad.color;
-				verts[vertIndex++] = gradientVerts[quad.i2];
-				colors[vertIndex] = quad.color;
-				verts[vertIndex++] = gradientVerts[quad.i3];
-
-				SetFaceUVs(uvs, baseVertIndex, quad.direction);
-				SetTextureLayer(uv2, baseVertIndex, textureLayer, frameCount);
-
-				if ((verts[baseVertIndex] - verts[baseVertIndex + 2]).sqrMagnitude <
-				(verts[baseVertIndex + 1] - verts[baseVertIndex + 3]).sqrMagnitude)
-				{
-					tris[triIndex++] = baseVertIndex;
-					tris[triIndex++] = baseVertIndex + 1;
-					tris[triIndex++] = baseVertIndex + 2;
-					tris[triIndex++] = baseVertIndex;
-					tris[triIndex++] = baseVertIndex + 2;
-					tris[triIndex++] = baseVertIndex + 3;
-				}
-				else
-				{
-					tris[triIndex++] = baseVertIndex + 1;
-					tris[triIndex++] = baseVertIndex + 2;
-					tris[triIndex++] = baseVertIndex + 3;
-					tris[triIndex++] = baseVertIndex + 1;
-					tris[triIndex++] = baseVertIndex + 3;
-					tris[triIndex++] = baseVertIndex;
-				}
-			}
-
-			Mesh mesh = new Mesh
-			{
-				vertices = verts,
-				uv = uvs,
-				uv2 = uv2,
-				triangles = tris,
-				colors32 = colors
-			};
-
-			mesh.RecalculateNormals();
-
-			return mesh;
-		}
-
-		// Calculate difference vector from the isosurface
-		private static Vector3 VoxelGradient(int localX, int localY, int localZ)
-		{
-			int index = localX * Chunk.VOXEL_STEP_X + localY * Chunk.VOXEL_STEP_Y + localZ * Chunk.VOXEL_STEP_Z;
-
-			return Gradient(
-				GetAdjVoxel(index, localX, localY, localZ).density,
-				GetAdjVoxel(index + Chunk.VOXEL_STEP_X, localX + 1, localY, localZ).density,
-				GetAdjVoxel(index + Chunk.VOXEL_STEP_Y, localX, localY + 1, localZ).density,
-				GetAdjVoxel(index + Chunk.VOXEL_STEP_X + Chunk.VOXEL_STEP_Y, localX + 1, localY + 1, localZ).density,
-				GetAdjVoxel(index += Chunk.VOXEL_STEP_Z,localX, localY, localZ + 1).density,
-				GetAdjVoxel(index + Chunk.VOXEL_STEP_X, localX + 1, localY, localZ + 1).density,
-				GetAdjVoxel(index + Chunk.VOXEL_STEP_Y, localX, localY + 1, localZ + 1).density,
-				GetAdjVoxel(index + Chunk.VOXEL_STEP_X + Chunk.VOXEL_STEP_Y, localX + 1, localY + 1, localZ + 1).density);
-		}
-
-		// Get gradient of 2x2x2 set of voxels
-		private static Vector3 Gradient(float a, float b, float c, float d, float e, float f, float g, float h)
-		{
-			float v = (a + b + c + d + e + f + g + h) * -0.125f;
-
-			Vector3 v3 = new Vector3(
-				(-a + b - c + d - e + f - g + h),
-				(-a - b + c + d - e - f + g + h),
-				(-a - b - c - d + e + f + g + h));
-
-			v3 *= 0.25f;
-			v /= v3.sqrMagnitude;
-			v3 *= v;
-
-			return v3;
-		}
-
-		private static int AdjIndex(int localX, int localY, int localZ)
-		{
-			return (localZ + 1) | ((localY + 1) << ADJ_BIT_SIZE) | ((localX + 1) << (ADJ_BIT_SIZE * 2));
-		}
-
 		private static Voxel GetAdjVoxel(int voxelIndex, int localX, int localY, int localZ)
 		{
 			int adjIndex = -2;
@@ -1187,30 +863,6 @@ namespace VoxelEngine
 				this.direction = direction;
 				this.blockType = blockType;
 				i0 = i1 = i2 = i3 = 0;
-			}
-
-			public Quad(int i0, int i1, int i2, int i3, Color32 color, Voxel.BlockType blockType)
-			{
-				this.i0 = i0;
-				this.i1 = i1;
-				this.i2 = i2;
-				this.i3 = i3;
-				this.color = color;
-				this.blockType = blockType;
-				direction = Direction.Left;
-				v0 = v1 = v2 = v3 = Vector3.zero;
-			}
-
-			public Quad(int i0, int i1, int i2, int i3, Color32 color, Voxel.BlockType blockType, Direction direction)
-			{
-				this.i0 = i0;
-				this.i1 = i1;
-				this.i2 = i2;
-				this.i3 = i3;
-				this.color = color;
-				this.blockType = blockType;
-				this.direction = direction;
-				v0 = v1 = v2 = v3 = Vector3.zero;
 			}
 		}
 	}

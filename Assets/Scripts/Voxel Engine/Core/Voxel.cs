@@ -1,22 +1,13 @@
 ﻿
 /*
-Storing as a byte is recommended for non gradient meshes
-Storing as a byte reduces memory usage by 4x
+Storing as a byte reduces memory usage by 4x compared to float.
 */
 
 #define STORE_AS_BYTE
 
 
 /*
-Storing as a half is recommended for gradient meshes
-Storing as a half reduces memory usage by 2x but has some processing overhead
-*/
-
-//#define STORE_AS_HALF
-
-
-/*
-Storing as a float uses the most memory but has the least processing overhead
+Storing as a float uses the most memory but has the least processing overhead.
 */
 
 //#define STORE_AS_FLOAT
@@ -79,26 +70,6 @@ namespace VoxelEngine
 		public bool IsSolid()
 		{
 			return _densityByte > 127;
-		}
-
-#elif STORE_AS_HALF
-		private Half _densityHalf;
-
-		public float density
-		{
-			get { return HalfHelper.HalfToSingle(_densityHalf); }
-			set { _densityHalf = HalfHelper.SingleToHalf(value); }
-		}
-
-		public Voxel(float density = -1.0f, BlockType blockType = BlockType.Stone)
-		{
-			_densityHalf = HalfHelper.SingleToHalf(density);
-			_blockTypeByte = (byte)blockType;
-		}
-
-		public bool IsSolid()
-		{
-			return HalfHelper.IsPositive(_densityHalf);
 		}
 
 #elif STORE_AS_FLOAT
