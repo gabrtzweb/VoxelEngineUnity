@@ -38,6 +38,7 @@ namespace VoxelEngine
 			Sand,
 			Water,
 			Stone,
+			Slate,
 		}
 
 		public static readonly Voxel Solid = new Voxel(1f, BlockType.Stone);

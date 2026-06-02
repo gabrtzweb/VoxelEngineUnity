@@ -214,6 +214,9 @@ namespace VoxelEngine
 				if (density < 4.5f)
 					return Voxel.BlockType.Dirt;
 
+				if (density < 12.0f)
+					return Voxel.BlockType.Slate;
+
 				return Voxel.BlockType.Stone;
 			}
 
@@ -225,6 +228,9 @@ namespace VoxelEngine
 
 			if (density < 10.0f)
 				return Voxel.BlockType.Dirt;
+
+			if (density < 12.0f)
+				return Voxel.BlockType.Slate;
 
 			return Voxel.BlockType.Stone;
 		}
