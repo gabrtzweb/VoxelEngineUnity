@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(AudioSource))]
 public class PlayerMovement : MonoBehaviour
 {
 	// Movement Speeds
@@ -14,7 +15,15 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] private float groundDeceleration = 40f;
 	[SerializeField] private float airAcceleration = 12f;
 
+	// Movement Sounds
+	[SerializeField] private AudioClip[] footstepClips;
+	[SerializeField] private AudioClip jumpClip;
+	[SerializeField] private AudioClip landingClip;
+	[SerializeField] private float footstepDistance = 1.75f;
+	[SerializeField] private float pitchVariation = 0.05f;
+
 	private Vector3 currentHorizontalVelocity;
+	private float footstepDistanceAccumulator;
 
 	// Flight Mode
 	[SerializeField] private float flightSpeed = 10.92f;
@@ -25,16 +34,28 @@ public class PlayerMovement : MonoBehaviour
 	// Runtime State
 	private CharacterController characterController;
 	private InputHandler inputHandler;
+	private AudioSource audioSource;
 	[SerializeField] private Animator animator;
 	[SerializeField] private bool debugAnimator = false;
 	private float verticalVelocity;
 	private bool isFlying;
+	private bool wasGrounded;
 	private float lastJumpPressedTime = -10f;
+
+	public bool IsFlying => isFlying;
+	public bool IsGrounded => characterController != null && characterController.isGrounded;
+	public float LandingImpactVelocity { get; private set; }
 
 	private void Awake()
 	{
 		characterController = GetComponent<CharacterController>();
 		inputHandler = GetComponent<InputHandler>();
+		audioSource = GetComponent<AudioSource>();
+		if (audioSource != null)
+		{
+			audioSource.playOnAwake = false;
+		}
+		wasGrounded = characterController != null && characterController.isGrounded;
 		if (animator == null)
 		{
 			animator = GetComponent<Animator>();
@@ -86,6 +107,12 @@ public class PlayerMovement : MonoBehaviour
 	private void HandleGroundedMovement()
 	{
 		bool isGrounded = characterController.isGrounded;
+		bool justLanded = isGrounded && !wasGrounded;
+		if (justLanded)
+		{
+			LandingImpactVelocity = Mathf.Abs(verticalVelocity);
+		}
+
 		if (isGrounded && verticalVelocity < 0f)
 		{
 			verticalVelocity = -2f;
@@ -118,6 +145,7 @@ public class PlayerMovement : MonoBehaviour
 		if (isGrounded && inputHandler.IsJumping)
 		{
 			verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+			PlayJumpSound();
 			if (animator != null)
 			{
 				animator.SetTrigger("JumpTrigger");
@@ -129,6 +157,9 @@ public class PlayerMovement : MonoBehaviour
 		finalMove.y = verticalVelocity;
 
 		characterController.Move(finalMove * Time.deltaTime);
+		wasGrounded = isGrounded;
+
+		HandleMovementSounds(isGrounded, moveInput, justLanded);
 
 		UpdateAnimatorParameters(moveInput, isGrounded);
 	}
@@ -151,6 +182,7 @@ public class PlayerMovement : MonoBehaviour
 		move.y = verticalInput * flightVerticalSpeed;
 
 		characterController.Move(move * Time.deltaTime);
+		wasGrounded = characterController.isGrounded;
 
 		UpdateAnimatorParameters(moveInput, /*isGrounded*/ false);
 	}
@@ -164,6 +196,86 @@ public class PlayerMovement : MonoBehaviour
 	private float GetTargetMoveSpeed()
 	{
 		return inputHandler.IsSprinting ? sprintSpeed : walkSpeed;
+	}
+
+	private void HandleMovementSounds(bool isGrounded, Vector2 moveInput, bool justLanded)
+	{
+		if (isFlying || !isGrounded)
+		{
+			footstepDistanceAccumulator = 0f;
+			if (justLanded && landingClip != null)
+			{
+				PlayLandingSound(LandingImpactVelocity);
+			}
+			return;
+		}
+
+		if (justLanded && landingClip != null)
+		{
+			PlayLandingSound(LandingImpactVelocity);
+		}
+
+		if (moveInput.sqrMagnitude <= 0.01f || footstepDistance <= 0f)
+		{
+			footstepDistanceAccumulator = 0f;
+			return;
+		}
+
+		footstepDistanceAccumulator += currentHorizontalVelocity.magnitude * Time.deltaTime;
+		while (footstepDistanceAccumulator >= footstepDistance)
+		{
+			footstepDistanceAccumulator -= footstepDistance;
+			PlayFootstepSound();
+		}
+	}
+
+	private void PlayFootstepSound()
+	{
+		if (audioSource == null || footstepClips == null || footstepClips.Length == 0)
+		{
+			return;
+		}
+
+		AudioClip clip = footstepClips[Random.Range(0, footstepClips.Length)];
+		if (clip == null)
+		{
+			return;
+		}
+
+		PlayClipWithPitchVariation(clip, 1f);
+	}
+
+	private void PlayJumpSound()
+	{
+		if (audioSource == null || jumpClip == null)
+		{
+			return;
+		}
+
+		PlayClipWithPitchVariation(jumpClip, 1f);
+	}
+
+	private void PlayLandingSound(float impactVelocity)
+	{
+		if (audioSource == null || landingClip == null)
+		{
+			return;
+		}
+
+		float landingVolume = Mathf.Lerp(0.35f, 0.9f, Mathf.Clamp01(impactVelocity / 12f));
+		PlayClipWithPitchVariation(landingClip, landingVolume);
+	}
+
+	private void PlayClipWithPitchVariation(AudioClip clip, float volumeScale)
+	{
+		float originalPitch = audioSource.pitch;
+		if (pitchVariation > 0f)
+		{
+			audioSource.pitch = 1f + Random.Range(-pitchVariation, pitchVariation);
+		}
+
+		audioSource.PlayOneShot(clip, volumeScale);
+		audioSource.pitch = originalPitch;
 	}
 
 	private void UpdateAnimatorParameters(Vector2 moveInput, bool isGrounded = true)
