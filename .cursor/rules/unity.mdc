@@ -1,0 +1,29 @@
+---
+description: Unity voxel engine project layout and editor workflow
+globs: Assets/**/*.cs
+alwaysApply: true
+---
+
+# VoxelEngineUnity (Unity)
+
+## Where to work
+
+- Game C# lives under `Assets/Scripts/` (voxel engine in `Assets/Scripts/Voxel Engine/`, player in `Assets/Scripts/Player/`).
+- Open the repo root that contains `Assets/`, `Packages/`, and `VoxelEngineUnity.slnx`.
+- Default .NET solution: `VoxelEngineUnity.slnx`.
+
+## Ignore when searching or editing
+
+Do not treat generated or binary Unity output as source: `Library/`, `Temp/`, `Logs/`, `obj/`, `Build/`, `ProjectSettings/`, `UserSettings/`, and common asset binaries (textures, meshes, audio, etc.). Prefer `.cs` under `Assets/Scripts/`.
+
+## File types
+
+`.asset`, `.meta`, `.prefab`, and `.unity` files are YAML, not C#.
+
+## Debugging
+
+Use the **Attach to Unity** launch configuration (`vstuc`). Install the recommended extension: **Unity** (`visualstudiotoolsforunity.vstuc`). Set Unity’s external script editor to Cursor.
+
+## Editor settings
+
+Workspace editor settings, launch configs, and extension recommendations are in `.cursor/` (mirrored from `.vscode/`). Cursor also reads `.vscode/` for the same keys—keep both in sync if you change either folder.
