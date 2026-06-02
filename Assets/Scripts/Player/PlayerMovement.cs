@@ -63,6 +63,11 @@ public class PlayerMovement : MonoBehaviour
 	private bool isFlying;
 	private bool wasGrounded;
 	private float lastJumpPressedTime = -10f;
+		private static readonly int speedHash = Animator.StringToHash("Speed");
+		private static readonly int isGroundedHash = Animator.StringToHash("IsGrounded");
+		private static readonly int isSprintingHash = Animator.StringToHash("IsSprinting");
+		private static readonly int isFlyingHash = Animator.StringToHash("IsFlying");
+		private static readonly int jumpTriggerHash = Animator.StringToHash("JumpTrigger");
 
 	public bool IsFlying => isFlying;
 	public bool IsGrounded => characterController != null && characterController.isGrounded;
@@ -194,7 +199,7 @@ public class PlayerMovement : MonoBehaviour
 			PlayJumpSound();
 			if (animator != null)
 			{
-				animator.SetTrigger("JumpTrigger");
+				animator.SetTrigger(jumpTriggerHash);
 			}
 		}
 
@@ -586,15 +591,15 @@ public class PlayerMovement : MonoBehaviour
 
 		// Speed: use normalized horizontal input magnitude (0..1) for blending
 		float normalizedSpeed = Mathf.Clamp01(moveInput.magnitude);
-		animator.SetFloat("Speed", normalizedSpeed);
+		animator.SetFloat(speedHash, normalizedSpeed);
 
 		if (debugAnimator)
 		{
 			Debug.Log($"Animator Params -> Speed: {normalizedSpeed}, IsGrounded: {isGrounded}, IsFlying: {isFlying}, IsSprinting: {inputHandler.IsSprinting}");
 		}
 
-		animator.SetBool("IsGrounded", isGrounded);
-		animator.SetBool("IsSprinting", inputHandler.IsSprinting);
-		animator.SetBool("IsFlying", isFlying);
+		animator.SetBool(isGroundedHash, isGrounded);
+		animator.SetBool(isSprintingHash, inputHandler.IsSprinting);
+		animator.SetBool(isFlyingHash, isFlying);
 	}
 }

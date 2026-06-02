@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using UnityEngine.InputSystem;
 
@@ -97,9 +96,7 @@ namespace VoxelEngine
 		{
 			Stopwatch updateTimer = new Stopwatch();
 			updateTimer.Start();
-			
 			UpdateLoadingQueue();
-
 			CheckUnloadChunks();
 		
 			LoadChunksFromQueue();
@@ -123,10 +120,11 @@ namespace VoxelEngine
 
 			Vector3i chunkPos = new Vector3i();
 			Vector3 chunkRealPos = new Vector3();
+			Vector3 targetPosition = targetTransform.position;
 			Vector3i targetChunk = new Vector3i(
-				Mathf.RoundToInt(targetTransform.position.x) >> Chunk.BIT_SIZE,
-				Mathf.RoundToInt(targetTransform.position.y) >> Chunk.BIT_SIZE,
-				Mathf.RoundToInt(targetTransform.position.z) >> Chunk.BIT_SIZE);
+				Mathf.RoundToInt(targetPosition.x) >> Chunk.BIT_SIZE,
+				Mathf.RoundToInt(targetPosition.y) >> Chunk.BIT_SIZE,
+				Mathf.RoundToInt(targetPosition.z) >> Chunk.BIT_SIZE);
 
 			// yLoadTick staggers chunk location checking to reduce time spent each frame
 			for (int y = yLoadTick - loadDistanceChunkY; y < loadDistanceChunkY; y += yCheckDelay)
@@ -149,7 +147,7 @@ namespace VoxelEngine
 
 						chunkRealPos.z = ((z + targetChunk.z) << Chunk.BIT_SIZE) + Chunk.SIZE2;
 
-						float distanceSq = ScaledTargetDistanceSq(chunkRealPos);
+						float distanceSq = ScaledTargetDistanceSq(targetPosition, chunkRealPos);
 
 						if (distanceSq < loadDistanceSq)
 							chunkQueue.Enqueue(distanceSq, chunkPos);
@@ -165,16 +163,19 @@ namespace VoxelEngine
 		private void CheckUnloadChunks()
 		{
 			float unloadDistanceSq = loadDistance * loadDistance * unloadDistanceModifier * unloadDistanceModifier;
+			Vector3 targetPosition = targetTransform.position;
 
 			// Unloading sections stagger must be (2^n)-1
 			const int unloadTickMax = 31;
 			
 			// Check if chunk is in stagger section then if it is outside the unload distance
-			foreach (Chunk chunk in chunkMap.Values.Where(chunk => 
-				(chunk.chunkPos.y & unloadTickMax) != unloadTick && 
-				ScaledTargetDistanceSq(chunk.realPos) > unloadDistanceSq))
+			foreach (Chunk chunk in chunkMap.Values)
 			{
-				chunkUnloadStack.Push(chunk);
+				if ((chunk.chunkPos.y & unloadTickMax) != unloadTick && 
+					ScaledTargetDistanceSq(targetPosition, chunk.realPos) > unloadDistanceSq)
+				{
+					chunkUnloadStack.Push(chunk);
+				}
 			}
 
 			if (++unloadTick > unloadTickMax)
@@ -247,12 +248,12 @@ namespace VoxelEngine
 		}
 
 		// Get distance squared to target using the yDistanceModifier
-		public float ScaledTargetDistanceSq(Vector3 realPos)
+		public float ScaledTargetDistanceSq(Vector3 targetPosition, Vector3 realPos)
 		{
 			return new Vector3(
-				targetTransform.position.x - realPos.x,
-				(targetTransform.position.y - realPos.y) * yDistanceModifier,
-				targetTransform.position.z - realPos.z).sqrMagnitude;
+				targetPosition.x - realPos.x,
+				(targetPosition.y - realPos.y) * yDistanceModifier,
+				targetPosition.z - realPos.z).sqrMagnitude;
 		}
 
 		public void LoadChunk(Vector3i chunkPos)
