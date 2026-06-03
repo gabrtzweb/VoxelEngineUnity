@@ -15,12 +15,12 @@ namespace VoxelEngine
 	{
 		public TerrainGeneratorBase terrainGenerator;
 		public Transform targetTransform;
+		public Material meshMaterial;
 		public float loadDistance = 256f;
 		public float unloadDistanceModifier = 1.2f;
 		public float yDistanceModifier = 1.5f;
 		public int maxThreads = 8;
 		public float targetFPS = 60f;
-		public Material meshMaterial;
 
 		// More low level voxel engine settings can be found in Chunk.cs
 
@@ -39,9 +39,6 @@ namespace VoxelEngine
 		private float averageFPS = 0.0f;
 		private float deltaTimeFPS = 0.0f;
 
-		public Light directionalLight;
-		public Light cameraLight;
-
 		void Awake()
 		{
 			if (terrainGenerator == null)
@@ -54,8 +51,6 @@ namespace VoxelEngine
 		void Start()
 		{
 			averageFPS = targetFPS;
-
-			ResetAll();
 		}
 
 		public int PooledChunkCount => chunkPool.Count;
@@ -67,18 +62,6 @@ namespace VoxelEngine
 		public int UpdateTimeLastFrameMs => updateTimerLastFrame;
 		public int ThreadCount => threadCount;
 		public float AverageFPS => averageFPS;
-
-		void ResetAll(bool useCameraLight = false)
-		{
-			UnloadAllChunks();
-			targetTransform.position = new Vector3(0,50,0);
-
-			if (cameraLight && directionalLight)
-			{
-				cameraLight.enabled = useCameraLight;
-				directionalLight.enabled = !useCameraLight;
-			}
-		}
 
 		void Update()
 		{
