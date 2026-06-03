@@ -1,4 +1,4 @@
-Shader "VoxelEngine/Voxel Texture Array URP"
+Shader "VoxelEngine/VoxelEngineShader_URP"
 {
 	Properties
 	{
