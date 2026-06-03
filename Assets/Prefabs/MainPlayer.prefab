@@ -140,26 +140,29 @@ MonoBehaviour:
   characterVisualRoot: {fileID: 1247426362189685023}
   firstPersonCamera: {fileID: 0}
   thirdPersonCamera: {fileID: 0}
+  idlePerlinAmplitude: 0.5
+  movingPerlinAmplitude: 0.08
+  perlinBlendSpeed: 8
   lookSensitivity: 0.4
   minPitch: -89
   maxPitch: 89
   startInFirstPerson: 1
   activeCameraPriority: 20
   inactiveCameraPriority: 0
-  normalFov: 90
-  sprintFov: 108
+  normalFov: 70
+  sprintFov: 84
   fovLerpSpeed: 10
   firstPersonNearClipPlane: 0.03
   walkBobFrequency: 8
-  walkBobAmplitude: 0.04
+  walkBobAmplitude: 0.02
   sprintBobFrequency: 12
-  sprintBobAmplitude: 0.06
-  landingBobDistance: 0.08
+  sprintBobAmplitude: 0.03
+  landingBobDistance: 0.04
   landingBobRecoverySpeed: 10
   bobBlendSpeed: 12
   landingFallVelocityScale: 8
   moveInputThreshold: 0.01
-  sprintSwayAngle: 1.5
+  sprintSwayAngle: 0.5
   swaySmoothSpeed: 10
 --- !u!114 &5018029380731804262
 MonoBehaviour:

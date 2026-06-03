@@ -8,6 +8,12 @@ public class CameraController : MonoBehaviour
 	[SerializeField] private Transform characterVisualRoot;
 	[SerializeField] private CinemachineCamera firstPersonCamera;
 	[SerializeField] private CinemachineCamera thirdPersonCamera;
+	private CinemachineBasicMultiChannelPerlin firstPersonPerlin;
+	private CinemachineBasicMultiChannelPerlin thirdPersonPerlin;
+
+	[SerializeField] private float idlePerlinAmplitude = 0.5f;
+	[SerializeField] private float movingPerlinAmplitude = 0.08f;
+	[SerializeField] private float perlinBlendSpeed = 8f;
 
 	// Camera Tuning
 	[SerializeField] private float lookSensitivity = 0.4f;
@@ -21,15 +27,15 @@ public class CameraController : MonoBehaviour
 	[SerializeField] private float fovLerpSpeed = 10f;
 	[SerializeField] private float firstPersonNearClipPlane = 0.03f;
 	[SerializeField] private float walkBobFrequency = 8f;
-	[SerializeField] private float walkBobAmplitude = 0.04f;
+	[SerializeField] private float walkBobAmplitude = 0.02f;
 	[SerializeField] private float sprintBobFrequency = 12f;
-	[SerializeField] private float sprintBobAmplitude = 0.06f;
-	[SerializeField] private float landingBobDistance = 0.08f;
+	[SerializeField] private float sprintBobAmplitude = 0.03f;
+	[SerializeField] private float landingBobDistance = 0.04f;
 	[SerializeField] private float landingBobRecoverySpeed = 10f;
 	[SerializeField] private float bobBlendSpeed = 12f;
 	[SerializeField] private float landingFallVelocityScale = 8f;
 	[SerializeField] private float moveInputThreshold = 0.01f;
-	[SerializeField] private float sprintSwayAngle = 1.5f;
+	[SerializeField] private float sprintSwayAngle = 0.5f;
 	[SerializeField] private float swaySmoothSpeed = 10f;
 
 	// Runtime State
@@ -73,6 +79,18 @@ public class CameraController : MonoBehaviour
 			defaultFirstPersonNearClipPlane = firstPersonCamera.Lens.NearClipPlane;
 		}
 
+		if (firstPersonCamera != null)
+		{
+			firstPersonPerlin =
+				firstPersonCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+		}
+
+		if (thirdPersonCamera != null)
+		{
+			thirdPersonPerlin =
+				thirdPersonCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+		}
+
 		CacheCharacterVisuals();
 
 		isFirstPerson = startInFirstPerson;
@@ -106,6 +124,7 @@ public class CameraController : MonoBehaviour
 		pitch = Mathf.Clamp(pitch - lookInput.y, minPitch, maxPitch);
 		UpdateCameraHeightFromStance();
 		UpdateSprintSway();
+		UpdatePerlinNoise();
 		ApplyCameraPivotRotation();
 		UpdateCameraNearClip();
 
@@ -202,6 +221,36 @@ public class CameraController : MonoBehaviour
 		}
 
 		currentSwayAngle = Mathf.MoveTowards(currentSwayAngle, targetSwayAngle, swaySmoothSpeed * Time.deltaTime);
+	}
+
+	private void UpdatePerlinNoise()
+	{
+		bool isMoving =
+			inputHandler != null &&
+			inputHandler.MoveInput.sqrMagnitude > moveInputThreshold;
+
+		float targetAmplitude =
+			isMoving
+				? movingPerlinAmplitude
+				: idlePerlinAmplitude;
+
+		if (firstPersonPerlin != null)
+		{
+			firstPersonPerlin.AmplitudeGain =
+				Mathf.Lerp(
+					firstPersonPerlin.AmplitudeGain,
+					targetAmplitude,
+					perlinBlendSpeed * Time.deltaTime);
+		}
+
+		if (thirdPersonPerlin != null)
+		{
+			thirdPersonPerlin.AmplitudeGain =
+				Mathf.Lerp(
+					thirdPersonPerlin.AmplitudeGain,
+					targetAmplitude,
+					perlinBlendSpeed * Time.deltaTime);
+		}
 	}
 
 	private void ApplyCameraPivotRotation()
