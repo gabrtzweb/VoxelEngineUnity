@@ -3,13 +3,8 @@ using VoxelEngine;
 
 public class PlayerInteractions : MonoBehaviour
 {
-	[SerializeField] private float interactionRange = 4.5f;
-	[SerializeField] private float hitEpsilon = 0.05f;
-	[SerializeField] private LayerMask interactionMask = ~0;
+	[SerializeField] private InteractionConfig config;
 	[SerializeField] private Voxel.BlockType equippedBlock = Voxel.BlockType.Stone;
-	[SerializeField] private bool allowPickWater = true;
-	[SerializeField] private float holdRepeatDelay = 0.2f;
-	[SerializeField] private float holdRepeatInterval = 0.2f;
 
 	private InputHandler inputHandler;
 	private VoxelEngineManager voxelEngineManager;
@@ -40,7 +35,7 @@ public class PlayerInteractions : MonoBehaviour
 		if (pressedThisFrame)
 		{
 			action();
-			nextRepeatTime = Time.time + holdRepeatDelay;
+			nextRepeatTime = Time.time + config.holdRepeatDelay;
 			return;
 		}
 
@@ -54,7 +49,7 @@ public class PlayerInteractions : MonoBehaviour
 			return;
 
 		action();
-		nextRepeatTime = Time.time + holdRepeatInterval;
+		nextRepeatTime = Time.time + config.holdRepeatInterval;
 	}
 
 	private void BreakBlock()
@@ -96,7 +91,7 @@ public class PlayerInteractions : MonoBehaviour
 		if (!targetVoxel.IsSolid())
 			return;
 
-		if (!allowPickWater && targetVoxel.blockType == Voxel.BlockType.Water)
+		if (!config.allowPickWater && targetVoxel.blockType == Voxel.BlockType.Water)
 			return;
 
 		equippedBlock = targetVoxel.blockType;
@@ -113,7 +108,7 @@ public class PlayerInteractions : MonoBehaviour
 			return false;
 
 		Ray ray = new Ray(cameraRef.transform.position, cameraRef.transform.forward);
-		RaycastHit[] hits = Physics.RaycastAll(ray, interactionRange, interactionMask, QueryTriggerInteraction.Ignore);
+		RaycastHit[] hits = Physics.RaycastAll(ray, config.interactionRange, config.interactionMask, QueryTriggerInteraction.Ignore);
 		if (hits == null || hits.Length == 0)
 			return false;
 
@@ -137,7 +132,7 @@ public class PlayerInteractions : MonoBehaviour
 		if (!foundHit)
 			return false;
 
-		Vector3i breakVoxel = WorldToVoxel(hit.point - hit.normal * hitEpsilon);
+		Vector3i breakVoxel = WorldToVoxel(hit.point - hit.normal * config.hitEpsilon);
 		Vector3i placeVoxel = breakVoxel + NormalToVoxelOffset(hit.normal);
 
 		if (!TryGetVoxelWorld(breakVoxel, out hitVoxel))

@@ -3,40 +3,13 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-	// Rig References
 	[SerializeField] private Transform cameraPivot;
 	[SerializeField] private Transform characterVisualRoot;
 	[SerializeField] private CinemachineCamera firstPersonCamera;
 	[SerializeField] private CinemachineCamera thirdPersonCamera;
+	[SerializeField] private CameraConfig config;
 	private CinemachineBasicMultiChannelPerlin firstPersonPerlin;
 	private CinemachineBasicMultiChannelPerlin thirdPersonPerlin;
-
-	[SerializeField] private float idlePerlinAmplitude = 0.5f;
-	[SerializeField] private float movingPerlinAmplitude = 0.08f;
-	[SerializeField] private float perlinBlendSpeed = 8f;
-
-	// Camera Tuning
-	[SerializeField] private float lookSensitivity = 0.4f;
-	[SerializeField] private float minPitch = -89f;
-	[SerializeField] private float maxPitch = 89f;
-	[SerializeField] private bool startInFirstPerson = true;
-	[SerializeField] private int activeCameraPriority = 20;
-	[SerializeField] private int inactiveCameraPriority = 0;
-	[SerializeField] private float normalFov = 70f;
-	[SerializeField] private float sprintFov = 84f;
-	[SerializeField] private float fovLerpSpeed = 10f;
-	[SerializeField] private float firstPersonNearClipPlane = 0.03f;
-	[SerializeField] private float walkBobFrequency = 8f;
-	[SerializeField] private float walkBobAmplitude = 0.02f;
-	[SerializeField] private float sprintBobFrequency = 12f;
-	[SerializeField] private float sprintBobAmplitude = 0.03f;
-	[SerializeField] private float landingBobDistance = 0.04f;
-	[SerializeField] private float landingBobRecoverySpeed = 10f;
-	[SerializeField] private float bobBlendSpeed = 12f;
-	[SerializeField] private float landingFallVelocityScale = 8f;
-	[SerializeField] private float moveInputThreshold = 0.01f;
-	[SerializeField] private float sprintSwayAngle = 0.5f;
-	[SerializeField] private float swaySmoothSpeed = 10f;
 
 	// Runtime State
 	private InputHandler inputHandler;
@@ -93,7 +66,7 @@ public class CameraController : MonoBehaviour
 
 		CacheCharacterVisuals();
 
-		isFirstPerson = startInFirstPerson;
+		isFirstPerson = config.startInFirstPerson;
 		wasGrounded = IsBobGrounded();
 		ApplyPerspective();
 	}
@@ -117,11 +90,11 @@ public class CameraController : MonoBehaviour
 			ApplyPerspective();
 		}
 
-		Vector2 lookInput = inputHandler.LookInput * lookSensitivity;
+		Vector2 lookInput = inputHandler.LookInput * config.lookSensitivity;
 
 		transform.Rotate(Vector3.up * lookInput.x, Space.World);
 
-		pitch = Mathf.Clamp(pitch - lookInput.y, minPitch, maxPitch);
+		pitch = Mathf.Clamp(pitch - lookInput.y, config.minPitch, config.maxPitch);
 		UpdateCameraHeightFromStance();
 		UpdateSprintSway();
 		UpdatePerlinNoise();
@@ -132,14 +105,14 @@ public class CameraController : MonoBehaviour
 		{
 			float targetFov =
 				inputHandler.IsSprinting
-					? sprintFov
-					: normalFov;
+					? config.sprintFov
+					: config.normalFov;
 
 			firstPersonCamera.Lens.FieldOfView =
 				Mathf.Lerp(
 					firstPersonCamera.Lens.FieldOfView,
 					targetFov,
-					fovLerpSpeed * Time.deltaTime);
+					config.fovLerpSpeed * Time.deltaTime);
 		}
 	}
 
@@ -173,15 +146,15 @@ public class CameraController : MonoBehaviour
 
 		if (firstPersonCamera != null)
 		{
-			firstPersonCamera.Priority = isFirstPerson ? activeCameraPriority : inactiveCameraPriority;
+			firstPersonCamera.Priority = isFirstPerson ? config.activeCameraPriority : config.inactiveCameraPriority;
 		}
 
 		if (thirdPersonCamera != null)
 		{
-			thirdPersonCamera.Priority = isFirstPerson ? inactiveCameraPriority : activeCameraPriority;
+			thirdPersonCamera.Priority = isFirstPerson ? config.inactiveCameraPriority : config.activeCameraPriority;
 		}
 
-		pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+		pitch = Mathf.Clamp(pitch, config.minPitch, config.maxPitch);
 		if (cameraPivot != null)
 		{
 			ApplyCameraPivotRotation();
@@ -212,27 +185,27 @@ public class CameraController : MonoBehaviour
 				inputHandler.Movement.IsGrounded &&
 				!inputHandler.Movement.IsFlying &&
 				inputHandler.IsSprinting &&
-				inputHandler.MoveInput.sqrMagnitude > moveInputThreshold;
+				inputHandler.MoveInput.sqrMagnitude > config.moveInputThreshold;
 
 			if (shouldSway)
 			{
-				targetSwayAngle = sprintSwayAngle * Mathf.Sin(Time.time * 2.2f);
+				targetSwayAngle = config.sprintSwayAngle * Mathf.Sin(Time.time * 2.2f);
 			}
 		}
 
-		currentSwayAngle = Mathf.MoveTowards(currentSwayAngle, targetSwayAngle, swaySmoothSpeed * Time.deltaTime);
+		currentSwayAngle = Mathf.MoveTowards(currentSwayAngle, targetSwayAngle, config.swaySmoothSpeed * Time.deltaTime);
 	}
 
 	private void UpdatePerlinNoise()
 	{
 		bool isMoving =
 			inputHandler != null &&
-			inputHandler.MoveInput.sqrMagnitude > moveInputThreshold;
+			inputHandler.MoveInput.sqrMagnitude > config.moveInputThreshold;
 
 		float targetAmplitude =
 			isMoving
-				? movingPerlinAmplitude
-				: idlePerlinAmplitude;
+				? config.movingPerlinAmplitude
+				: config.idlePerlinAmplitude;
 
 		if (firstPersonPerlin != null)
 		{
@@ -240,7 +213,7 @@ public class CameraController : MonoBehaviour
 				Mathf.Lerp(
 					firstPersonPerlin.AmplitudeGain,
 					targetAmplitude,
-					perlinBlendSpeed * Time.deltaTime);
+					config.perlinBlendSpeed * Time.deltaTime);
 		}
 
 		if (thirdPersonPerlin != null)
@@ -249,7 +222,7 @@ public class CameraController : MonoBehaviour
 				Mathf.Lerp(
 					thirdPersonPerlin.AmplitudeGain,
 					targetAmplitude,
-					perlinBlendSpeed * Time.deltaTime);
+					config.perlinBlendSpeed * Time.deltaTime);
 		}
 	}
 
@@ -279,12 +252,12 @@ public class CameraController : MonoBehaviour
 		Vector3 targetOffset = Vector3.zero;
 		bool canBob = IsBobGrounded();
 		Vector2 moveInput = inputHandler != null ? inputHandler.MoveInput : Vector2.zero;
-		bool hasMoveInput = moveInput.sqrMagnitude > moveInputThreshold;
+		bool hasMoveInput = moveInput.sqrMagnitude > config.moveInputThreshold;
 
 		if (canBob && hasMoveInput)
 		{
-			float bobFrequency = inputHandler.IsSprinting ? sprintBobFrequency : walkBobFrequency;
-			float bobAmplitude = inputHandler.IsSprinting ? sprintBobAmplitude : walkBobAmplitude;
+			float bobFrequency = inputHandler.IsSprinting ? config.sprintBobFrequency : config.walkBobFrequency;
+			float bobAmplitude = inputHandler.IsSprinting ? config.sprintBobAmplitude : config.walkBobAmplitude;
 			bobTimer += Time.deltaTime * bobFrequency * (1f + moveInput.magnitude * 0.1f);
 
 			float bobPhase = bobTimer * Mathf.PI * 2f;
@@ -295,15 +268,15 @@ public class CameraController : MonoBehaviour
 
 		if (canBob && !wasGrounded)
 		{
-			float landingStrength = Mathf.Clamp01(inputHandler.Movement.LandingImpactVelocity / landingFallVelocityScale);
-			float landingAmount = landingBobDistance * Mathf.Lerp(0.5f, 1f, landingStrength);
+			float landingStrength = Mathf.Clamp01(inputHandler.Movement.LandingImpactVelocity / config.landingFallVelocityScale);
+			float landingAmount = config.landingBobDistance * Mathf.Lerp(0.5f, 1f, landingStrength);
 			landingBobOffset = Mathf.Min(landingBobOffset, -landingAmount);
 		}
 
-		landingBobOffset = Mathf.MoveTowards(landingBobOffset, 0f, landingBobRecoverySpeed * Time.deltaTime);
+		landingBobOffset = Mathf.MoveTowards(landingBobOffset, 0f, config.landingBobRecoverySpeed * Time.deltaTime);
 
 		Vector3 desiredOffset = targetOffset + Vector3.up * landingBobOffset;
-		currentCameraPivotOffset = Vector3.Lerp(currentCameraPivotOffset, desiredOffset, bobBlendSpeed * Time.deltaTime);
+		currentCameraPivotOffset = Vector3.Lerp(currentCameraPivotOffset, desiredOffset, config.bobBlendSpeed * Time.deltaTime);
 		cameraPivot.localPosition = cameraPivotBaseLocalPosition + currentCameraPivotOffset;
 
 		wasGrounded = canBob;
@@ -316,8 +289,8 @@ public class CameraController : MonoBehaviour
 
 	private void ResetCameraBob()
 	{
-		currentCameraPivotOffset = Vector3.Lerp(currentCameraPivotOffset, Vector3.zero, bobBlendSpeed * Time.deltaTime);
-		landingBobOffset = Mathf.MoveTowards(landingBobOffset, 0f, landingBobRecoverySpeed * Time.deltaTime);
+		currentCameraPivotOffset = Vector3.Lerp(currentCameraPivotOffset, Vector3.zero, config.bobBlendSpeed * Time.deltaTime);
+		landingBobOffset = Mathf.MoveTowards(landingBobOffset, 0f, config.landingBobRecoverySpeed * Time.deltaTime);
 		if (cameraPivot != null)
 		{
 			cameraPivot.localPosition = cameraPivotBaseLocalPosition + currentCameraPivotOffset + Vector3.up * landingBobOffset;
@@ -331,7 +304,7 @@ public class CameraController : MonoBehaviour
 		if (firstPersonCamera != null)
 		{
 			firstPersonCamera.Lens.NearClipPlane = isFirstPerson
-				? firstPersonNearClipPlane
+				? config.firstPersonNearClipPlane
 				: defaultFirstPersonNearClipPlane;
 		}
 
@@ -347,7 +320,7 @@ public class CameraController : MonoBehaviour
 		}
 
 		outputCamera.nearClipPlane = isFirstPerson
-			? Mathf.Min(defaultNearClipPlane, firstPersonNearClipPlane)
+			? Mathf.Min(defaultNearClipPlane, config.firstPersonNearClipPlane)
 			: defaultNearClipPlane;
 	}
 

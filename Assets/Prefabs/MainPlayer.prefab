@@ -76,33 +76,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 979813f578559d84cb25fceb418c54b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  walkSpeed: 4.317
-  sprintSpeed: 5.612
-  jumpHeight: 1.252
-  gravity: -20
-  groundAcceleration: 35
-  groundDeceleration: 40
-  airAcceleration: 12
-  standingHeight: 1.8
-  standingEyeHeight: 1.62
-  crouchHeight: 1.5
-  crouchEyeHeight: 1.27
-  crouchSpeed: 1.295
-  crawlHeight: 0.6
-  crawlEyeHeight: 0.42
-  crawlSpeed: 0.85
-  stanceTransitionSpeed: 10
-  footstepClips: []
-  jumpClip: {fileID: 0}
-  landingClip: {fileID: 0}
-  footstepDistance: 1.75
-  pitchVariation: 0.05
-  flightSpeed: 10.92
-  flightSprintMultiplier: 2
-  flightVerticalSpeed: 10.92
-  doubleTapJumpWindow: 0.28
+  config: {fileID: 11400000, guid: 89b20c7d7b6b8b4458fa0b669b16fce5, type: 2}
   animator: {fileID: 7140075043740737157}
-  debugAnimator: 0
 --- !u!114 &5775300402452204387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,15 +90,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4806c09ccd917d14588ccca4909ae002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractions
-  interactionRange: 4.5
-  hitEpsilon: 0.05
-  interactionMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  config: {fileID: 11400000, guid: 436f79f059214174681b6d2c4e945946, type: 2}
   equippedBlock: 5
-  allowPickWater: 1
-  holdRepeatDelay: 0.2
-  holdRepeatInterval: 0.2
 --- !u!114 &8595646699761913960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,30 +108,7 @@ MonoBehaviour:
   characterVisualRoot: {fileID: 1247426362189685023}
   firstPersonCamera: {fileID: 0}
   thirdPersonCamera: {fileID: 0}
-  idlePerlinAmplitude: 0.5
-  movingPerlinAmplitude: 0.08
-  perlinBlendSpeed: 8
-  lookSensitivity: 0.4
-  minPitch: -89
-  maxPitch: 89
-  startInFirstPerson: 1
-  activeCameraPriority: 20
-  inactiveCameraPriority: 0
-  normalFov: 70
-  sprintFov: 84
-  fovLerpSpeed: 10
-  firstPersonNearClipPlane: 0.03
-  walkBobFrequency: 8
-  walkBobAmplitude: 0.02
-  sprintBobFrequency: 12
-  sprintBobAmplitude: 0.03
-  landingBobDistance: 0.04
-  landingBobRecoverySpeed: 10
-  bobBlendSpeed: 12
-  landingFallVelocityScale: 8
-  moveInputThreshold: 0.01
-  sprintSwayAngle: 0.5
-  swaySmoothSpeed: 10
+  config: {fileID: 11400000, guid: 11888bf00fc2ea245aee23e8878b1729, type: 2}
 --- !u!114 &5018029380731804262
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91900e17e8af20a4694e4a8c1bd641a5, type: 3}
+  m_Name: MovementConfig
+  m_EditorClassIdentifier: Assembly-CSharp::MovementConfig
+  walkSpeed: 4.317
+  sprintSpeed: 5.612
+  jumpHeight: 1.252
+  gravity: -20
+  groundAcceleration: 35
+  groundDeceleration: 40
+  airAcceleration: 12
+  standingHeight: 1.8
+  standingEyeHeight: 1.62
+  crouchHeight: 1.5
+  crouchEyeHeight: 1.27
+  crouchSpeed: 1.295
+  crawlHeight: 0.6
+  crawlEyeHeight: 0.42
+  crawlSpeed: 0.85
+  stanceTransitionSpeed: 10
+  footstepClips: []
+  jumpClip: {fileID: 0}
+  landingClip: {fileID: 0}
+  footstepDistance: 1.75
+  pitchVariation: 0.05
+  flightSpeed: 10.92
+  flightSprintMultiplier: 2
+  flightVerticalSpeed: 10.92
+  doubleTapJumpWindow: 0.28
+  debugAnimator: 0
