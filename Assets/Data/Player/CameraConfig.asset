@@ -33,6 +33,5 @@ MonoBehaviour:
   landingBobRecoverySpeed: 10
   bobBlendSpeed: 12
   landingFallVelocityScale: 8
-  moveInputThreshold: 0.01
   sprintSwayAngle: 0.5
   swaySmoothSpeed: 10

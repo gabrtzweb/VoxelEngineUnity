@@ -37,4 +37,4 @@ MonoBehaviour:
   flightSprintMultiplier: 2
   flightVerticalSpeed: 10.92
   doubleTapJumpWindow: 0.28
-  debugAnimator: 0
+  moveInputThreshold: 0.01

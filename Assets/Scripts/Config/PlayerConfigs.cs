@@ -38,8 +38,8 @@ public class MovementConfig : ScriptableObject
 	public float flightVerticalSpeed = 10.92f;
 	public float doubleTapJumpWindow = 0.28f;
 
-	[Header("Debug")]
-	public bool debugAnimator;
+	[Header("Input")]
+	public float moveInputThreshold = 0.01f;
 }
 
 [CreateAssetMenu(fileName = "CameraConfig", menuName = "Voxel Engine/Player/Camera Config")]
@@ -74,8 +74,7 @@ public class CameraConfig : ScriptableObject
 	public float bobBlendSpeed = 12f;
 	public float landingFallVelocityScale = 8f;
 
-	[Header("Input and Sway")]
-	public float moveInputThreshold = 0.01f;
+	[Header("Sway")]
 	public float sprintSwayAngle = 0.5f;
 	public float swaySmoothSpeed = 10f;
 }

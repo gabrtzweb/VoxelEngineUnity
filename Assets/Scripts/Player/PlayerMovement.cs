@@ -2,6 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(AudioSource))]
+[DefaultExecutionOrder(-100)]
 public class PlayerMovement : MonoBehaviour
 {
 	private enum MovementStance
@@ -21,6 +22,33 @@ public class PlayerMovement : MonoBehaviour
 	private float currentControllerHeight;
 	private float currentEyeHeight;
 
+	private float walkSpeed;
+	private float sprintSpeed;
+	private float crouchSpeed;
+	private float crawlSpeed;
+	private float jumpHeight;
+	private float gravity;
+	private float groundAcceleration;
+	private float groundDeceleration;
+	private float airAcceleration;
+	private float standingHeight;
+	private float standingEyeHeight;
+	private float crouchHeight;
+	private float crouchEyeHeight;
+	private float crawlHeight;
+	private float crawlEyeHeight;
+	private float stanceTransitionSpeed;
+	private float doubleTapJumpWindow;
+	private float flightSpeed;
+	private float flightSprintMultiplier;
+	private float flightVerticalSpeed;
+	private float footstepDistance;
+	private float pitchVariation;
+	private float moveInputThresholdSqr;
+	private AudioClip[] footstepClips;
+	private AudioClip jumpClip;
+	private AudioClip landingClip;
+
 	// Runtime State
 	private CharacterController characterController;
 	private InputHandler inputHandler;
@@ -29,11 +57,11 @@ public class PlayerMovement : MonoBehaviour
 	private bool isFlying;
 	private bool wasGrounded;
 	private float lastJumpPressedTime = -10f;
-		private static readonly int speedHash = Animator.StringToHash("Speed");
-		private static readonly int isGroundedHash = Animator.StringToHash("IsGrounded");
-		private static readonly int isSprintingHash = Animator.StringToHash("IsSprinting");
-		private static readonly int isFlyingHash = Animator.StringToHash("IsFlying");
-		private static readonly int jumpTriggerHash = Animator.StringToHash("JumpTrigger");
+	private static readonly int speedHash = Animator.StringToHash("Speed");
+	private static readonly int isGroundedHash = Animator.StringToHash("IsGrounded");
+	private static readonly int isSprintingHash = Animator.StringToHash("IsSprinting");
+	private static readonly int isFlyingHash = Animator.StringToHash("IsFlying");
+	private static readonly int jumpTriggerHash = Animator.StringToHash("JumpTrigger");
 
 	public bool IsFlying => isFlying;
 	public bool IsGrounded => characterController != null && characterController.isGrounded;
@@ -41,9 +69,17 @@ public class PlayerMovement : MonoBehaviour
 	public bool IsCrawling => currentStance == MovementStance.Crawling;
 	public float CameraEyeHeight => currentEyeHeight;
 	public float LandingImpactVelocity { get; private set; }
+	public float MoveInputThresholdSqr => moveInputThresholdSqr;
 
 	private void Awake()
 	{
+		if (config == null)
+		{
+			Debug.LogError($"{nameof(PlayerMovement)} requires a {nameof(MovementConfig)} asset assigned.", this);
+			enabled = false;
+			return;
+		}
+
 		characterController = GetComponent<CharacterController>();
 		inputHandler = GetComponent<InputHandler>();
 		audioSource = GetComponent<AudioSource>();
@@ -56,11 +92,11 @@ public class PlayerMovement : MonoBehaviour
 			audioSource.playOnAwake = false;
 		}
 
-		currentControllerHeight = config.standingHeight > 0f ? config.standingHeight : characterController.height;
-		currentEyeHeight = config.standingEyeHeight;
-		ApplyControllerDimensions(currentControllerHeight);
+		CacheConfigValues();
+		SyncCharacterControllerFromConfig();
 		currentStance = MovementStance.Standing;
 		wasGrounded = characterController != null && characterController.isGrounded;
+
 		if (animator == null)
 		{
 			animator = GetComponent<Animator>();
@@ -68,11 +104,64 @@ public class PlayerMovement : MonoBehaviour
 			{
 				animator = GetComponentInChildren<Animator>();
 			}
-			if (animator == null && config.debugAnimator)
-			{
-				Debug.LogWarning("PlayerMovement: Animator not found on GameObject or children. Please assign an Animator in the inspector.");
-			}
 		}
+	}
+
+	private void OnValidate()
+	{
+		if (config == null)
+		{
+			return;
+		}
+
+		CharacterController controller = GetComponent<CharacterController>();
+		if (controller == null)
+		{
+			return;
+		}
+
+		float height = Mathf.Max(config.standingHeight, controller.radius * 2f);
+		controller.height = height;
+		Vector3 center = controller.center;
+		center.y = height * 0.5f;
+		controller.center = center;
+	}
+
+	private void CacheConfigValues()
+	{
+		walkSpeed = config.walkSpeed;
+		sprintSpeed = config.sprintSpeed;
+		crouchSpeed = config.crouchSpeed;
+		crawlSpeed = config.crawlSpeed;
+		jumpHeight = config.jumpHeight;
+		gravity = config.gravity;
+		groundAcceleration = config.groundAcceleration;
+		groundDeceleration = config.groundDeceleration;
+		airAcceleration = config.airAcceleration;
+		standingHeight = config.standingHeight;
+		standingEyeHeight = config.standingEyeHeight;
+		crouchHeight = config.crouchHeight;
+		crouchEyeHeight = config.crouchEyeHeight;
+		crawlHeight = config.crawlHeight;
+		crawlEyeHeight = config.crawlEyeHeight;
+		stanceTransitionSpeed = config.stanceTransitionSpeed;
+		doubleTapJumpWindow = config.doubleTapJumpWindow;
+		flightSpeed = config.flightSpeed;
+		flightSprintMultiplier = config.flightSprintMultiplier;
+		flightVerticalSpeed = config.flightVerticalSpeed;
+		footstepDistance = config.footstepDistance;
+		pitchVariation = config.pitchVariation;
+		moveInputThresholdSqr = config.moveInputThreshold * config.moveInputThreshold;
+		footstepClips = config.footstepClips;
+		jumpClip = config.jumpClip;
+		landingClip = config.landingClip;
+	}
+
+	private void SyncCharacterControllerFromConfig()
+	{
+		currentControllerHeight = standingHeight > 0f ? standingHeight : characterController.height;
+		currentEyeHeight = standingEyeHeight;
+		ApplyControllerDimensions(currentControllerHeight);
 	}
 
 	private void Update()
@@ -89,12 +178,11 @@ public class PlayerMovement : MonoBehaviour
 		if (isFlying)
 		{
 			HandleFlightMovement();
-			UpdateAnimatorParameters(Vector2.zero); // flight movement sets its own speed inside the handler
+			UpdateAnimatorParameters(Vector2.zero);
 			return;
 		}
 
 		HandleGroundedMovement();
-		// animator params updated inside grounded handler
 	}
 
 	private void UpdateFlightToggle()
@@ -104,7 +192,7 @@ public class PlayerMovement : MonoBehaviour
 			return;
 		}
 
-		if (Time.time - lastJumpPressedTime <= config.doubleTapJumpWindow)
+		if (Time.time - lastJumpPressedTime <= doubleTapJumpWindow)
 		{
 			isFlying = !isFlying;
 			if (isFlying)
@@ -134,11 +222,11 @@ public class PlayerMovement : MonoBehaviour
 		Vector3 moveDirection = GetPlanarMoveDirection(moveInput);
 		float targetSpeed = GetTargetMoveSpeed();
 		Vector3 desiredVelocity = moveDirection * targetSpeed;
-		bool hasMoveInput = moveInput.sqrMagnitude > 0.01f;
+		bool hasMoveInput = moveInput.sqrMagnitude > moveInputThresholdSqr;
 
 		if (isGrounded)
 		{
-			float acceleration = hasMoveInput ? config.groundAcceleration : config.groundDeceleration;
+			float acceleration = hasMoveInput ? groundAcceleration : groundDeceleration;
 			currentHorizontalVelocity =
 				Vector3.MoveTowards(
 					currentHorizontalVelocity,
@@ -151,7 +239,7 @@ public class PlayerMovement : MonoBehaviour
 				Vector3.MoveTowards(
 					currentHorizontalVelocity,
 					desiredVelocity,
-					config.airAcceleration * Time.deltaTime);
+					airAcceleration * Time.deltaTime);
 		}
 
 		if (isGrounded && IsEdgeSafetyEnabled() && currentHorizontalVelocity.sqrMagnitude > 0f)
@@ -161,7 +249,7 @@ public class PlayerMovement : MonoBehaviour
 
 		if (isGrounded && inputHandler.IsJumping)
 		{
-			verticalVelocity = Mathf.Sqrt(config.jumpHeight * -2f * config.gravity);
+			verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
 			PlayJumpSound();
 			if (animator != null)
 			{
@@ -169,7 +257,7 @@ public class PlayerMovement : MonoBehaviour
 			}
 		}
 
-		verticalVelocity += config.gravity * Time.deltaTime;
+		verticalVelocity += gravity * Time.deltaTime;
 		Vector3 finalMove = currentHorizontalVelocity;
 		finalMove.y = verticalVelocity;
 
@@ -184,7 +272,7 @@ public class PlayerMovement : MonoBehaviour
 	private void HandleFlightMovement()
 	{
 		Vector2 moveInput = inputHandler.MoveInput;
-		float speed = inputHandler.IsSprinting ? config.flightSpeed * config.flightSprintMultiplier : config.flightSpeed;
+		float speed = inputHandler.IsSprinting ? flightSpeed * flightSprintMultiplier : flightSpeed;
 		Vector3 move = GetPlanarMoveDirection(moveInput) * speed;
 
 		float verticalInput = 0f;
@@ -196,12 +284,12 @@ public class PlayerMovement : MonoBehaviour
 		{
 			verticalInput -= 1f;
 		}
-		move.y = verticalInput * config.flightVerticalSpeed;
+		move.y = verticalInput * flightVerticalSpeed;
 
 		characterController.Move(move * Time.deltaTime);
 		wasGrounded = characterController.isGrounded;
 
-		UpdateAnimatorParameters(moveInput, /*isGrounded*/ false);
+		UpdateAnimatorParameters(moveInput, false);
 	}
 
 	private Vector3 GetPlanarMoveDirection(Vector2 moveInput)
@@ -215,11 +303,11 @@ public class PlayerMovement : MonoBehaviour
 		switch (targetStance)
 		{
 			case MovementStance.Crouching:
-				return config.crouchSpeed;
+				return crouchSpeed;
 			case MovementStance.Crawling:
-				return config.crawlSpeed;
+				return crawlSpeed;
 			default:
-				return inputHandler.IsSprinting ? config.sprintSpeed : config.walkSpeed;
+				return inputHandler.IsSprinting ? sprintSpeed : walkSpeed;
 		}
 	}
 
@@ -249,41 +337,41 @@ public class PlayerMovement : MonoBehaviour
 		switch (requestedStance)
 		{
 			case MovementStance.Crawling:
-				if (CanFitHeight(config.crawlHeight))
+				if (CanFitHeight(crawlHeight))
 				{
 					return MovementStance.Crawling;
 				}
 
-				if (CanFitHeight(config.crouchHeight))
+				if (CanFitHeight(crouchHeight))
 				{
 					return MovementStance.Crouching;
 				}
 
 				return targetStance;
 			case MovementStance.Crouching:
-				if (CanFitHeight(config.crouchHeight))
+				if (CanFitHeight(crouchHeight))
 				{
 					return MovementStance.Crouching;
 				}
 
-				if (CanFitHeight(config.crawlHeight))
+				if (CanFitHeight(crawlHeight))
 				{
 					return MovementStance.Crawling;
 				}
 
 				return targetStance == MovementStance.Crawling ? MovementStance.Crawling : MovementStance.Standing;
 			default:
-				if (CanFitHeight(config.standingHeight))
+				if (CanFitHeight(standingHeight))
 				{
 					return MovementStance.Standing;
 				}
 
-				if (CanFitHeight(config.crouchHeight))
+				if (CanFitHeight(crouchHeight))
 				{
 					return MovementStance.Crouching;
 				}
 
-				if (CanFitHeight(config.crawlHeight))
+				if (CanFitHeight(crawlHeight))
 				{
 					return MovementStance.Crawling;
 				}
@@ -302,8 +390,8 @@ public class PlayerMovement : MonoBehaviour
 		float targetHeight = GetStanceHeight(targetStance);
 		float targetEye = GetStanceEyeHeight(targetStance);
 
-		currentControllerHeight = Mathf.MoveTowards(currentControllerHeight, targetHeight, config.stanceTransitionSpeed * Time.deltaTime);
-		currentEyeHeight = Mathf.MoveTowards(currentEyeHeight, targetEye, config.stanceTransitionSpeed * Time.deltaTime);
+		currentControllerHeight = Mathf.MoveTowards(currentControllerHeight, targetHeight, stanceTransitionSpeed * Time.deltaTime);
+		currentEyeHeight = Mathf.MoveTowards(currentEyeHeight, targetEye, stanceTransitionSpeed * Time.deltaTime);
 
 		ApplyControllerDimensions(currentControllerHeight);
 
@@ -318,11 +406,11 @@ public class PlayerMovement : MonoBehaviour
 		switch (stance)
 		{
 			case MovementStance.Crouching:
-				return config.crouchHeight;
+				return crouchHeight;
 			case MovementStance.Crawling:
-				return config.crawlHeight;
+				return crawlHeight;
 			default:
-				return config.standingHeight;
+				return standingHeight;
 		}
 	}
 
@@ -331,11 +419,11 @@ public class PlayerMovement : MonoBehaviour
 		switch (stance)
 		{
 			case MovementStance.Crouching:
-				return config.crouchEyeHeight;
+				return crouchEyeHeight;
 			case MovementStance.Crawling:
-				return config.crawlEyeHeight;
+				return crawlEyeHeight;
 			default:
-				return config.standingEyeHeight;
+				return standingEyeHeight;
 		}
 	}
 
@@ -476,40 +564,40 @@ public class PlayerMovement : MonoBehaviour
 		if (isFlying || !isGrounded)
 		{
 			footstepDistanceAccumulator = 0f;
-			if (justLanded && config.landingClip != null)
+			if (justLanded && landingClip != null)
 			{
 				PlayLandingSound(LandingImpactVelocity);
 			}
 			return;
 		}
 
-		if (justLanded && config.landingClip != null)
+		if (justLanded && landingClip != null)
 		{
 			PlayLandingSound(LandingImpactVelocity);
 		}
 
-		if (moveInput.sqrMagnitude <= 0.01f || config.footstepDistance <= 0f)
+		if (moveInput.sqrMagnitude <= moveInputThresholdSqr || footstepDistance <= 0f)
 		{
 			footstepDistanceAccumulator = 0f;
 			return;
 		}
 
 		footstepDistanceAccumulator += currentHorizontalVelocity.magnitude * Time.deltaTime;
-		while (footstepDistanceAccumulator >= config.footstepDistance)
+		while (footstepDistanceAccumulator >= footstepDistance)
 		{
-			footstepDistanceAccumulator -= config.footstepDistance;
+			footstepDistanceAccumulator -= footstepDistance;
 			PlayFootstepSound();
 		}
 	}
 
 	private void PlayFootstepSound()
 	{
-		if (audioSource == null || config.footstepClips == null || config.footstepClips.Length == 0)
+		if (audioSource == null || footstepClips == null || footstepClips.Length == 0)
 		{
 			return;
 		}
 
-		AudioClip clip = config.footstepClips[Random.Range(0, config.footstepClips.Length)];
+		AudioClip clip = footstepClips[Random.Range(0, footstepClips.Length)];
 		if (clip == null)
 		{
 			return;
@@ -520,31 +608,31 @@ public class PlayerMovement : MonoBehaviour
 
 	private void PlayJumpSound()
 	{
-		if (audioSource == null || config.jumpClip == null)
+		if (audioSource == null || jumpClip == null)
 		{
 			return;
 		}
 
-		PlayClipWithPitchVariation(config.jumpClip, 1f);
+		PlayClipWithPitchVariation(jumpClip, 1f);
 	}
 
 	private void PlayLandingSound(float impactVelocity)
 	{
-		if (audioSource == null || config.landingClip == null)
+		if (audioSource == null || landingClip == null)
 		{
 			return;
 		}
 
 		float landingVolume = Mathf.Lerp(0.35f, 0.9f, Mathf.Clamp01(impactVelocity / 12f));
-		PlayClipWithPitchVariation(config.landingClip, landingVolume);
+		PlayClipWithPitchVariation(landingClip, landingVolume);
 	}
 
 	private void PlayClipWithPitchVariation(AudioClip clip, float volumeScale)
 	{
 		float originalPitch = audioSource.pitch;
-		if (config.pitchVariation > 0f)
+		if (pitchVariation > 0f)
 		{
-			audioSource.pitch = 1f + Random.Range(-config.pitchVariation, config.pitchVariation);
+			audioSource.pitch = 1f + Random.Range(-pitchVariation, pitchVariation);
 		}
 
 		audioSource.PlayOneShot(clip, volumeScale);
@@ -553,17 +641,13 @@ public class PlayerMovement : MonoBehaviour
 
 	private void UpdateAnimatorParameters(Vector2 moveInput, bool isGrounded = true)
 	{
-		if (animator == null) return;
-
-		// Speed: use normalized horizontal input magnitude (0..1) for blending
-		float normalizedSpeed = Mathf.Clamp01(moveInput.magnitude);
-		animator.SetFloat(speedHash, normalizedSpeed);
-
-		if (config.debugAnimator)
+		if (animator == null)
 		{
-			Debug.Log($"Animator Params -> Speed: {normalizedSpeed}, IsGrounded: {isGrounded}, IsFlying: {isFlying}, IsSprinting: {inputHandler.IsSprinting}");
+			return;
 		}
 
+		float normalizedSpeed = Mathf.Clamp01(moveInput.magnitude);
+		animator.SetFloat(speedHash, normalizedSpeed);
 		animator.SetBool(isGroundedHash, isGrounded);
 		animator.SetBool(isSprintingHash, inputHandler.IsSprinting);
 		animator.SetBool(isFlyingHash, isFlying);
